@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.UI;
 using Photon.Pun;
@@ -22,6 +23,10 @@ public class GameController : MonoBehaviourPun
     public Image uiImage;
     public Sprite trueAns;
     public Sprite falseAns;
+
+    public Animator characteranimator;
+
+    public StableDiffusionRegionPrompt stablediffusionregionprompt;
     void Start()
     {
         roomNumber.text = "Room : " + PhotonNetwork.CurrentRoom.Name;
@@ -41,6 +46,10 @@ public class GameController : MonoBehaviourPun
         else if (diff == "Hard") { /* 設定困難模式參數 */
             StartCoroutine(GetGeminiKeywords(2));
         }
+        else
+        {
+            StartCoroutine(GetGeminiKeywords(3));
+        }
     }
 
     private void OnImageGenerated(Texture2D generatedTexture)
@@ -48,10 +57,10 @@ public class GameController : MonoBehaviourPun
         if (generatedTexture != null)
         {
             byte[] imageBytes = generatedTexture.EncodeToJPG();
-            StartCoroutine(huggingFaceAPI.UpscaleImage(imageBytes, (result) =>
-            {
-                imageBytes = result;
-            }));
+            //StartCoroutine(huggingFaceAPI.UpscaleImage(imageBytes, (result) =>
+            //{
+            //    imageBytes = result;
+            //}));
             photonView.RPC("SyncImage", RpcTarget.All, imageBytes);
         }
         else
@@ -80,24 +89,32 @@ public class GameController : MonoBehaviourPun
 
         if(mode == 1)
         {
-            yield return StartCoroutine(geminiAPI.SendRequest("我們想做一個遊戲，遊戲內容是會有數名玩家和一個AI，然後讓玩家看圖猜題目是什麼，如果玩家都答錯那AI就會讓關鍵字可以生的更像題目，一直持續到玩家可以透過生出的圖片猜到題目為止。回答會是選擇題的樣式，會有四個選項，一個正確，三個錯誤，請你出題目，你要回答的樣式為，題目:「提示字」，選項A:「提示字」，選項B:「提示字」，選項C:「提示字」，選項D:「提示字」，正確答案為:「提示字」，盡量為明確物品，題目用英文，選項用中文，不要有多餘的字，給我一題就好了，標點符號不要變，一定要使用「」框住提示字。", (result) =>
+            yield return StartCoroutine(geminiAPI.SendRequest("我們想做一個遊戲，遊戲內容是會有數名玩家和一個AI，然後讓玩家看圖猜題目是什麼，如果玩家都答錯那AI就會讓關鍵字可以生的更像題目，一直持續到玩家可以透過生出的圖片猜到題目為止。回答會是選擇題的樣式，會有四個選項，一個正確，三個錯誤，請你出題目，你要回答的樣式為，題目:「提示字」，選項A:「答案提示字」，選項B:「提示字」，選項C:「提示字」，選項D:「提示字」，正確答案為:「提示字」，盡量為明確物品，題目用英文，選項用中文，不要有多餘的字，給我一題就好了，標點符號不要變，一定要使用「」框住提示字。", (result) =>
             {
-                keywords = result;
+                keywords = ExtractTextInsideQuotes(result);
             }));
+            Debug.Log("獲取到的關鍵字: " + string.Join(", ", keywords));
+            GetOption();
+            answer = keywords[1];
+            StartCoroutine(huggingFaceAPI.GenerateImageFromText(keywords[0], OnImageGenerated));
+        }
+        else if(mode == 2)
+        {
+            yield return StartCoroutine(geminiAPI.SendRequest("我們想做一個遊戲，遊戲內容是會有數名玩家和一個AI，然後讓玩家看圖猜題目是什麼，如果玩家都答錯那AI就會讓關鍵字可以生的更像題目，一直持續到玩家可以透過生出的圖片猜到題目為止。回答會是選擇題的樣式，會有四個選項，一個正確，三個錯誤，請你出題目，每次都不一樣的題目，題目為中文成語用英文去表達，你要回應的樣式為，題目:「提示字」，選項A:「答案提示字」，選項B:「提示字」，選項C:「提示字」，選項D:「提示字」，正確答案為:「提示字」，題目用英文描述，選項用中文，不要有多餘的字，給我一題就好了，標點符號不要變，一定要使用「」框住提示字。", (result) =>
+            {
+                keywords = ExtractTextInsideQuotes(result);
+            }));
+            Debug.Log("獲取到的關鍵字: " + string.Join(", ", keywords));
+            GetOption();
+            answer = keywords[1];
+            StartCoroutine(huggingFaceAPI.GenerateImageFromText(keywords[0], OnImageGenerated));
         }
         else
         {
-            yield return StartCoroutine(geminiAPI.SendRequest("我們想做一個遊戲，遊戲內容是會有數名玩家和一個AI，然後讓玩家看圖猜題目是什麼，如果玩家都答錯那AI就會讓關鍵字可以生的更像題目，一直持續到玩家可以透過生出的圖片猜到題目為止。回答會是選擇題的樣式，會有四個選項，一個正確，三個錯誤，請你出題目，每次都不一樣的題目，題目為中文成語用英文去表達，你要回應的樣式為，題目:「提示字」，選項A:「提示字」，選項B:「提示字」，選項C:「提示字」，選項D:「提示字」，正確答案為:「提示字」，題目用英文描述，選項用中文，不要有多餘的字，給我一題就好了，標點符號不要變，一定要使用「」框住提示字。", (result) =>
-            {
-                keywords = result;
-            }));
+            StartCoroutine(ChainCoroutines());
         }
-        
+
         // 等待 API 回應
-        Debug.Log("獲取到的關鍵字: " + string.Join(", ", keywords));
-        GetOption();
-        answer = keywords[1];
-        StartCoroutine(huggingFaceAPI.GenerateImageFromText(keywords[0], OnImageGenerated));
         //StartCoroutine(ChangeEvery10Seconds());
     }
     //IEnumerator ChangeEvery10Seconds()
@@ -121,13 +138,87 @@ public class GameController : MonoBehaviourPun
     }
     public void CheckAns(Text Buttontext)
     {
-        //if(Buttontext.text == answer)
-        //{
-        //    uiImage.sprite = trueAns;
-        //}
-        //else
-        //{
-        //    uiImage.sprite = falseAns;
-        //}
+        if (Buttontext.text == answer)
+        {
+            characteranimator.SetTrigger("correct");
+        }
+        else
+        {
+            //characteranimator.Play("Wrong", 0, 0f);
+            characteranimator.SetTrigger("wrong");
+        }
+    }
+    IEnumerator ReadTextFileAndSend()
+    {
+        string path = System.IO.Path.Combine(Application.streamingAssetsPath, "LLM設定.txt");
+
+    #if UNITY_ANDROID && !UNITY_EDITOR
+        UnityWebRequest www = UnityWebRequest.Get(path);
+        yield return www.SendWebRequest();
+        if (www.result != UnityWebRequest.Result.Success)
+        {
+            Debug.LogError("讀檔失敗: " + www.error);
+            yield break;
+        }
+        string fileContent = www.downloadHandler.text;
+    #else
+            string fileContent = System.IO.File.ReadAllText(path);
+    #endif
+
+        // 呼叫 Gemini API 並傳入檔案內容
+        yield return StartCoroutine(geminiAPI.SendRequest(fileContent, (result) =>
+        {
+            keywords = ExtractContentsSeparatedByDash(result);
+
+            //foreach (var content in keywords)
+            //{
+            //    Debug.Log(content);
+            //}
+            //Debug.Log(keywords.Count);
+            for (int i=0;i< keywords.Count / 7; i++)
+            {
+                stablediffusionregionprompt.InputRegion(keywords[i * 7], float.Parse(keywords[i * 7 + 1]), float.Parse(keywords[i * 7 + 2]), float.Parse(keywords[i * 7 + 3]), float.Parse(keywords[i * 7 + 4]), keywords[i * 7 + 5], keywords[i * 7 + 6]);
+                //Debug.Log(i);
+            }
+        }));
+    }
+    List<string> ExtractContentsSeparatedByDash(string text)
+    {
+        List<string> allItems = new List<string>();
+        MatchCollection matchCollection = Regex.Matches(text, @"\{(.*?)\}");
+
+        foreach (Match match in matchCollection)
+        {
+            string insideBraces = match.Groups[1].Value;
+            // 用 '-' 分割
+            string[] parts = insideBraces.Split('=');
+
+            foreach (var part in parts)
+            {
+                if (!string.IsNullOrWhiteSpace(part))
+                {
+                    allItems.Add(part.Trim());
+                }
+            }
+        }
+
+        return allItems;
+    }
+    static List<string> ExtractTextInsideQuotes(string input)
+    {
+        List<string> results = new List<string>();
+        MatchCollection matches = Regex.Matches(input, "[「\"](.*?)[」\"]");
+
+        foreach (Match match in matches)
+        {
+            results.Add(match.Groups[1].Value);
+        }
+
+        return results;
+    }
+    private IEnumerator ChainCoroutines()
+    {
+        yield return StartCoroutine(ReadTextFileAndSend());
+        yield return StartCoroutine(stablediffusionregionprompt.GenerateImageWithRegions(OnImageGenerated));
     }
 }
