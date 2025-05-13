@@ -9,8 +9,8 @@ public class HuggingFaceAPI : MonoBehaviour
 {
     private string apiUrl = "https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-3.5-large-turbo";
     private string apiKey = "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"; // 在這裡替換為您的 Hugging Face API Token
-    private string SuperResolutionapiUrl = "https://api.segmind.com/v1/esrgan";
-    private string SuperResolutionapiKey = "SG_deb5def02d6cc7a4";
+    //private string SuperResolutionapiUrl = "https://api.segmind.com/v1/esrgan";
+    //private string SuperResolutionapiKey = "SG_deb5def02d6cc7a4";
     public GameObject generateText;
     public GameObject errorText;
     /// <summary>
@@ -64,37 +64,37 @@ public class HuggingFaceAPI : MonoBehaviour
             }
         }
     }
-    public IEnumerator UpscaleImage(byte[] imageData, System.Action<byte[]> onComplete)
-    {
-        // 建立請求
-        UnityWebRequest request = new UnityWebRequest(SuperResolutionapiUrl, "POST");
-        request.SetRequestHeader("x-api-key",  SuperResolutionapiKey);
-        request.SetRequestHeader("Content-Type", "application/json");
+    //public IEnumerator UpscaleImage(byte[] imageData, System.Action<byte[]> onComplete)
+    //{
+    //    // 建立請求
+    //    UnityWebRequest request = new UnityWebRequest(SuperResolutionapiUrl, "POST");
+    //    request.SetRequestHeader("x-api-key",  SuperResolutionapiKey);
+    //    request.SetRequestHeader("Content-Type", "application/json");
 
-        // 構造 JSON 請求體
-        string jsonPayload = "{\"image\":\"" + System.Convert.ToBase64String(imageData) + "\"}";
-        byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(jsonPayload);
-        request.uploadHandler = new UploadHandlerRaw(bodyRaw);
-        request.downloadHandler = new DownloadHandlerBuffer();
+    //    // 構造 JSON 請求體
+    //    string jsonPayload = "{\"image\":\"" + System.Convert.ToBase64String(imageData) + "\"}";
+    //    byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(jsonPayload);
+    //    request.uploadHandler = new UploadHandlerRaw(bodyRaw);
+    //    request.downloadHandler = new DownloadHandlerBuffer();
 
-        // 發送請求
-        yield return request.SendWebRequest();
+    //    // 發送請求
+    //    yield return request.SendWebRequest();
 
-        // 檢查是否發生錯誤
-        if (request.result == UnityWebRequest.Result.ConnectionError || request.result == UnityWebRequest.Result.ProtocolError)
-        {
-            Debug.LogError("Error: " + request.error);
-            onComplete?.Invoke(null);
-        }
-        else
-        {
-            Debug.Log("Response: " + request.downloadHandler.text);
-            // 解析返回的圖片數據
-            byte[] imageBytes = request.downloadHandler.data;
-            //Texture2D texture = new Texture2D(2, 2);
-            //texture.LoadImage(imageBytes);
-            onComplete?.Invoke(imageBytes);
-        }
-    }
+    //    // 檢查是否發生錯誤
+    //    if (request.result == UnityWebRequest.Result.ConnectionError || request.result == UnityWebRequest.Result.ProtocolError)
+    //    {
+    //        Debug.LogError("Error: " + request.error);
+    //        onComplete?.Invoke(null);
+    //    }
+    //    else
+    //    {
+    //        Debug.Log("Response: " + request.downloadHandler.text);
+    //        // 解析返回的圖片數據
+    //        byte[] imageBytes = request.downloadHandler.data;
+    //        //Texture2D texture = new Texture2D(2, 2);
+    //        //texture.LoadImage(imageBytes);
+    //        onComplete?.Invoke(imageBytes);
+    //    }
+    //}
 
 }

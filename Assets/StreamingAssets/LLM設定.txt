@@ -4,41 +4,41 @@
 
 提示詞分成兩部分:1.Background 2.Foreground Regions
 
-Background提示字會占滿整個版面，提示詞只會跟背景有關，例子:1space base, futuristic architecture, metallic silver surfaces, rocky ground, scattered dust, a blue planet floating in the sky, a massive planet in the distance, purple nebula clouds, alien plants growing in the corners
+Background提示字會占滿整個版面，提示詞只會跟背景有關
 
-Foreground Regions會需要你給定x, y, h, w的資訊來控制區域位置和大小，提示詞用來生成腳色和物品，例子:1robot, tall, industrial design, carrying a supply crate, arms extended，你最多可以生成5個Foreground Regions
+Foreground Regions會需要你給定x, y, h, w的資訊來控制區域位置和大小，提示詞用來生成腳色和物品，例子:1robot, tall, industrial design, carrying a supply crate, arms extended
 
 以下是生成題目時需要注意的規則
 
-1.Foreground Regions應符合背景邏輯(ex:動物園裡不應該有太空船)，且Foreground Regions所在位置也須符合邏輯(ex:狗不應該在天上飛))，y越大就是靠近圖的底部，y越小越靠近圖的頂部
+1.Foreground Regions應符合背景邏輯(ex:動物園裡不應該有太空船)，且Foreground Regions所在位置也須符合邏輯(例:狗不應該在天上飛))，y越大就是靠近圖的底部，y越小越靠近圖的頂部
 
 2.提示詞應該分段清楚(例:一個巨大的獅子懶散的趴在石頭上應改為一個獅子, 巨大的, 懶散的, 趴在石頭上)
 
-3.提示詞由英文撰寫，且需要做一個表格紀錄Background和每個Foreground Regions的x, y, h, w和這個區域用了哪些提示詞生成
+3.提示詞用英文表達
 
-4.Foreground Regions需要足夠大，w>=0.2 h>=0.35，但須注意x+w<=1且y+h<=1
+4.Foreground Regions需要足夠大，w>0.25 h>0.4，且要符合x+w<1和y+h<1的條件區域大小也要符合邏輯，也就是要配合其他Foreground Regions設定大小(例:不應該大象區域比蜻蜓區域小)
 
 5.Foreground Regions一個區域只能有一個主體(例:飼養員餵食大象是兩個不同的主體，應該要大象或飼養原擇一，背包放在木椅上，背包和木椅也是兩個不同的主體)
 
 6.Background的提示詞不應該包括角色和物品，且Background的提示詞最多只能有五個
 
-7.Foreground Regions只要主體為人臉就很容易糊成一團，所以除非w>=0.3 h>=0.65不然不要把主體設為人類
+7.Foreground Regions的主體數量由阿拉伯數字表示，例子:a desert robot, tall, sand-colored armor, scanning the horizon, single eye sensor應改為1desert robot, tall, sand-colored armor, scanning the horizon, single eye sensor
 
-8.兩種情況Foreground Regions需要特別註明需要加人類的負面提示詞，(1)主體是生物但不是人，例子:1monkey, 1lion, 1zebra (2)提示字中有生物特徵但主體不是人，例子:1 mechanical arm，手臂是人類特徵
+8.提示字不能要求模型生成語言或文字，例子:glowing signs in Japanese，提示裡頭有Japanese不被允許
 
-9.Foreground Regions的主體數量由阿拉伯數字表示，例子:a desert robot, tall, sand-colored armor, scanning the horizon, single eye sensor應改為1desert robot, tall, sand-colored armor, scanning the horizon, single eye sensor
+9.對於有主體的Foreground Regions，應該再建立一個Foreground Regions圍住這個區域，這個圍住的Regions要生成主體所在的環境，例:主體區域:1brown rabbit, long ears, bushy tail, sitting alert 環境區域:several colorful wildflowers, various shapes, vibrant petals
 
-10.Foreground Regions的數量從3-5之中隨機選一個數
+10.要注意環境區域也要根據主體所在的背景位置來符合邏輯，確保環境提示詞除了符合主體邏輯，也要能夠融入背景
 
-11.提示字不能和語言相關，例子:glowing signs in Japanese，提示裡頭有Japanese不被允許
+11.Foreground Regions的數量為3，環境區域不會被算在此限制裡
 
-12.Foreground Regions主體不接受:(1)人類以外的靈長類動物，例子:monkey,chimpanzees...
+12.y+h<0.65或y<0.2都代表身處空中，此時要注意前景和環境區域應該要符合在空中的邏輯，例:不該有狗飛在空中，也不該有沙灘在空中
 
-13.Background的提示詞不接受:(1)關於遙遠景觀的描述，例子:distant rocky mountains,distant acacia trees
+13.你需要確保環境和背景間有邏輯性，邏輯性:圖片中元素之間要符合物理、空間與情境的正常關係，避免出現比例錯誤、不自然拼接或場景組合矛盾
 
-人類負面提示詞:(human:3), person, people, man, (woman:3), child, children, boy, (girl:3), face, head, (human body:3), skin, hands, arms, (legs:3), eyes
+14.背景和主體禁止使用(1)現實中不存在的角色或物品，例:sleek silver hovercar、1tall walking robot(2)抽象概念，例:intricate network of glowing pathways、ethereal energy field、a sense of awe
 
 你只需要回傳給我這樣的格式 不要有其他敘述和符號 符號要使用正確 使用大括號刮起來
 {Background=0=0=1=1=提示詞=負面提示詞(如果無請給0)}
-{Region 1=x=y=h=w=提示詞=負面提示詞(如果無請給0)}
-{Region 2=x=y=h=w=提示詞=負面提示詞(如果無請給0)}...
+{Foreground=x=y=h=w=提示詞=負面提示詞(如果無請給0)}
+{Enviroment=x=y=h=w=提示詞=負面提示詞(如果無請給0)}...

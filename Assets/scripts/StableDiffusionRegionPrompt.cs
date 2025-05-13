@@ -5,11 +5,13 @@ using UnityEngine.Networking;
 using System.Text;
 using Newtonsoft.Json;
 using UnityEngine.UI;
+using System.Text.RegularExpressions;
 
 public class StableDiffusionRegionPrompt : MonoBehaviour
 {
     //public RawImage imageUI;
     public Image imageUI;
+    public GeminiAPI geminiAPI;
     [System.Serializable]
     public class Region
     {
@@ -55,12 +57,15 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
         public int steps = 20;
         public int width = 512;
         public int height = 512;
+        //public int n_iter = 2;
+        public int batch_size = 3;
         public bool enable_hr = false;
         public bool restore_faces = false;
         public bool tiling = false;
 
         [JsonProperty("alwayson_scripts")]
         public AlwaysonScripts alwayson_scripts;
+        internal Dictionary<string, string> override_settings;
     }
 
     [System.Serializable]
@@ -70,7 +75,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
     }
 
     public List<Region> AllRegions;
-    public void InputRegion(string blendMode, float X, float Y, float W, float H,string Prompt,string Neg_Prompt)
+    public void InputRegion(string BlendMode, float X, float Y, float W, float H,string Prompt,string Neg_Prompt)
     {
         AllRegions.Add(new Region
         {
@@ -80,15 +85,15 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
             h = H,
             prompt = Prompt,
             negative_prompt = Neg_Prompt,
-            blendMode = (blendMode == "Background")? "Background" : "Foreground",
-            feather = 0.35f
+            blendMode = (BlendMode == "Background")? "Background" : "Foreground",
+            feather = (BlendMode == "Foreground") ? 0.15f : 0.35f
         });
     }
     void Start()
     {
         // 初始化 List
         AllRegions = new List<Region>();
-
+        allScores = new int[4];
         //StartCoroutine(GenerateImageWithRegions());
     }
     List<object> BuildFullArgs(List<Region> regions)
@@ -228,6 +233,10 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
             tiling = false,
             prompt = "masterpiece,  best quality, ultra high reslotion, highly detailed",
             negative_prompt = "(worst quality:2), (low quality:2), (normal quality:2), lowers, ((monochrome)), ((grayscale)), watermark",
+            override_settings = new Dictionary<string, string>
+            {
+                { "sd_model_checkpoint", "counterfeitV30_v30.safetensors" }
+            },
             alwayson_scripts = new AlwaysonScripts
             {
                 TiledDiffusion = new MultiDiffusionWrapper
@@ -263,15 +272,88 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
             Txt2ImgResponse response = JsonConvert.DeserializeObject<Txt2ImgResponse>(request.downloadHandler.text);
             if (response.images != null && response.images.Count > 0)
             {
-                byte[] imageBytes = System.Convert.FromBase64String(response.images[0]);
+
+                Debug.Log("總共生成了"+response.images.Count+"張");
+                //for(int i = 0; i < 3; i++)
+                //{
+                //    yield return StartCoroutine(ReadScoreFileAndSend(response.images[i], i));
+                //}
+                yield return StartCoroutine(ReadScoreFileAndSend(response.images[0], 0));
+                yield return StartCoroutine(ReadScoreFileAndSend(response.images[1], 1));
+                yield return StartCoroutine(ReadScoreFileAndSend(response.images[2], 2));
+                int maxIndex = 0;
+                int maxValue = allScores[0];
+                for (int i = 1; i < 3; i++)
+                {
+                    if (allScores[i] > maxValue)
+                    {
+                        maxValue = allScores[i];
+                        maxIndex = i;
+                    }
+                }
+                Debug.Log("圖片" + (maxIndex + 1) + "分數最高，為" + maxValue + "分，所以將上傳第" + (maxIndex + 1) + "張圖");
+                byte[] imageBytes = System.Convert.FromBase64String(response.images[maxIndex]);
                 Texture2D texture = new Texture2D(2, 2);
                 texture.LoadImage(imageBytes);
                 Debug.Log("✅ 圖片成功產生（Region Prompt Control）");
 
                 callback?.Invoke(texture);
-                //imageUI.texture = tex;
-                //imageUI.sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
             }
         }
+    }
+    private int[] allScores;
+    IEnumerator ReadScoreFileAndSend(string base64Image,int num)
+    {
+        string path = System.IO.Path.Combine(Application.streamingAssetsPath, "評分階段.txt");
+
+#if UNITY_ANDROID && !UNITY_EDITOR
+        UnityWebRequest www = UnityWebRequest.Get(path);
+        yield return www.SendWebRequest();
+        if (www.result != UnityWebRequest.Result.Success)
+        {
+            Debug.LogError("讀檔失敗: " + www.error);
+            yield break;
+        }
+        string fileContent = www.downloadHandler.text;
+#else
+        string fileContent = System.IO.File.ReadAllText(path);
+#endif
+
+        // 呼叫 Gemini API 並傳入檔案內容
+        yield return StartCoroutine(geminiAPI.SendPhotoRequest(fileContent, base64Image, (result) =>
+        {
+            int score = ContentsSeparated(result);
+            Debug.Log(score);
+            allScores[num] = score;
+        }));
+    }
+    int ContentsSeparated(string text)
+    {
+        List<string> allItems = new List<string>();
+        MatchCollection matchCollection = Regex.Matches(text, @"\((.*?)\)");
+        int score = 0;
+        foreach (Match match in matchCollection)
+        {
+            string insideBraces = match.Groups[1].Value;
+            // 用 '-' 分割
+            string[] parts = insideBraces.Split('/');
+
+            foreach (var part in parts)
+            {
+                if (!string.IsNullOrWhiteSpace(part))
+                {
+                    string trimmed = part.Trim();
+                    allItems.Add(trimmed);
+
+                    // 嘗試轉換成 int 並加總
+                    if (int.TryParse(trimmed, out int number))
+                    {
+                        score += number;
+                    }
+                }
+            }
+        }
+
+        return score;
     }
 }

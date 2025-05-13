@@ -4,7 +4,7 @@ using UnityEngine.Video;
 
 public class VoiceAudioPlayer : MonoBehaviour
 {
-    public AudioClip audioClip;
+    public AudioClip[] audioClip;
     private AudioSource audioSource;
     private Recorder recorder;
     public VideoPlayer videoPlayer;
@@ -15,7 +15,7 @@ public class VoiceAudioPlayer : MonoBehaviour
 
         if (audioClip != null)
         {
-            audioSource.clip = audioClip;
+            audioSource.clip = audioClip[0];
             audioSource.loop = false;
 
             // 確保 Recorder 傳輸音頻
@@ -29,5 +29,17 @@ public class VoiceAudioPlayer : MonoBehaviour
     void StopLoop()
     {
         videoPlayer.isLooping = false;
+    }
+    
+    public void AudioPlay(int index)
+    {
+        audioSource.clip = audioClip[index];//1答對 2答錯
+        audioSource.loop = false;
+
+        // 確保 Recorder 傳輸音頻
+        recorder.TransmitEnabled = true;
+
+        // 開始播放音頻
+        audioSource.Play();
     }
 }
