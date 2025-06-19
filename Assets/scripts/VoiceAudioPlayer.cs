@@ -13,18 +13,19 @@ public class VoiceAudioPlayer : MonoBehaviour
         audioSource = GetComponent<AudioSource>();
         recorder = GetComponent<Recorder>();
 
-        if (audioClip != null)
-        {
-            audioSource.clip = audioClip[0];
-            audioSource.loop = false;
+        //if (audioClip != null)
+        //{
+        //    audioSource.clip = audioClip[0];
+        //    audioSource.loop = false;
 
-            // 確保 Recorder 傳輸音頻
-            recorder.TransmitEnabled = true;
+        //    // 確保 Recorder 傳輸音頻
+        //    recorder.TransmitEnabled = true;
 
-            // 開始播放音頻
-            audioSource.Play();
-            Invoke("StopLoop", 20f);
-        }
+        //    // 開始播放音頻
+        //    audioSource.Play();
+        //    Invoke("StopLoop", 20f);
+        //}
+        AudioPlay(0);
     }
     void StopLoop()
     {

@@ -19,7 +19,6 @@ public class PhotonManager : MonoBehaviourPunCallbacks
 
     public override void OnConnectedToMaster()
     {
-        Debug.Log("已连接到 Photon 服务器");
         PhotonNetwork.JoinLobby();
         PhotonNetwork.LoadLevel("Lobby");
     }
@@ -28,7 +27,7 @@ public class PhotonManager : MonoBehaviourPunCallbacks
     {
         while (true)
         {
-            dotCount = (dotCount + 1) % 4; // 讓點數在 0-3 之間循環
+            dotCount = (dotCount + 1) % 4; 
             loadingText.text = baseText + new string('.', dotCount);
             yield return new WaitForSeconds(0.5f);
         }

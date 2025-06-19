@@ -6,12 +6,16 @@ using System.Text;
 using Newtonsoft.Json;
 using UnityEngine.UI;
 using System.Text.RegularExpressions;
+using System;
+using System.IO;
 
 public class StableDiffusionRegionPrompt : MonoBehaviour
 {
     //public RawImage imageUI;
     public Image imageUI;
     public GeminiAPI geminiAPI;
+    private string Sampler_name = "Euler a";
+    private string Scheduler = "Automatic";
     [System.Serializable]
     public class Region
     {
@@ -42,18 +46,20 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
     [System.Serializable]
     public class AlwaysonScripts
     {
-        [JsonProperty("Tiled Diffusion")]
+        [JsonProperty("Tiled Diffusion", NullValueHandling = NullValueHandling.Ignore)]
         public MultiDiffusionWrapper TiledDiffusion;
 
-        [JsonProperty("Tiled VAE")]
+        [JsonProperty("Tiled VAE", NullValueHandling = NullValueHandling.Ignore)]
         public TiledVAEWrapper TiledVAE;
-    }
 
+    }
     [System.Serializable]
     public class Txt2ImgRequest
     {
         public string prompt = "";
         public string negative_prompt = "";
+        public string sampler_name = "";
+        public string scheduler = "";
         public int steps = 20;
         public int width = 512;
         public int height = 512;
@@ -63,9 +69,9 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
         public bool restore_faces = false;
         public bool tiling = false;
 
-        [JsonProperty("alwayson_scripts")]
+        [JsonProperty("alwayson_scripts", NullValueHandling = NullValueHandling.Ignore)]
         public AlwaysonScripts alwayson_scripts;
-        internal Dictionary<string, string> override_settings;
+        internal Dictionary<string, object> override_settings;
     }
 
     [System.Serializable]
@@ -94,7 +100,17 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
         // 初始化 List
         AllRegions = new List<Region>();
         allScores = new int[4];
-        //StartCoroutine(GenerateImageWithRegions());
+        StartCoroutine(GenerateImageForMultipleChoice(384,384, "girl,hanfu,ming style,<lora:hanfu40-beta-3:0.6>", "counterfeitV30_v30", "",
+                        texture =>
+                        {
+                            // 將 Texture2D 轉為 Sprite 並灌入 UI Image
+                            Sprite newSprite = Sprite.Create(
+                                texture,
+                                new Rect(0, 0, texture.width, texture.height),
+                                new Vector2(0.5f, 0.5f)
+                            );
+                            imageUI.sprite = newSprite;
+                        }));
     }
     List<object> BuildFullArgs(List<Region> regions)
     {
@@ -171,56 +187,65 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
             true    // Fast Decoder
         };
     }
-    public IEnumerator GenerateImageWithRegions(System.Action<Texture2D> callback)
+    public IEnumerator GenerateImageForMultipleChoice(int Width,int Height,string prompt,string Model_checkpoint,string Lora_Name, System.Action<Texture2D> callback)
     {
         string url = "http://127.0.0.1:7860/sdapi/v1/txt2img";
 
-        //var regions = new List<Region>
-        //{
-        //    new Region
-        //    {
-        //        x = 0,
-        //        y = 0,
-        //        w = 1,
-        //        h = 1,
-        //        prompt = "tiger",
-        //        negative_prompt = "(human:3), person, people, man, (woman:3), child, children, boy, (girl:3), face, head, (human body:3), skin, hands, arms, (legs:3), eyes",
-        //        blendMode="Background"
-        //    },
-        //    new Region
-        //    {
-        //        x = 0.1f,
-        //        y = 0.6f,
-        //        w = 0.3f,
-        //        h = 0.3f,
-        //        prompt = "a vending machine, old, red, slightly rusted, filled with colorful drinks, glowing interior light",
-        //        negative_prompt = "(human:3), person, people, man, (woman:3), child, children, boy, (girl:3), face, head, (human body:3), skin, hands, arms, (legs:3), eyes",
-        //        blendMode="Foreground",
-        //        feather = 0.25f
-        //    },
-        //    new Region
-        //    {
-        //        x = 0.45f,
-        //        y = 0.65f,
-        //        w = 0.3f,
-        //        h = 0.3f,
-        //        prompt = "a suitcase, black, broken handle, wide open, clothes spilling out, resting on a wet tile floor",
-        //        negative_prompt = "(human:3), person, people, man, (woman:3), child, children, boy, (girl:3), face, head, (human body:3), skin, hands, arms, (legs:3), eyes",
-        //        blendMode="Foreground",
-        //        feather = 0.25f
-        //    },
-        //    new Region
-        //    {
-        //        x = 0.75f,
-        //        y = 0.55f,
-        //        w = 0.3f,
-        //        h = 0.3f,
-        //        prompt = "a subway train door, metallic, closed, slightly dented, smeared with grime, reflecting blue neon light",
-        //        negative_prompt = "(human:3), person, people, man, (woman:3), child, children, boy, (girl:3), face, head, (human body:3), skin, hands, arms, (legs:3), eyes",
-        //        blendMode="Foreground",
-        //        feather = 0.25f
-        //    }
-        //};
+
+        var requestData = new Txt2ImgRequest
+        {
+            steps = 20,
+            width = Width,
+            height = Height,
+            sampler_name = Sampler_name,
+            scheduler = Scheduler,
+            enable_hr = false,
+            restore_faces = false,
+            tiling = false,
+            prompt = prompt,
+            negative_prompt = "(worst quality:2), (low quality:2), (normal quality:2), lowers, ((monochrome)), ((grayscale)), watermark",
+            override_settings = new Dictionary<string, object>
+            {
+                { "sd_model_checkpoint", Model_checkpoint },
+                { "CLIP_stop_at_last_layers", 2 }
+            }
+
+        };
+
+
+        string jsonData = JsonConvert.SerializeObject(requestData);
+        Debug.Log(jsonData);
+        byte[] postData = Encoding.UTF8.GetBytes(jsonData);
+
+        UnityWebRequest request = new UnityWebRequest(url, "POST");
+        request.uploadHandler = new UploadHandlerRaw(postData);
+        request.downloadHandler = new DownloadHandlerBuffer();
+        request.SetRequestHeader("Content-Type", "application/json");
+
+        yield return request.SendWebRequest();
+
+        if (request.result != UnityWebRequest.Result.Success)
+        {
+            Debug.LogError("Request failed: " + request.error);
+            Debug.LogError(request.downloadHandler.text); // 看錯誤訊息詳細原因
+        }
+        else
+        {
+            Txt2ImgResponse response = JsonConvert.DeserializeObject<Txt2ImgResponse>(request.downloadHandler.text);
+            if (response.images != null)
+            {
+                byte[] imageBytes = System.Convert.FromBase64String(response.images[0]);
+                Texture2D texture = new Texture2D(2, 2);
+                texture.LoadImage(imageBytes);
+                Debug.Log("✅ 圖片成功產生（Region Prompt Control）");
+
+                callback?.Invoke(texture);
+            }
+        }
+    }
+    public IEnumerator GenerateImageWithRegions(System.Action<Texture2D> callback)
+    {
+        string url = "http://127.0.0.1:7860/sdapi/v1/txt2img";
 
 
         var requestData = new Txt2ImgRequest
@@ -228,14 +253,17 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
             steps = 1,
             width = 512,
             height = 512,
+            sampler_name = Sampler_name,
+            scheduler = Scheduler,
             enable_hr = false,
             restore_faces = false,
             tiling = false,
             prompt = "masterpiece,  best quality, ultra high reslotion, highly detailed",
             negative_prompt = "(worst quality:2), (low quality:2), (normal quality:2), lowers, ((monochrome)), ((grayscale)), watermark",
-            override_settings = new Dictionary<string, string>
+            override_settings = new Dictionary<string, object>
             {
-                { "sd_model_checkpoint", "counterfeitV30_v30.safetensors" }
+                { "sd_model_checkpoint", "counterfeitV30_v30.safetensors" },
+                { "CLIP_stop_at_last_layers", 2 }
             },
             alwayson_scripts = new AlwaysonScripts
             {
@@ -274,10 +302,6 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
             {
 
                 Debug.Log("總共生成了"+response.images.Count+"張");
-                //for(int i = 0; i < 3; i++)
-                //{
-                //    yield return StartCoroutine(ReadScoreFileAndSend(response.images[i], i));
-                //}
                 yield return StartCoroutine(ReadScoreFileAndSend(response.images[0], 0));
                 yield return StartCoroutine(ReadScoreFileAndSend(response.images[1], 1));
                 yield return StartCoroutine(ReadScoreFileAndSend(response.images[2], 2));
@@ -322,6 +346,22 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
         // 呼叫 Gemini API 並傳入檔案內容
         yield return StartCoroutine(geminiAPI.SendPhotoRequest(fileContent, base64Image, (result) =>
         {
+            // 將 Base64 字串轉為 byte 陣列
+            byte[] imageBytesForDownload = Convert.FromBase64String(base64Image);
+
+            // 建立 Texture2D 並載入圖片
+            Texture2D textureForDownload = new Texture2D(2, 2);
+            textureForDownload.LoadImage(imageBytesForDownload);
+
+            // 將圖片轉為 PNG 格式的 byte[]
+            byte[] pngData = textureForDownload.EncodeToPNG();
+            // 選擇儲存路徑（例如：Application.persistentDataPath）
+            string path = Path.Combine(Application.persistentDataPath, $"DownloadedImage{num}.png");
+
+            // 寫入檔案
+            System.IO.File.WriteAllBytes(path, pngData);
+
+            Debug.Log("圖片已儲存至: " + path);
             int score = ContentsSeparated(result);
             Debug.Log(score);
             allScores[num] = score;

@@ -9,8 +9,8 @@ using Photon.Realtime;
 using System.IO;
 public class GameController : MonoBehaviourPun
 {
-    public HuggingFaceAPI huggingFaceAPI; // HuggingFaceAPI 的引用
-    public InputField descriptionInput;  // 玩家描述的輸入框
+    //public HuggingFaceAPI huggingFaceAPI; // HuggingFaceAPI 的引用
+    //public InputField descriptionInput;  // 玩家描述的輸入框
     public Image resultImage;            // 用於顯示生成圖片的 UI Image
     public Text roomNumber;
 
@@ -20,7 +20,7 @@ public class GameController : MonoBehaviourPun
     public List<Button> OptionButton;
 
     private string answer;
-    public Image uiImage;
+    //public Image uiImage;
     public Sprite trueAns;
     public Sprite falseAns;
 
@@ -31,6 +31,9 @@ public class GameController : MonoBehaviourPun
     public VoiceAudioPlayer voiceAudioPlayer;
 
     private String NowDifficulty;
+
+    public MultiChoiceQuestion multiChoiceQuestion;
+    private int NowQuestion = 1;
     void Start()
     {
         roomNumber.text = "Room : " + PhotonNetwork.CurrentRoom.Name;
@@ -44,7 +47,6 @@ public class GameController : MonoBehaviourPun
         }
         Debug.Log(diff);
         NowDifficulty = diff;
-        // 根據難易度調整遊戲參數，例如敵人數量、血量等
         if (diff == "Easy") { /* 設定簡單模式參數 */
             StartCoroutine(GetGeminiKeywords(1));
         }
@@ -101,14 +103,16 @@ public class GameController : MonoBehaviourPun
 
         if(mode == 1)
         {
-            yield return StartCoroutine(geminiAPI.SendRequest("我們想做一個遊戲，遊戲內容是會有數名玩家和一個AI，然後讓玩家看圖猜題目是什麼，如果玩家都答錯那AI就會讓關鍵字可以生的更像題目，一直持續到玩家可以透過生出的圖片猜到題目為止。回答會是選擇題的樣式，會有四個選項，一個正確，三個錯誤，請你出題目，你要回答的樣式為，題目:「提示字」，選項A:「答案提示字」，選項B:「提示字」，選項C:「提示字」，選項D:「提示字」，正確答案為:「提示字」，盡量為明確物品，題目用英文，選項用中文，不要有多餘的字，給我一題就好了，標點符號不要變，一定要使用「」框住提示字。", (result) =>
-            {
-                keywords = ExtractTextInsideQuotes(result);
-            }));
-            Debug.Log("獲取到的關鍵字: " + string.Join(", ", keywords));
-            GetOption();
-            answer = keywords[1];
-            StartCoroutine(huggingFaceAPI.GenerateImageFromText(keywords[0], OnImageGenerated));
+            //yield return StartCoroutine(geminiAPI.SendRequest("我們想做一個遊戲，遊戲內容是會有數名玩家和一個AI，然後讓玩家看圖猜題目是什麼，如果玩家都答錯那AI就會讓關鍵字可以生的更像題目，一直持續到玩家可以透過生出的圖片猜到題目為止。回答會是選擇題的樣式，會有四個選項，一個正確，三個錯誤，請你出題目，你要回答的樣式為，題目:「提示字」，選項A:「答案提示字」，選項B:「提示字」，選項C:「提示字」，選項D:「提示字」，正確答案為:「提示字」，盡量為明確物品，題目用英文，選項用中文，不要有多餘的字，給我一題就好了，標點符號不要變，一定要使用「」框住提示字。", (result) =>
+            //{
+            //    keywords = ExtractTextInsideQuotes(result);
+            //}));
+            //Debug.Log("獲取到的關鍵字: " + string.Join(", ", keywords));
+            ////GetOption();
+            //answer = keywords[1];
+            //StartCoroutine(huggingFaceAPI.GenerateImageFromText(keywords[0], OnImageGenerated));
+
+            answer = multiChoiceQuestion.ChangeQuestion(NowQuestion++);
         }
         else if(mode == 2)
         {
@@ -116,10 +120,10 @@ public class GameController : MonoBehaviourPun
             {
                 keywords = ExtractTextInsideQuotes(result);
             }));
-            Debug.Log("獲取到的關鍵字: " + string.Join(", ", keywords));
-            GetOption();
-            answer = keywords[1];
-            StartCoroutine(huggingFaceAPI.GenerateImageFromText(keywords[0], OnImageGenerated));
+            //Debug.Log("獲取到的關鍵字: " + string.Join(", ", keywords));
+            ////GetOption();
+            //answer = keywords[1];
+            //StartCoroutine(huggingFaceAPI.GenerateImageFromText(keywords[0], OnImageGenerated));
         }
         else
         {
@@ -153,11 +157,15 @@ public class GameController : MonoBehaviourPun
         if (Buttontext.text == answer)
         {
             characteranimator.SetTrigger("correct");
+            voiceAudioPlayer.AudioPlay(1);
+            answer = multiChoiceQuestion.ChangeQuestion(NowQuestion);
+            if (NowQuestion < 17) NowQuestion++;
         }
         else
         {
             //characteranimator.Play("Wrong", 0, 0f);
             characteranimator.SetTrigger("wrong");
+            voiceAudioPlayer.AudioPlay(2);
         }
     }
     private string Uncheckedprompt;
@@ -281,9 +289,13 @@ public class GameController : MonoBehaviourPun
     }
     private IEnumerator CheckAnswer(String MyAnswer)
     {
-        String CheckAnswerPrompt = "目前題目的關鍵字長這樣"+answer+ "以下為我的回答，請你回答我這個回答有沒有對應到關鍵字裡面的物件，如果為動植物則回答必須為相同物種，例如:黃牛=牛、牛不等於雞。我的回答為: "+MyAnswer+ "請你回覆我(正確) or (錯誤) ，並說明原因。";
+        String CheckAnswerPrompt = $"你是負責比對圖像敘述正確性的助手。請參考以下題目所包含的關鍵詞描述，每個項目各代表一個物件或特徵，例如:{{Background=0=0=1=1=lush green rainforest, dense foliage, dappled sunlight, mist hanging low=0}}應該要記錄[1.lush green rainforest 2.dense foliage 3.dappled sunlight 4.mist hanging low]，以下為題目:{answer}，使用者回答如下:{MyAnswer}，請檢查使用者的回答中是否有描述到上述哪些項目。即使使用的是同義詞，只要語意相同也算命中。每命中一項就得一分。請回覆一個整數，代表該回答命中了幾個項目（0~N 分），然後簡要列出命中的項目。只需要簡單清楚的說明即可。";
+        
         yield return StartCoroutine(geminiAPI.SendRequest(CheckAnswerPrompt, (result) => {
-            if (result.Contains("正確"))
+            Match match = Regex.Match(result, @"\d+");
+            int score = int.Parse(match.Value);
+            Debug.Log($"你拿到了{score}分。");
+            if (score > 0)
             {
                 characteranimator.SetTrigger("correct");
                 voiceAudioPlayer.AudioPlay(1);

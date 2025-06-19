@@ -6,6 +6,7 @@ using UnityEngine.UI;
 
 public class DifficultySelector : MonoBehaviourPunCallbacks
 {
+    private string Diff;
     void Start()
     {
         PhotonNetwork.AutomaticallySyncScene = true;
@@ -17,6 +18,7 @@ public class DifficultySelector : MonoBehaviourPunCallbacks
         // 設定房間屬性
         Hashtable roomProperties = new Hashtable();
         roomProperties["Difficulty"] = difficulty;
+        Diff = difficulty;
         PhotonNetwork.CurrentRoom.SetCustomProperties(roomProperties);
 
         Debug.Log($"房主設定難易度: {difficulty}");
@@ -25,7 +27,9 @@ public class DifficultySelector : MonoBehaviourPunCallbacks
     public void StartGame()
     {
         if (!PhotonNetwork.IsMasterClient) return; // 只有房主可以開始遊戲
-
-        PhotonNetwork.LoadLevel("gameScenes"); // 房主切換場景，其他玩家會同步
+        if(Diff == "Easy"|| Diff == "Hard")
+            PhotonNetwork.LoadLevel("MultiChoicegameScenes"); // 房主切換場景，其他玩家會同步
+        else
+            PhotonNetwork.LoadLevel("gameScenes"); // 房主切換場景，其他玩家會同步
     }
 }
