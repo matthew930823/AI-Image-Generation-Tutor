@@ -56,9 +56,18 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
 
         [JsonProperty("ControlNet", NullValueHandling = NullValueHandling.Ignore)]
         public ControlNetWrapper ControlNet;
+
+        [JsonProperty("ADetailer", NullValueHandling = NullValueHandling.Ignore)]
+        public ADetailerWrapper ADetailer;
     }
     [System.Serializable]
     public class ControlNetWrapper
+    {
+        [JsonProperty("args")]
+        public List<object> args;
+    }
+    [System.Serializable]
+    public class ADetailerWrapper
     {
         [JsonProperty("args")]
         public List<object> args;
@@ -78,6 +87,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
         public bool enable_hr = false;
         public bool restore_faces = false;
         public bool tiling = false;
+        public int seed = 1;
 
         [JsonProperty("alwayson_scripts", NullValueHandling = NullValueHandling.Ignore)]
         public AlwaysonScripts alwayson_scripts;
@@ -121,10 +131,10 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
     IEnumerator HandlePromptAndGenerateImage()
     {
         // 等待 ReadFileAndSendPrompt 完成
-        yield return StartCoroutine(ReadFileAndSendPrompt("選擇題提示詞.txt", "漫畫"));
+        yield return StartCoroutine(ReadFileAndSendPrompt("選擇題提示詞.txt", "漢服"));
 
         // 然後執行 GenerateImageForMultipleChoice
-        yield return StartCoroutine(GenerateImageForMultipleChoice(768, 768, Prompt, "counterfeitV30_v30", "漫畫", "Canny", ControlnetTexture,
+        yield return StartCoroutine(GenerateImageForMultipleChoice(768, 768, Prompt, "counterfeitV30_v30", "漢服", "Canny", ControlnetTexture,
             texture =>
             {
             // 將 Texture2D 轉為 Sprite 並灌入 UI Image
@@ -291,6 +301,17 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
                 }
             }
         };
+        var adetailerArgs = new List<object>
+        {
+            true,   // enabled
+            false,  // disable second pass
+            new Dictionary<string, object>
+            {
+                { "ad_model", "face_yolov8n_v2.pt" },
+                { "ad_prompt", "detail face" }
+            }
+        };
+
         var requestData = new Txt2ImgRequest
         {
             steps = 20,
@@ -310,10 +331,8 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
             },
             alwayson_scripts = new AlwaysonScripts
             {
-                ControlNet = new ControlNetWrapper
-                {
-                    args = controlnetArgs
-                }
+                //ControlNet = new ControlNetWrapper{args = controlnetArgs},
+                ADetailer = new ADetailerWrapper { args = adetailerArgs }
             }
 
         };
