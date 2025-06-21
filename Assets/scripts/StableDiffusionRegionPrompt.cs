@@ -17,6 +17,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
     private string Sampler_name = "DPM++ 2M";
     private string Scheduler = "Karras";
     private string Prompt = "";
+    Texture2D ControlnetTexture;
     [System.Serializable]
     public class Region
     {
@@ -53,6 +54,14 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
         [JsonProperty("Tiled VAE", NullValueHandling = NullValueHandling.Ignore)]
         public TiledVAEWrapper TiledVAE;
 
+        [JsonProperty("ControlNet", NullValueHandling = NullValueHandling.Ignore)]
+        public ControlNetWrapper ControlNet;
+    }
+    [System.Serializable]
+    public class ControlNetWrapper
+    {
+        [JsonProperty("args")]
+        public List<object> args;
     }
     [System.Serializable]
     public class Txt2ImgRequest
@@ -101,6 +110,12 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
         // 初始化 List
         AllRegions = new List<Region>();
         allScores = new int[4];
+
+        string path = Path.Combine(Application.streamingAssetsPath, "Canny參考圖.png");
+        byte[] imageBytes = File.ReadAllBytes(path);
+        ControlnetTexture = new Texture2D(2, 2);
+        ControlnetTexture.LoadImage(imageBytes);
+
         StartCoroutine(HandlePromptAndGenerateImage());
     }
     IEnumerator HandlePromptAndGenerateImage()
@@ -109,7 +124,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
         yield return StartCoroutine(ReadFileAndSendPrompt("選擇題提示詞.txt", "漫畫"));
 
         // 然後執行 GenerateImageForMultipleChoice
-        yield return StartCoroutine(GenerateImageForMultipleChoice(768, 768, Prompt, "counterfeitV30_v30", "漫畫",
+        yield return StartCoroutine(GenerateImageForMultipleChoice(768, 768, Prompt, "counterfeitV30_v30", "漫畫", "Canny", ControlnetTexture,
             texture =>
             {
             // 將 Texture2D 轉為 Sprite 並灌入 UI Image
@@ -196,7 +211,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
             true    // Fast Decoder
         };
     }
-    public IEnumerator GenerateImageForMultipleChoice(int Width,int Height,string prompt,string Model_checkpoint,string Lora_Name, System.Action<Texture2D> callback)
+    public IEnumerator GenerateImageForMultipleChoice(int Width,int Height,string prompt,string Model_checkpoint,string Lora_Name, string controlNetType, Texture2D controlImage, System.Action<Texture2D> callback)
     {
         string url = "http://127.0.0.1:7860/sdapi/v1/txt2img";
 
@@ -230,6 +245,52 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
             default:
                 break;
         }
+
+        //Canny/Depth/Openpose/Shuffle
+        string base64Image = Convert.ToBase64String(controlImage.EncodeToPNG());
+        string imageData = "data:image/png;base64," + base64Image;
+
+        string modelString = "";
+        string moduleString = "none";
+        switch (controlNetType)
+        {
+            case "Canny":
+                modelString = "control_v11p_sd15_canny [d14c016b]";
+                break;
+            case "Depth":
+                modelString = "control_v11f1p_sd15_depth [cfd03158]";
+                break;
+            case "Openpose":
+                modelString = "control_v11p_sd15_openpose [cab727d4]";
+                break;
+            case "Shuffle":
+                modelString = "control_v11e_sd15_shuffle [526bfdae]";
+                break;
+            default:
+                modelString = "control_v11p_sd15_canny [d14c016b]";
+                break;
+        }
+        var controlnetArgs = new List<object>
+        {
+            new Dictionary<string, object>
+            {
+                { "enabled", true },
+                { "model", modelString },
+                { "module", moduleString },
+                { "weight", 1.0f },
+                { "guidance_start", 0.0f },
+                { "guidance_end", 1.0f },
+                { "control_mode", "Balanced" },
+                { "pixel_perfect", true },
+                { "resize_mode", "Resize and Fill" },
+                { "image", new Dictionary<string, object>
+                    {
+                        { "image", imageData },
+                        { "mask", null }
+                    }
+                }
+            }
+        };
         var requestData = new Txt2ImgRequest
         {
             steps = 20,
@@ -246,6 +307,13 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
             {
                 { "sd_model_checkpoint", Model_checkpoint },
                 { "CLIP_stop_at_last_layers", 2 }
+            },
+            alwayson_scripts = new AlwaysonScripts
+            {
+                ControlNet = new ControlNetWrapper
+                {
+                    args = controlnetArgs
+                }
             }
 
         };
