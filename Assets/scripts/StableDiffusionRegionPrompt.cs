@@ -100,17 +100,18 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
         // 初始化 List
         AllRegions = new List<Region>();
         allScores = new int[4];
-        StartCoroutine(GenerateImageForMultipleChoice(384,384, "girl,hanfu,ming style,<lora:hanfu40-beta-3:0.6>", "counterfeitV30_v30", "",
-                        texture =>
-                        {
-                            // 將 Texture2D 轉為 Sprite 並灌入 UI Image
-                            Sprite newSprite = Sprite.Create(
-                                texture,
-                                new Rect(0, 0, texture.width, texture.height),
-                                new Vector2(0.5f, 0.5f)
-                            );
-                            imageUI.sprite = newSprite;
-                        }));
+        StartCoroutine(ReadFileAndSendPrompt("選擇題提示詞.txt", "漢服"));
+        //StartCoroutine(GenerateImageForMultipleChoice(384,384, "girl,hanfu,ming style,<lora:hanfu40-beta-3:0.6>", "counterfeitV30_v30", "",
+        //                texture =>
+        //                {
+        //                    // 將 Texture2D 轉為 Sprite 並灌入 UI Image
+        //                    Sprite newSprite = Sprite.Create(
+        //                        texture,
+        //                        new Rect(0, 0, texture.width, texture.height),
+        //                        new Vector2(0.5f, 0.5f)
+        //                    );
+        //                    imageUI.sprite = newSprite;
+        //                }));
     }
     List<object> BuildFullArgs(List<Region> regions)
     {
@@ -195,28 +196,28 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
         switch (Lora_Name)
         {
             case "漢服":
-                LoraPrompt = "<lora:hanfu40-beta-3:0.6>";
+                LoraPrompt = ",<lora:hanfu40-beta-3:0.6>";
                 break;
             case "漫畫":
-                LoraPrompt = "<lora:animeoutlineV4_16:1.3>";
+                LoraPrompt = "lineart, ((monochrome)),<lora:animeoutlineV4_16:1.3>";
                 break;
             case "貓":
-                LoraPrompt = "<lora:cat_20230627113759:0.7>";
+                LoraPrompt = ",<lora:cat_20230627113759:0.7>";
                 break;
             case "水墨":
-                LoraPrompt = "<lora:3Guofeng3_v34:0.85> <lora:shuV2:0.9>";
+                LoraPrompt = ",<lora:3Guofeng3_v34:0.85> <lora:shuV2:0.9>";
                 break;
             case "盒玩": 
-                LoraPrompt = "<lora:blindbox_v1_mix:1>";
+                LoraPrompt = ",<lora:blindbox_v1_mix:1>";
                 break;
             case "吉普利":
-                LoraPrompt = "<lora:ghibli_style_offset:1>";
+                LoraPrompt = ",<lora:ghibli_style_offset:1>";
                 break;
             case "眼睛":
-                LoraPrompt = "<lora:Loraeyes_V1:0.8>";
+                LoraPrompt = ",<lora:Loraeyes_V1:0.8>";
                 break;
             case "食物照片":
-                LoraPrompt = "<lora:foodphoto:0.6>";
+                LoraPrompt = ",<lora:foodphoto:0.6>";
                 break;
             default:
                 break;
@@ -231,8 +232,8 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
             enable_hr = false,
             restore_faces = false,
             tiling = false,
-            prompt = prompt+ LoraPrompt+ "<lora:add_detail:0.5>",
-            negative_prompt = "(worst quality:2), (low quality:2), (normal quality:2), lowers, ((monochrome)), ((grayscale)), watermark",
+            prompt = prompt+ LoraPrompt+ ", BREAK, (masterpiece:1.2),  best quality, highres, highly detailed, perfect lighting , < lora:add_detail: 0.5 > ",
+            negative_prompt = "easynegative, (badhandv4:1.2), NSFW, (worst quality:2), (low quality:2), (normal quality:2), lowres, normal quality, ((monochrome)), ((grayscale)), skin spots, acnes, skin blemishes, age spot, (ugly:1.331), (duplicate:1.331), watermark jpeg artifacts signature watermark username blurry, Stable_Yogis_SD1.5_Negatives-neg",
             override_settings = new Dictionary<string, object>
             {
                 { "sd_model_checkpoint", Model_checkpoint },
@@ -426,7 +427,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
         return score;
     }
 
-    IEnumerator ReaFileAndSend(string TXTfile,string LoRa_name)
+    IEnumerator ReadFileAndSendPrompt(string TXTfile,string LoRa_name)
     {
         string path = System.IO.Path.Combine(Application.streamingAssetsPath, TXTfile);
         string AddLLM = "";
@@ -473,10 +474,13 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
         string fileContent = System.IO.File.ReadAllText(path);
 #endif
 
+        //Debug.Log(fileContent+ AddLLM);
         // 呼叫 Gemini API 並傳入檔案內容
         yield return StartCoroutine(geminiAPI.SendRequest(fileContent+ AddLLM, (result) =>
         {
-            Debug.Log(result);
+            //string prompt = result.Split(new string[] { "PROMPT={" }, StringSplitOptions.None)[1].TrimEnd('}');
+            Match prompt = Regex.Match(result, @"\{([^}]*)\}");
+            Debug.Log("取出的提示詞為:"+prompt.Groups[1].Value);
         }));
     }
 }
