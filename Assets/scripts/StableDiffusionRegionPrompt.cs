@@ -191,7 +191,36 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
     {
         string url = "http://127.0.0.1:7860/sdapi/v1/txt2img";
 
-
+        string LoraPrompt = "";
+        switch (Lora_Name)
+        {
+            case "漢服":
+                LoraPrompt = "<lora:hanfu40-beta-3:0.6>";
+                break;
+            case "漫畫":
+                LoraPrompt = "<lora:animeoutlineV4_16:1.3>";
+                break;
+            case "貓":
+                LoraPrompt = "<lora:cat_20230627113759:0.7>";
+                break;
+            case "水墨":
+                LoraPrompt = "<lora:3Guofeng3_v34:0.85> <lora:shuV2:0.9>";
+                break;
+            case "盒玩": 
+                LoraPrompt = "<lora:blindbox_v1_mix:1>";
+                break;
+            case "吉普利":
+                LoraPrompt = "<lora:ghibli_style_offset:1>";
+                break;
+            case "眼睛":
+                LoraPrompt = "<lora:Loraeyes_V1:0.8>";
+                break;
+            case "食物照片":
+                LoraPrompt = "<lora:foodphoto:0.6>";
+                break;
+            default:
+                break;
+        }
         var requestData = new Txt2ImgRequest
         {
             steps = 20,
@@ -202,7 +231,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
             enable_hr = false,
             restore_faces = false,
             tiling = false,
-            prompt = prompt,
+            prompt = prompt+ LoraPrompt+ "<lora:add_detail:0.5>",
             negative_prompt = "(worst quality:2), (low quality:2), (normal quality:2), lowers, ((monochrome)), ((grayscale)), watermark",
             override_settings = new Dictionary<string, object>
             {
@@ -395,5 +424,59 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
         }
 
         return score;
+    }
+
+    IEnumerator ReaFileAndSend(string TXTfile,string LoRa_name)
+    {
+        string path = System.IO.Path.Combine(Application.streamingAssetsPath, TXTfile);
+        string AddLLM = "";
+        switch (LoRa_name)
+        {
+            case "漢服":
+                AddLLM = "主角是一個女生，提示詞需要包含hanfu, (朝代) style，其他由你自由發揮";
+                break;
+            case "漫畫":
+                AddLLM = "題目由你來決定";
+                break;
+            case "貓":
+                AddLLM = "主角是一個貓，提示詞需要包含cat，其他由你自由發揮";
+                break;
+            case "水墨":
+                AddLLM = "主體前需要加potrait of，提示詞需要包含traditional chinese ink painting, 大師名, shukezouma，其他由你自由發揮 ";
+                break;
+            case "盒玩":
+                AddLLM = "主角是一個女生或男生，提示詞需要包含full body, chibi，提示詞只能描述主體，不用描述環境";
+                break;
+            case "吉普利":
+                AddLLM = "題目由你來決定";
+                break;
+            case "眼睛":
+                AddLLM = "主角是一個眼睛，提示詞需要包含loraeyes，其他由你自由發揮";
+                break;
+            case "食物照片":
+                AddLLM = "主角是一個食物(禁止壽司)，提示詞需要包含foodphoto，可以使用攝影細節，其他由你自由發揮";
+                break;
+            default:
+                AddLLM = "題目由你來決定";
+                break;
+        }
+#if UNITY_ANDROID && !UNITY_EDITOR
+        UnityWebRequest www = UnityWebRequest.Get(path);
+        yield return www.SendWebRequest();
+        if (www.result != UnityWebRequest.Result.Success)
+        {
+            Debug.LogError("讀檔失敗: " + www.error);
+            yield break;
+        }
+        string fileContent = www.downloadHandler.text;
+#else
+        string fileContent = System.IO.File.ReadAllText(path);
+#endif
+
+        // 呼叫 Gemini API 並傳入檔案內容
+        yield return StartCoroutine(geminiAPI.SendRequest(fileContent+ AddLLM, (result) =>
+        {
+            Debug.Log(result);
+        }));
     }
 }
