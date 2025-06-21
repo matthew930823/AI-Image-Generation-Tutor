@@ -14,8 +14,9 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
     //public RawImage imageUI;
     public Image imageUI;
     public GeminiAPI geminiAPI;
-    private string Sampler_name = "Euler a";
-    private string Scheduler = "Automatic";
+    private string Sampler_name = "DPM++ 2M";
+    private string Scheduler = "Karras";
+    private string Prompt = "";
     [System.Serializable]
     public class Region
     {
@@ -100,18 +101,18 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
         // 初始化 List
         AllRegions = new List<Region>();
         allScores = new int[4];
-        StartCoroutine(ReadFileAndSendPrompt("選擇題提示詞.txt", "漢服"));
-        //StartCoroutine(GenerateImageForMultipleChoice(384,384, "girl,hanfu,ming style,<lora:hanfu40-beta-3:0.6>", "counterfeitV30_v30", "",
-        //                texture =>
-        //                {
-        //                    // 將 Texture2D 轉為 Sprite 並灌入 UI Image
-        //                    Sprite newSprite = Sprite.Create(
-        //                        texture,
-        //                        new Rect(0, 0, texture.width, texture.height),
-        //                        new Vector2(0.5f, 0.5f)
-        //                    );
-        //                    imageUI.sprite = newSprite;
-        //                }));
+        StartCoroutine(ReadFileAndSendPrompt("選擇題提示詞.txt", "漫畫"));
+        StartCoroutine(GenerateImageForMultipleChoice(768, 768, Prompt, "counterfeitV30_v30", "漫畫",
+                        texture =>
+                        {
+                            // 將 Texture2D 轉為 Sprite 並灌入 UI Image
+                            Sprite newSprite = Sprite.Create(
+                                texture,
+                                new Rect(0, 0, texture.width, texture.height),
+                                new Vector2(0.5f, 0.5f)
+                            );
+                            imageUI.sprite = newSprite;
+                        }));
     }
     List<object> BuildFullArgs(List<Region> regions)
     {
@@ -199,7 +200,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
                 LoraPrompt = ",<lora:hanfu40-beta-3:0.6>";
                 break;
             case "漫畫":
-                LoraPrompt = "lineart, ((monochrome)),<lora:animeoutlineV4_16:1.3>";
+                LoraPrompt = ",lineart, ((monochrome)),<lora:animeoutlineV4_16:1.3>";
                 break;
             case "貓":
                 LoraPrompt = ",<lora:cat_20230627113759:0.7>";
@@ -479,8 +480,9 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
         yield return StartCoroutine(geminiAPI.SendRequest(fileContent+ AddLLM, (result) =>
         {
             //string prompt = result.Split(new string[] { "PROMPT={" }, StringSplitOptions.None)[1].TrimEnd('}');
-            Match prompt = Regex.Match(result, @"\{([^}]*)\}");
-            Debug.Log("取出的提示詞為:"+prompt.Groups[1].Value);
+            Match match = Regex.Match(result, @"\{([^}]*)\}");
+            Prompt = match.Groups[1].Value;
+            //Debug.Log("取出的提示詞為:"+prompt.Groups[1].Value);
         }));
     }
 }
