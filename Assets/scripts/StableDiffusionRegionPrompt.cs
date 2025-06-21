@@ -101,18 +101,25 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
         // 初始化 List
         AllRegions = new List<Region>();
         allScores = new int[4];
-        StartCoroutine(ReadFileAndSendPrompt("選擇題提示詞.txt", "漫畫"));
-        StartCoroutine(GenerateImageForMultipleChoice(768, 768, Prompt, "counterfeitV30_v30", "漫畫",
-                        texture =>
-                        {
-                            // 將 Texture2D 轉為 Sprite 並灌入 UI Image
-                            Sprite newSprite = Sprite.Create(
-                                texture,
-                                new Rect(0, 0, texture.width, texture.height),
-                                new Vector2(0.5f, 0.5f)
-                            );
-                            imageUI.sprite = newSprite;
-                        }));
+        StartCoroutine(HandlePromptAndGenerateImage());
+    }
+    IEnumerator HandlePromptAndGenerateImage()
+    {
+        // 等待 ReadFileAndSendPrompt 完成
+        yield return StartCoroutine(ReadFileAndSendPrompt("選擇題提示詞.txt", "漫畫"));
+
+        // 然後執行 GenerateImageForMultipleChoice
+        yield return StartCoroutine(GenerateImageForMultipleChoice(768, 768, Prompt, "counterfeitV30_v30", "漫畫",
+            texture =>
+            {
+            // 將 Texture2D 轉為 Sprite 並灌入 UI Image
+            Sprite newSprite = Sprite.Create(
+                    texture,
+                    new Rect(0, 0, texture.width, texture.height),
+                    new Vector2(0.5f, 0.5f)
+                );
+                imageUI.sprite = newSprite;
+            }));
     }
     List<object> BuildFullArgs(List<Region> regions)
     {
