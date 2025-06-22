@@ -87,7 +87,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
         public bool enable_hr = false;
         public bool restore_faces = false;
         public bool tiling = false;
-        public int seed = 1;
+        //public int seed = 1;
 
         [JsonProperty("alwayson_scripts", NullValueHandling = NullValueHandling.Ignore)]
         public AlwaysonScripts alwayson_scripts;
@@ -137,7 +137,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
         yield return StartCoroutine(ReadFileAndSendPrompt("選擇題提示詞.txt", "漢服"));
 
         // 然後執行 GenerateImageForMultipleChoice
-        yield return StartCoroutine(GenerateImageForMultipleChoice(768, 768, Prompt, "counterfeitV30_v30", "漢服", "Canny",Image2base64("Canny參考圖.png"),
+        yield return StartCoroutine(GenerateImageForMultipleChoice(768, 768, Prompt, "anime_cute.safetensors", "漢服", "Canny",Image2base64("Canny參考圖.png"),
             texture =>
             {
             // 將 Texture2D 轉為 Sprite 並灌入 UI Image
@@ -234,12 +234,12 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
 
         string modelString = "";
         string moduleString = "none";
-
+        yield return StartCoroutine(ChangeCheckpoint(Model_checkpoint));
         switch (Lora_Name)
         {
             case "漢服":
                 LoraPrompt = ",<lora:hanfu40-beta-3:0.6>";
-                imageData = "data:image/png;base64," + Image2base64("/ConTrolNet參考圖/openpose/no hand/stand1");
+                imageData = "data:image/png;base64," + Image2base64("ConTrolNet參考圖/openpose/no hand/stand1.png");
                 break;
             case "漫畫":
                 LoraPrompt = ",lineart, ((monochrome)),<lora:animeoutlineV4_16:1.3>";
@@ -336,7 +336,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
             },
             alwayson_scripts = new AlwaysonScripts
             {
-                //ControlNet = new ControlNetWrapper{args = controlnetArgs},
+                ControlNet = new ControlNetWrapper{args = controlnetArgs},
                 ADetailer = new ADetailerWrapper { args = adetailerArgs }
             }
 
@@ -583,5 +583,38 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
             Prompt = match.Groups[1].Value;
             //Debug.Log("取出的提示詞為:"+prompt.Groups[1].Value);
         }));
+    }
+    public IEnumerator ChangeCheckpoint(string modelCheckpoint)
+    {
+        string url = "http://127.0.0.1:7860/sdapi/v1/options";
+
+        // 建立 payload，符合 API 格式
+        Dictionary<string, string> payload = new Dictionary<string, string>()
+        {
+            { "sd_model_checkpoint", modelCheckpoint }
+        };
+
+        string jsonData = JsonConvert.SerializeObject(payload);
+        Debug.Log("要傳送的資料：" + jsonData);
+
+        byte[] postData = Encoding.UTF8.GetBytes(jsonData);
+
+        UnityWebRequest request = new UnityWebRequest(url, "POST");
+        request.uploadHandler = new UploadHandlerRaw(postData);
+        request.downloadHandler = new DownloadHandlerBuffer();
+        request.SetRequestHeader("Content-Type", "application/json");
+
+        yield return request.SendWebRequest();
+
+        if (request.result != UnityWebRequest.Result.Success)
+        {
+            Debug.LogError("❌ Checkpoint 切換失敗: " + request.error);
+            Debug.LogError(request.downloadHandler.text);
+        }
+        else
+        {
+            Debug.Log("✅ Checkpoint 已成功切換為: " + modelCheckpoint);
+            Debug.Log("API 回應：" + request.downloadHandler.text);
+        }
     }
 }
