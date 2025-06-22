@@ -265,7 +265,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
                 break;
             case "吉普利":
                 LoraPrompt = ",<lora:ghibli_style_offset:1>";
-                CheckpointType = new string[] { "anime_cute", "anime - real_hybrid", "anime_soft" };
+                CheckpointType = new string[] { "anime_cute", "anime-real_hybrid", "anime_soft" };
                 Model_checkpoint = CheckpointType[UnityEngine.Random.Range(0, CheckpointType.Length)];
                 break;
             case "眼睛":
@@ -546,7 +546,13 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
 
     IEnumerator ReadFileAndSendPrompt(string LoRa_name)
     {
-        string path = System.IO.Path.Combine(Application.streamingAssetsPath, "選擇題提示詞.txt");
+        string path;
+        if(LoRa_name == "貓")
+            path = System.IO.Path.Combine(Application.streamingAssetsPath, "選擇題提示詞For貓.txt");
+        else if (LoRa_name == "食物")
+            path = System.IO.Path.Combine(Application.streamingAssetsPath, "選擇題提示詞For食物.txt");
+        else
+            path = System.IO.Path.Combine(Application.streamingAssetsPath, "選擇題提示詞.txt");
         string AddLLM = "";
         switch (LoRa_name)
         {
@@ -646,12 +652,12 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
                         ControlNetType = "Depth";
                         if (infoArray[2]=="woman")
                             if (infoArray[3] == "stand" || infoArray[3] == "sit" || infoArray[3] == "run" || infoArray[3] == "kneel" || infoArray[3] == "jump")
-                                ControlnetImageBase64 = GetRandomControlImageBase64("ConTrolNet參考圖/female_depth/woman" + infoArray[3]);
+                                ControlnetImageBase64 = GetRandomControlImageBase64("ConTrolNet參考圖/female_depth/woman/" + infoArray[3]);
                             else
                                 ControlnetImageBase64 = GetRandomControlImageBase64("ConTrolNet參考圖/female_depth/woman/stand");
                         else
                             if (infoArray[3] == "stand" || infoArray[3] == "sit" || infoArray[3] == "run" || infoArray[3] == "kneel" || infoArray[3] == "jump")
-                            ControlnetImageBase64 = GetRandomControlImageBase64("ConTrolNet參考圖/female_depth/girl" + infoArray[3]);
+                            ControlnetImageBase64 = GetRandomControlImageBase64("ConTrolNet參考圖/female_depth/girl/" + infoArray[3]);
                         else
                             ControlnetImageBase64 = GetRandomControlImageBase64("ConTrolNet參考圖/female_depth/girl/stand");
                         break;
