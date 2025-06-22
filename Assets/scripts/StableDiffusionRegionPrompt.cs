@@ -263,11 +263,22 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
                 modelString = "";
                 break;
         }
+        int rand;
         switch (Lora_Name)
         {
             case "漢服":
                 LoraPrompt = ",<lora:hanfu40-beta-3:0.6>";
-                imageData = "data:image/png;base64," + Image2base64("ConTrolNet參考圖/openpose/no hand/stand1.png");
+                modelString = "control_v11f1p_sd15_depth [cfd03158]";
+                if (infoArray[2] == "girl")
+                {
+                    imageData = "data:image/png;base64," + Image2base64("ConTrolNet參考圖/female_depth/girl/no hand/1.png");
+                }
+                else
+                {
+                    rand = UnityEngine.Random.Range(1, 4); // 1~3
+                    string path = $"ConTrolNet參考圖/female_depth/woman/no hand/{rand}.png";
+                    imageData = "data:image/png;base64," + Image2base64(path);
+                }
                 break;
             case "漫畫":
                 LoraPrompt = ",lineart, ((monochrome)),<lora:animeoutlineV4_16:1.3>";
