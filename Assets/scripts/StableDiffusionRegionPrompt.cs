@@ -20,6 +20,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
     private string Prompt = "";
     string ControlnetImageBase64;
     string ControlNetType;
+    string[] infoArray;//提取細節
     string[] LoRaType = new string[] { "漢服", "漫畫", "貓", "水墨", "盒玩", "吉普利", "眼睛", "食物照片" };
     [System.Serializable]
     public class Region
@@ -243,6 +244,25 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
         string modelString = "";
         string moduleString = "none";
         string[] CheckpointType = {};
+
+        switch (controlNetType)
+        {
+            case "Canny":
+                modelString = "control_v11p_sd15_canny [d14c016b]";
+                break;
+            case "Depth":
+                modelString = "control_v11f1p_sd15_depth [cfd03158]";
+                break;
+            case "Openpose":
+                modelString = "control_v11p_sd15_openpose [cab727d4]";
+                break;
+            case "Shuffle":
+                modelString = "control_v11e_sd15_shuffle [526bfdae]";
+                break;
+            default:
+                modelString = "";
+                break;
+        }
         switch (Lora_Name)
         {
             case "漢服":
@@ -258,7 +278,8 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
             case "水墨":
                 LoraPrompt = ",<lora:3Guofeng3_v34:0.85> <lora:shuV2:0.9>";
                 break;
-            case "盒玩": 
+            case "盒玩":
+                modelString = "";
                 LoraPrompt = ",<lora:blindbox_v1_mix:1>";
                 CheckpointType = new string[] { "anime-real_hybrid", "anime_soft" };
                 Model_checkpoint = CheckpointType[UnityEngine.Random.Range(0, CheckpointType.Length)];
@@ -280,29 +301,13 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
                 break;
         }
         yield return StartCoroutine(ChangeCheckpoint(Model_checkpoint));
-        switch (controlNetType)
-        {
-            case "Canny":
-                modelString = "control_v11p_sd15_canny [d14c016b]";
-                break;
-            case "Depth":
-                modelString = "control_v11f1p_sd15_depth [cfd03158]";
-                break;
-            case "Openpose":
-                modelString = "control_v11p_sd15_openpose [cab727d4]";
-                break;
-            case "Shuffle":
-                modelString = "control_v11e_sd15_shuffle [526bfdae]";
-                break;
-            default:
-                modelString = "control_v11p_sd15_canny [d14c016b]";
-                break;
-        }
+        
+        Debug.Log("是否使用controlNet:"+controlNetType);
         var controlnetArgs = new List<object>
         {
             new Dictionary<string, object>
             {
-                { "enabled", true },
+                { "enabled", (modelString == "")?false:true },
                 { "model", modelString },
                 { "module", moduleString },
                 { "weight", 1.0f },
@@ -326,14 +331,14 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
             new Dictionary<string, object>
             {
                 { "ad_model", "face_yolov8n_v2.pt" },
-                { "ad_prompt", "detail face" }
+                { "ad_prompt", "detail face," + ((infoArray[5] == "none") ? "":infoArray[5])+((infoArray[4] == "old") ? ",wrinkle":"")}
             },
             new Dictionary<string, object>
             {
                 { "ad_model", "hand_yolov8n.pt" }
             }
         };
-
+        Debug.Log("ADetaile:" + infoArray[5]);
         var requestData = new Txt2ImgRequest
         {
             steps = 20,
@@ -344,7 +349,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
             enable_hr = false,
             restore_faces = false,
             tiling = false,
-            prompt = prompt+ LoraPrompt+ ", BREAK, (masterpiece:1.2),  best quality, highres, highly detailed, perfect lighting , < lora:add_detail: 0.5 > ",
+            prompt = prompt+ LoraPrompt+ ", BREAK, (masterpiece:1.2),  best quality, highres, highly detailed, perfect lighting , < lora:add_detail: 0.5 > "+ ((infoArray[4] == "old") ? ",(AS-Elderly:1.5)" : ""),
             negative_prompt = (Lora_Name == "漫畫") ? "easynegative, (badhandv4:1.2), NSFW, watermark jpeg artifacts signature watermark username blurry" : "easynegative, (badhandv4:1.2), NSFW, (worst quality:2), (low quality:2), (normal quality:2), lowres, normal quality, ((monochrome)), ((grayscale)), skin spots, acnes, skin blemishes, age spot, (ugly:1.331), (duplicate:1.331), watermark jpeg artifacts signature watermark username blurry, Stable_Yogis_SD1.5_Negatives-neg",
             override_settings = new Dictionary<string, object>
             {
@@ -632,7 +637,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
             if (match.Success)
             {
                 string raw = match.Groups[1].Value; // 取得大括號內的內容: yes,woman,girl,stand,no,smiling
-                string[] infoArray = raw.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                infoArray = raw.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
 
                 // ✅ 範例：列出陣列內容
                 foreach (string item in infoArray)
@@ -662,8 +667,8 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
                             ControlnetImageBase64 = GetRandomControlImageBase64("ConTrolNet參考圖/female_depth/girl/stand");
                         break;
                     default:
-                        ControlNetType = "Openpose";
-                        ControlnetImageBase64 = GetRandomControlImageBase64("ConTrolNet參考圖/openpose/stand");
+                        ControlNetType = "";
+                        ControlnetImageBase64 = "";
                         break;
                 }
             }
