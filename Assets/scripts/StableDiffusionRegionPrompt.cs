@@ -120,13 +120,16 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
         // 初始化 List
         AllRegions = new List<Region>();
         allScores = new int[4];
-
-        string path = Path.Combine(Application.streamingAssetsPath, "Canny參考圖.png");
-        byte[] imageBytes = File.ReadAllBytes(path);
-        ControlnetTexture = new Texture2D(2, 2);
-        ControlnetTexture.LoadImage(imageBytes);
-
         StartCoroutine(HandlePromptAndGenerateImage());
+    }
+    string Image2base64(string filename)
+    {
+        string path = Path.Combine(Application.streamingAssetsPath, filename);
+        byte[] imageBytes = File.ReadAllBytes(path);
+        Texture2D controlImage = new Texture2D(2, 2);
+        controlImage.LoadImage(imageBytes);
+        string base64Image = Convert.ToBase64String(controlImage.EncodeToPNG());
+        return base64Image;
     }
     IEnumerator HandlePromptAndGenerateImage()
     {
@@ -134,7 +137,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
         yield return StartCoroutine(ReadFileAndSendPrompt("選擇題提示詞.txt", "漢服"));
 
         // 然後執行 GenerateImageForMultipleChoice
-        yield return StartCoroutine(GenerateImageForMultipleChoice(768, 768, Prompt, "counterfeitV30_v30", "漢服", "Canny", ControlnetTexture,
+        yield return StartCoroutine(GenerateImageForMultipleChoice(768, 768, Prompt, "counterfeitV30_v30", "漢服", "Canny",Image2base64("Canny參考圖.png"),
             texture =>
             {
             // 將 Texture2D 轉為 Sprite 並灌入 UI Image
@@ -221,15 +224,22 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
             true    // Fast Decoder
         };
     }
-    public IEnumerator GenerateImageForMultipleChoice(int Width,int Height,string prompt,string Model_checkpoint,string Lora_Name, string controlNetType, Texture2D controlImage, System.Action<Texture2D> callback)
+    public IEnumerator GenerateImageForMultipleChoice(int Width,int Height,string prompt,string Model_checkpoint,string Lora_Name, string controlNetType, string base64Image, System.Action<Texture2D> callback)
     {
         string url = "http://127.0.0.1:7860/sdapi/v1/txt2img";
 
         string LoraPrompt = "";
+        //Canny/Depth/Openpose/Shuffle
+        string imageData = "data:image/png;base64," + base64Image;
+
+        string modelString = "";
+        string moduleString = "none";
+
         switch (Lora_Name)
         {
             case "漢服":
                 LoraPrompt = ",<lora:hanfu40-beta-3:0.6>";
+                imageData = "data:image/png;base64," + Image2base64("/ConTrolNet參考圖/openpose/no hand/stand1");
                 break;
             case "漫畫":
                 LoraPrompt = ",lineart, ((monochrome)),<lora:animeoutlineV4_16:1.3>";
@@ -256,12 +266,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
                 break;
         }
 
-        //Canny/Depth/Openpose/Shuffle
-        string base64Image = Convert.ToBase64String(controlImage.EncodeToPNG());
-        string imageData = "data:image/png;base64," + base64Image;
-
-        string modelString = "";
-        string moduleString = "none";
+        
         switch (controlNetType)
         {
             case "Canny":
