@@ -644,7 +644,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
                 {
                     Debug.Log("陣列元素: " + item.Trim());
                 }
-                switch (infoArray[1])
+                switch (infoArray[1].Trim().ToLower())
                 {
                     case "man":
                         ControlNetType = "Openpose";
@@ -652,6 +652,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
                             ControlnetImageBase64 = GetRandomControlImageBase64("ConTrolNet參考圖/openpose/"+ infoArray[3]);
                         else
                             ControlnetImageBase64 = GetRandomControlImageBase64("ConTrolNet參考圖/openpose/stand");
+                        Debug.Log("ControlnetImageBase64:"+ControlnetImageBase64);
                         break;
                     case "woman":
                         ControlNetType = "Depth";
@@ -665,10 +666,12 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
                                 ControlnetImageBase64 = GetRandomControlImageBase64("ConTrolNet參考圖/female_depth/girl/" + infoArray[3]);
                             else
                                 ControlnetImageBase64 = GetRandomControlImageBase64("ConTrolNet參考圖/female_depth/girl/stand");
+                        Debug.Log("ControlnetImageBase64:" + ControlnetImageBase64);
                         break;
                     default:
                         ControlNetType = "";
                         ControlnetImageBase64 = "";
+                        Debug.Log("ControlnetImageBase64:" + ControlnetImageBase64);
                         break;
                 }
             }
