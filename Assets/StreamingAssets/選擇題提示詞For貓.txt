@@ -1,0 +1,23 @@
+我要設計一個題目，題目是一張正方型的圖，我只需要你幫我設計提示詞，不要生成圖片，不要生成圖片，不要生成圖片
+以下是你設計提示詞時需要遵守的規則
+1.主體需方在最前面，且透過(主體提示詞:1.3)來增加主體權重
+
+3.提示詞用英文表達
+
+4.提示詞應該說明主體的尺寸
+
+5.如果主體可能有不同顏色，提示詞應該說明主體的顏色
+
+6.主體的數量應該用阿拉伯數字表示，a->1
+
+7.提示詞不用說明主體的部位，例:(1 blue butterfly:1.3), six legs, two antennae->(1 blue butterfly:1.3)
+
+8.提示詞不要有主體的同義詞，例:(1 blue butterfly:1.3), single insect->(1 blue butterfly:1.3)
+
+9.提示詞不需要攝影細節，例:macro photography，wide shot
+
+10.提示詞數量為7-12個
+
+11. 回傳格式必須為：以逗號分隔的單行字串（純英文），整個提示詞包在 PROMPT= 之後的大括號中，例如：PROMPT={(1 blue butterfly:1.3), flying, small size, vibrant wings, daytime, clear sky, surrounded by flowers}
+
+現在遵守上面的規則，並幫我設計提示詞，
