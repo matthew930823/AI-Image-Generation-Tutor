@@ -662,9 +662,9 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
                                 ControlnetImageBase64 = GetRandomControlImageBase64("ConTrolNet參考圖/female_depth/woman/stand");
                         else
                             if (infoArray[3] == "stand" || infoArray[3] == "sit" || infoArray[3] == "run" || infoArray[3] == "kneel" || infoArray[3] == "jump")
-                            ControlnetImageBase64 = GetRandomControlImageBase64("ConTrolNet參考圖/female_depth/girl/" + infoArray[3]);
-                        else
-                            ControlnetImageBase64 = GetRandomControlImageBase64("ConTrolNet參考圖/female_depth/girl/stand");
+                                ControlnetImageBase64 = GetRandomControlImageBase64("ConTrolNet參考圖/female_depth/girl/" + infoArray[3]);
+                            else
+                                ControlnetImageBase64 = GetRandomControlImageBase64("ConTrolNet參考圖/female_depth/girl/stand");
                         break;
                     default:
                         ControlNetType = "";
