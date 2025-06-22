@@ -8,6 +8,7 @@ using UnityEngine.UI;
 using System.Text.RegularExpressions;
 using System;
 using System.IO;
+using System.Linq;
 
 public class StableDiffusionRegionPrompt : MonoBehaviour
 {
@@ -17,7 +18,9 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
     private string Sampler_name = "DPM++ 2M";
     private string Scheduler = "Karras";
     private string Prompt = "";
-    Texture2D ControlnetTexture;
+    string ControlnetImageBase64;
+    string ControlNetType;
+    string[] LoRaType = new string[] { "漢服", "漫畫", "貓", "水墨", "盒玩", "吉普利", "眼睛", "食物照片" };
     [System.Serializable]
     public class Region
     {
@@ -120,6 +123,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
         // 初始化 List
         AllRegions = new List<Region>();
         allScores = new int[4];
+        
         StartCoroutine(HandlePromptAndGenerateImage());
     }
     string Image2base64(string filename)
@@ -133,11 +137,15 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
     }
     IEnumerator HandlePromptAndGenerateImage()
     {
-        // 等待 ReadFileAndSendPrompt 完成
-        yield return StartCoroutine(ReadFileAndSendPrompt("選擇題提示詞.txt", "漢服"));
+        string LoRa = LoRaType[UnityEngine.Random.Range(0, LoRaType.Length)];
 
+        // 等待 ReadFileAndSendPrompt 完成
+        yield return StartCoroutine(ReadFileAndSendPrompt(LoRa));
+
+        yield return StartCoroutine(ReadFileAndSendImformation());
         // 然後執行 GenerateImageForMultipleChoice
-        yield return StartCoroutine(GenerateImageForMultipleChoice(768, 768, Prompt, "anime_cute.safetensors", "漢服", "Canny",Image2base64("Canny參考圖.png"),
+
+        yield return StartCoroutine(GenerateImageForMultipleChoice(768, 768, Prompt, "anime_cute.safetensors", LoRa, ControlNetType, ControlnetImageBase64,
             texture =>
             {
             // 將 Texture2D 轉為 Sprite 並灌入 UI Image
@@ -234,7 +242,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
 
         string modelString = "";
         string moduleString = "none";
-        yield return StartCoroutine(ChangeCheckpoint(Model_checkpoint));
+        string[] CheckpointType = {};
         switch (Lora_Name)
         {
             case "漢服":
@@ -252,21 +260,26 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
                 break;
             case "盒玩": 
                 LoraPrompt = ",<lora:blindbox_v1_mix:1>";
+                CheckpointType = new string[] { "anime-real_hybrid", "anime_soft" };
+                Model_checkpoint = CheckpointType[UnityEngine.Random.Range(0, CheckpointType.Length)];
                 break;
             case "吉普利":
                 LoraPrompt = ",<lora:ghibli_style_offset:1>";
+                CheckpointType = new string[] { "anime_cute", "anime - real_hybrid", "anime_soft" };
+                Model_checkpoint = CheckpointType[UnityEngine.Random.Range(0, CheckpointType.Length)];
                 break;
             case "眼睛":
                 LoraPrompt = ",<lora:Loraeyes_V1:0.8>";
                 break;
             case "食物照片":
                 LoraPrompt = ",<lora:foodphoto:0.6>";
+                CheckpointType = new string[] { "anime_cute", "realistic_anything", "anime_soft" };
+                Model_checkpoint = CheckpointType[UnityEngine.Random.Range(0, CheckpointType.Length)];
                 break;
             default:
                 break;
         }
-
-        
+        yield return StartCoroutine(ChangeCheckpoint(Model_checkpoint));
         switch (controlNetType)
         {
             case "Canny":
@@ -314,6 +327,10 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
             {
                 { "ad_model", "face_yolov8n_v2.pt" },
                 { "ad_prompt", "detail face" }
+            },
+            new Dictionary<string, object>
+            {
+                { "ad_model", "hand_yolov8n.pt" }
             }
         };
 
@@ -328,7 +345,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
             restore_faces = false,
             tiling = false,
             prompt = prompt+ LoraPrompt+ ", BREAK, (masterpiece:1.2),  best quality, highres, highly detailed, perfect lighting , < lora:add_detail: 0.5 > ",
-            negative_prompt = "easynegative, (badhandv4:1.2), NSFW, (worst quality:2), (low quality:2), (normal quality:2), lowres, normal quality, ((monochrome)), ((grayscale)), skin spots, acnes, skin blemishes, age spot, (ugly:1.331), (duplicate:1.331), watermark jpeg artifacts signature watermark username blurry, Stable_Yogis_SD1.5_Negatives-neg",
+            negative_prompt = (Lora_Name == "漫畫") ? "easynegative, (badhandv4:1.2), NSFW, watermark jpeg artifacts signature watermark username blurry" : "easynegative, (badhandv4:1.2), NSFW, (worst quality:2), (low quality:2), (normal quality:2), lowres, normal quality, ((monochrome)), ((grayscale)), skin spots, acnes, skin blemishes, age spot, (ugly:1.331), (duplicate:1.331), watermark jpeg artifacts signature watermark username blurry, Stable_Yogis_SD1.5_Negatives-neg",
             override_settings = new Dictionary<string, object>
             {
                 { "sd_model_checkpoint", Model_checkpoint },
@@ -527,9 +544,9 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
         return score;
     }
 
-    IEnumerator ReadFileAndSendPrompt(string TXTfile,string LoRa_name)
+    IEnumerator ReadFileAndSendPrompt(string LoRa_name)
     {
-        string path = System.IO.Path.Combine(Application.streamingAssetsPath, TXTfile);
+        string path = System.IO.Path.Combine(Application.streamingAssetsPath, "選擇題提示詞.txt");
         string AddLLM = "";
         switch (LoRa_name)
         {
@@ -584,6 +601,72 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
             //Debug.Log("取出的提示詞為:"+prompt.Groups[1].Value);
         }));
     }
+    IEnumerator ReadFileAndSendImformation()
+    {
+        string path = System.IO.Path.Combine(Application.streamingAssetsPath, "提取資訊.txt");
+        
+#if UNITY_ANDROID && !UNITY_EDITOR
+        UnityWebRequest www = UnityWebRequest.Get(path);
+        yield return www.SendWebRequest();
+        if (www.result != UnityWebRequest.Result.Success)
+        {
+            Debug.LogError("讀檔失敗: " + www.error);
+            yield break;
+        }
+        string fileContent = www.downloadHandler.text;
+#else
+        string fileContent = System.IO.File.ReadAllText(path);
+#endif
+
+        //Debug.Log(fileContent+ AddLLM);
+        // 呼叫 Gemini API 並傳入檔案內容
+        yield return StartCoroutine(geminiAPI.SendRequest(fileContent+Prompt , (result) =>
+        {
+            Match match = Regex.Match(result, @"\{([^}]*)\}");
+            if (match.Success)
+            {
+                string raw = match.Groups[1].Value; // 取得大括號內的內容: yes,woman,girl,stand,no,smiling
+                string[] infoArray = raw.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+
+                // ✅ 範例：列出陣列內容
+                foreach (string item in infoArray)
+                {
+                    Debug.Log("陣列元素: " + item.Trim());
+                }
+                switch (infoArray[1])
+                {
+                    case "man":
+                        ControlNetType = "Openpose";
+                        if (infoArray[3] == "stand" || infoArray[3] == "sit" || infoArray[3] == "run" || infoArray[3] == "kneel" || infoArray[3] == "jump")
+                            ControlnetImageBase64 = GetRandomControlImageBase64("ConTrolNet參考圖/openpose/"+ infoArray[3]);
+                        else
+                            ControlnetImageBase64 = GetRandomControlImageBase64("ConTrolNet參考圖/openpose/stand");
+                        break;
+                    case "woman":
+                        ControlNetType = "Depth";
+                        if (infoArray[2]=="woman")
+                            if (infoArray[3] == "stand" || infoArray[3] == "sit" || infoArray[3] == "run" || infoArray[3] == "kneel" || infoArray[3] == "jump")
+                                ControlnetImageBase64 = GetRandomControlImageBase64("ConTrolNet參考圖/female_depth/woman" + infoArray[3]);
+                            else
+                                ControlnetImageBase64 = GetRandomControlImageBase64("ConTrolNet參考圖/female_depth/woman/stand");
+                        else
+                            if (infoArray[3] == "stand" || infoArray[3] == "sit" || infoArray[3] == "run" || infoArray[3] == "kneel" || infoArray[3] == "jump")
+                            ControlnetImageBase64 = GetRandomControlImageBase64("ConTrolNet參考圖/female_depth/girl" + infoArray[3]);
+                        else
+                            ControlnetImageBase64 = GetRandomControlImageBase64("ConTrolNet參考圖/female_depth/girl/stand");
+                        break;
+                    default:
+                        ControlNetType = "Openpose";
+                        ControlnetImageBase64 = GetRandomControlImageBase64("ConTrolNet參考圖/openpose/stand");
+                        break;
+                }
+            }
+            else
+            {
+                Debug.LogWarning("⚠️ 無法從回傳結果中找到 { ... } 格式內容！");
+            }
+        }));
+    }
     public IEnumerator ChangeCheckpoint(string modelCheckpoint)
     {
         string url = "http://127.0.0.1:7860/sdapi/v1/options";
@@ -617,4 +700,29 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
             Debug.Log("API 回應：" + request.downloadHandler.text);
         }
     }
+    public string GetRandomControlImageBase64(string ConTrolNetPath)
+    {
+        string baseFolder = Path.Combine(Application.streamingAssetsPath, ConTrolNetPath);
+
+        
+
+        // 隨機圖片
+        string[] imageFiles = Directory.GetFiles(baseFolder, "*.*")
+            .Where(f => f.EndsWith(".png") || f.EndsWith(".jpg") || f.EndsWith(".jpeg"))
+            .ToArray();
+
+        if (imageFiles.Length == 0)
+        {
+            Debug.LogWarning("❌ 該資料夾中沒有圖片：" + baseFolder);
+            return null;
+        }
+
+        string randomImagePath = imageFiles[UnityEngine.Random.Range(0, imageFiles.Length)];
+
+        // 轉換為 StreamingAssets 相對路徑給你的方法
+        string relativePath = randomImagePath.Replace(Application.streamingAssetsPath + Path.DirectorySeparatorChar, "");
+
+        return Image2base64(relativePath);
+    }
+
 }
