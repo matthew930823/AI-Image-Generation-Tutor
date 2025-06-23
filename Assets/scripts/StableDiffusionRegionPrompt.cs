@@ -210,7 +210,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
                 string[] ControlnetModule = new string[] { "depth_anything_v2", "canny", "openpose_full", "shuffle" };
                 string randControlnet = ControlnetModule[UnityEngine.Random.Range(0, ControlnetModule.Length)];
                 Debug.Log("randControlnet:" + randControlnet);
-                ControlnetImageBase64 = Image2base64("ConTrolNet參考圖/other/"+ UnityEngine.Random.Range(1, 9) + ".png");
+                ControlnetImageBase64 = GetRandomControlImageBase64("ConTrolNet參考圖/other");
                 byte[] imageBytes = Convert.FromBase64String(ControlnetImageBase64);
                 Texture2D tex = new Texture2D(2, 2);
                 tex.LoadImage(imageBytes);
