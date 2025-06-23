@@ -209,14 +209,11 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
             case "Controlnet":
                 string[] ControlnetModule = new string[] { "depth_anything_v2", "canny", "openpose_full", "shuffle" };
                 string randControlnet = ControlnetModule[UnityEngine.Random.Range(0, ControlnetModule.Length)];
-                Debug.Log("randResolution:" + randControlnet);
-                ControlnetImageBase64 = Image2base64("ConTrolNet參考圖/other/"+ UnityEngine.Random.Range(1, 9));
-                // 2. 轉成圖片顯示
+                Debug.Log("randControlnet:" + randControlnet);
+                ControlnetImageBase64 = Image2base64("ConTrolNet參考圖/other/"+ UnityEngine.Random.Range(1, 9) + ".png");
                 byte[] imageBytes = Convert.FromBase64String(ControlnetImageBase64);
                 Texture2D tex = new Texture2D(2, 2);
                 tex.LoadImage(imageBytes);
-
-                // 3. 建立 Sprite 並套用到 imageUI
                 Rect rect = new Rect(0, 0, tex.width, tex.height);
                 Vector2 pivot = new Vector2(0.5f, 0.5f);
                 imageUI.sprite = Sprite.Create(tex, rect, pivot);
