@@ -189,6 +189,27 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
                         }));
                 break;
             case "Prompt":
+                
+                var parts = Prompt.Split(',')
+                                  .Select(p => p.Trim())
+                                  .ToList();
+
+                int rand = UnityEngine.Random.Range(1, 5);
+                Debug.Log("去除的字為:"+parts[rand]);
+                parts.RemoveAt(rand);
+                string result = string.Join(", ", parts);
+                Debug.Log("修改為:" + result);
+                yield return StartCoroutine(GenerateImageForMultipleChoice(768, 768, result, checkpoint, LoRa, ControlNetType, "", ControlnetImageBase64, seed,
+                   texture =>
+                   {
+                       // 將 Texture2D 轉為 Sprite 並灌入 UI Image
+                       Sprite newSprite = Sprite.Create(
+                               texture,
+                               new Rect(0, 0, texture.width, texture.height),
+                               new Vector2(0.5f, 0.5f)
+                           );
+                       imageUI.sprite = newSprite;
+                   }));
                 break;
             case "Resolution":
                 int[] resolution = new int[] { 1280 ,384,1024,512};
