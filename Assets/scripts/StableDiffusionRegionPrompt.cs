@@ -339,6 +339,23 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
                 modelString = "";
                 break;
         }
+        switch (controlnetModule)
+        {
+            case "canny":
+                modelString = "control_v11p_sd15_canny [d14c016b]";
+                break;
+            case "depth_anything_v2":
+                modelString = "control_v11f1p_sd15_depth [cfd03158]";
+                break;
+            case "openpose_full":
+                modelString = "control_v11p_sd15_openpose [cab727d4]";
+                break;
+            case "shuffle":
+                modelString = "control_v11e_sd15_shuffle [526bfdae]";
+                break;
+            default:
+                break;
+        }
         int rand;
         switch (Lora_Name)
         {
