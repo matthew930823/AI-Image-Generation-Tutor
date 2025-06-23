@@ -341,25 +341,6 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
         string modelString = "";
         string moduleString = (controlnetModule == "")?"none": controlnetModule;
         string[] CheckpointType = {};
-
-        switch (controlNetType)
-        {
-            case "Canny":
-                modelString = "control_v11p_sd15_canny [d14c016b]";
-                break;
-            case "Depth":
-                modelString = "control_v11f1p_sd15_depth [cfd03158]";
-                break;
-            case "Openpose":
-                modelString = "control_v11p_sd15_openpose [cab727d4]";
-                break;
-            case "Shuffle":
-                modelString = "control_v11e_sd15_shuffle [526bfdae]";
-                break;
-            default:
-                modelString = "";
-                break;
-        }
         switch (controlnetModule)
         {
             case "canny":
@@ -375,8 +356,31 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
                 modelString = "control_v11e_sd15_shuffle [526bfdae]";
                 break;
             default:
+                modelString = "none";
                 break;
         }
+        if (modelString == "none") {
+            switch (controlNetType)
+            {
+                case "Canny":
+                    modelString = "control_v11p_sd15_canny [d14c016b]";
+                    break;
+                case "Depth":
+                    modelString = "control_v11f1p_sd15_depth [cfd03158]";
+                    break;
+                case "Openpose":
+                    modelString = "control_v11p_sd15_openpose [cab727d4]";
+                    break;
+                case "Shuffle":
+                    modelString = "control_v11e_sd15_shuffle [526bfdae]";
+                    break;
+                default:
+                    modelString = "";
+                    break;
+            }
+        }
+        
+        
         int rand;
         switch (Lora_Name)
         {
@@ -475,7 +479,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
             restore_faces = false,
             tiling = false,
             seed = seed,
-            prompt = prompt+ LoraPrompt+ ", BREAK, (masterpiece:1.2),  best quality, highres, highly detailed, perfect lighting , < lora:add_detail: 0.5 > "+ ((infoArray[4] == "old") ? ",(AS-Elderly:1.5)" : ""),
+            prompt = prompt+ LoraPrompt+ ", BREAK, (masterpiece:1.2),  best quality, highres, highly detailed, perfect lighting , <lora:add_detail:0.5> " + ((infoArray[4] == "old") ? ",(AS-Elderly:1.5)" : ""),
             negative_prompt = (Lora_Name == "漫畫") ? "easynegative, (badhandv4:1.2), NSFW, watermark jpeg artifacts signature watermark username blurry" : "easynegative, (badhandv4:1.2), NSFW, (worst quality:2), (low quality:2), (normal quality:2), lowres, normal quality, ((monochrome)), ((grayscale)), skin spots, acnes, skin blemishes, age spot, (ugly:1.331), (duplicate:1.331), watermark jpeg artifacts signature watermark username blurry, Stable_Yogis_SD1.5_Negatives-neg",
             override_settings = new Dictionary<string, object>
             {
