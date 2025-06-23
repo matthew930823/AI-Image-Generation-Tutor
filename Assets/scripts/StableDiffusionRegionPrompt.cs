@@ -145,22 +145,25 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
 
         yield return StartCoroutine(ReadFileAndSendImformation());
         // 然後執行 GenerateImageForMultipleChoice
-
-        yield return StartCoroutine(GenerateImageForMultipleChoice(768, 768, Prompt, checkpoint, LoRa, ControlNetType, ControlnetImageBase64, seed,
-            texture =>
-            {
-            // 將 Texture2D 轉為 Sprite 並灌入 UI Image
-            Sprite newSprite = Sprite.Create(
-                    texture,
-                    new Rect(0, 0, texture.width, texture.height),
-                    new Vector2(0.5f, 0.5f)
-                );
-                imageUI.sprite = newSprite;
-            }));
+        if(type!= "Controlnet")
+        {
+            yield return StartCoroutine(GenerateImageForMultipleChoice(768, 768, Prompt, checkpoint, LoRa, ControlNetType, "", ControlnetImageBase64, seed,
+                   texture =>
+                   {
+                        // 將 Texture2D 轉為 Sprite 並灌入 UI Image
+                        Sprite newSprite = Sprite.Create(
+                                texture,
+                                new Rect(0, 0, texture.width, texture.height),
+                                new Vector2(0.5f, 0.5f)
+                            );
+                       imageUI.sprite = newSprite;
+                   }));
+        }
+       
         switch (type) {
             case "LoRa":
                 LoRa = "";
-                yield return StartCoroutine(GenerateImageForMultipleChoice(768, 768, Prompt, checkpoint, LoRa, ControlNetType, ControlnetImageBase64, seed,
+                yield return StartCoroutine(GenerateImageForMultipleChoice(768, 768, Prompt, checkpoint, LoRa, ControlNetType, "", ControlnetImageBase64, seed,
                         texture =>
                         {
                             // 將 Texture2D 轉為 Sprite 並灌入 UI Image
@@ -173,7 +176,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
                         }));
                 break;
             case "Checkpoint":
-                yield return StartCoroutine(GenerateImageForMultipleChoice(768, 768, Prompt, "v1-5-pruned-emaonly.safetensors [6ce0161689]", LoRa, ControlNetType, ControlnetImageBase64, seed,
+                yield return StartCoroutine(GenerateImageForMultipleChoice(768, 768, Prompt, "v1-5-pruned-emaonly.safetensors [6ce0161689]", LoRa, ControlNetType, "", ControlnetImageBase64, seed,
                         texture =>
                         {
                             // 將 Texture2D 轉為 Sprite 並灌入 UI Image
@@ -190,7 +193,8 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
             case "Resolution":
                 int[] resolution = new int[] { 1280 ,384,1024,512};
                 int randResolution=resolution[UnityEngine.Random.Range(0, resolution.Length)];
-                yield return StartCoroutine(GenerateImageForMultipleChoice(randResolution, randResolution, Prompt, checkpoint, LoRa, ControlNetType, ControlnetImageBase64, seed,
+                Debug.Log("randResolution:" + randResolution);
+                yield return StartCoroutine(GenerateImageForMultipleChoice(randResolution, randResolution, Prompt, checkpoint, LoRa, ControlNetType,"", ControlnetImageBase64, seed,
                         texture =>
                         {
                             // 將 Texture2D 轉為 Sprite 並灌入 UI Image
@@ -203,7 +207,30 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
                         }));
                 break;
             case "Controlnet":
+                string[] ControlnetModule = new string[] { "depth_anything_v2", "canny", "openpose_full", "shuffle" };
+                string randControlnet = ControlnetModule[UnityEngine.Random.Range(0, ControlnetModule.Length)];
+                Debug.Log("randResolution:" + randControlnet);
+                ControlnetImageBase64 = Image2base64("ConTrolNet參考圖/other/"+ UnityEngine.Random.Range(1, 9));
+                // 2. 轉成圖片顯示
+                byte[] imageBytes = Convert.FromBase64String(ControlnetImageBase64);
+                Texture2D tex = new Texture2D(2, 2);
+                tex.LoadImage(imageBytes);
 
+                // 3. 建立 Sprite 並套用到 imageUI
+                Rect rect = new Rect(0, 0, tex.width, tex.height);
+                Vector2 pivot = new Vector2(0.5f, 0.5f);
+                imageUI.sprite = Sprite.Create(tex, rect, pivot);
+                yield return StartCoroutine(GenerateImageForMultipleChoice(768, 768, Prompt, checkpoint, LoRa, ControlNetType, randControlnet, ControlnetImageBase64, seed,
+                        texture =>
+                        {
+                            // 將 Texture2D 轉為 Sprite 並灌入 UI Image
+                            Sprite newSprite = Sprite.Create(
+                                    texture,
+                                    new Rect(0, 0, texture.width, texture.height),
+                                    new Vector2(0.5f, 0.5f)
+                                );
+                            imageUI2.sprite = newSprite;
+                        }));
                 break;
             default:
                 break;
@@ -285,7 +312,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
             true    // Fast Decoder
         };
     }
-    public IEnumerator GenerateImageForMultipleChoice(int Width,int Height,string prompt,string Model_checkpoint,string Lora_Name, string controlNetType, string base64Image,int seed, System.Action<Texture2D> callback)
+    public IEnumerator GenerateImageForMultipleChoice(int Width,int Height,string prompt,string Model_checkpoint,string Lora_Name, string controlNetType,string controlnetModule, string base64Image,int seed, System.Action<Texture2D> callback)
     {
         string url = "http://127.0.0.1:7860/sdapi/v1/txt2img";
 
@@ -294,7 +321,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
         string imageData = "data:image/png;base64," + base64Image;
 
         string modelString = "";
-        string moduleString = "none";
+        string moduleString = (controlnetModule == "")?"none": controlnetModule;
         string[] CheckpointType = {};
 
         switch (controlNetType)

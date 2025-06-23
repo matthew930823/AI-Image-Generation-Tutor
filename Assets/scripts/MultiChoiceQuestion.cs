@@ -162,7 +162,7 @@ public class MultiChoiceQuestion : MonoBehaviour
     {
         int randomValue = Random.Range(0, 5);// 0 到 4 的整數
         //string type=AllType[randomValue];
-        string type = "Checkpoint";
+        string type = "Controlnet";
         string[] AllCheckpoint = new string[] { "anime_cute.safetensors", "anime-real_hybrid.safetensors", "anime_soft.safetensors", "realistic_anything.safetensors" };
         string randomCheckpoint = AllCheckpoint[UnityEngine.Random.Range(0, AllCheckpoint.Length)];
         switch (type)
@@ -182,7 +182,7 @@ public class MultiChoiceQuestion : MonoBehaviour
                 StartCoroutine(stableDiffusionRegionPrompt.HandlePromptAndGenerateImage("", randomCheckpoint, type));
                 break;
             case "Controlnet":
-
+                StartCoroutine(stableDiffusionRegionPrompt.HandlePromptAndGenerateImage("", randomCheckpoint, type));
                 break;
             default:
                 break;
