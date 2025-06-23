@@ -212,10 +212,10 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
                    }));
                 break;
             case "Resolution":
-                int[] resolution = new int[] { 1280 ,384,1024,512};
+                int[] resolution = new int[] { 128 ,384,1024,512};
                 int randResolution=resolution[UnityEngine.Random.Range(0, resolution.Length)];
                 Debug.Log("randResolution:" + randResolution);
-                yield return StartCoroutine(GenerateImageForMultipleChoice(1280, 1280, Prompt, checkpoint, LoRa, ControlNetType,"", ControlnetImageBase64, seed,
+                yield return StartCoroutine(GenerateImageForMultipleChoice(1024, 1024, Prompt, checkpoint, LoRa, ControlNetType,"", ControlnetImageBase64, seed,
                         texture =>
                         {
                             // 將 Texture2D 轉為 Sprite 並灌入 UI Image
