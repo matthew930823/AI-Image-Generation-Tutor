@@ -125,8 +125,8 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
         // 初始化 List
         AllRegions = new List<Region>();
         allScores = new int[4];
-        string LoRa = LoRaType[UnityEngine.Random.Range(0, LoRaType.Length)];
-        StartCoroutine(HandlePromptAndGenerateImage(LoRa, "anime_cute.safetensors","LoRa"));
+        //string LoRa = LoRaType[UnityEngine.Random.Range(0, LoRaType.Length)];
+        //StartCoroutine(HandlePromptAndGenerateImage(LoRa, "anime_cute.safetensors","LoRa"));
     }
     string Image2base64(string filename)
     {
@@ -173,10 +173,34 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
                         }));
                 break;
             case "Checkpoint":
+                yield return StartCoroutine(GenerateImageForMultipleChoice(768, 768, Prompt, "v1-5-pruned-emaonly.safetensors [6ce0161689]", LoRa, ControlNetType, ControlnetImageBase64, seed,
+                        texture =>
+                        {
+                            // 將 Texture2D 轉為 Sprite 並灌入 UI Image
+                            Sprite newSprite = Sprite.Create(
+                                    texture,
+                                    new Rect(0, 0, texture.width, texture.height),
+                                    new Vector2(0.5f, 0.5f)
+                                );
+                            imageUI2.sprite = newSprite;
+                        }));
                 break;
             case "Prompt":
                 break;
             case "Resolution":
+                int[] resolution = new int[] { 1280 ,384,1024,512};
+                int randResolution=resolution[UnityEngine.Random.Range(0, resolution.Length)];
+                yield return StartCoroutine(GenerateImageForMultipleChoice(randResolution, randResolution, Prompt, "v1-5-pruned-emaonly.safetensors [6ce0161689]", LoRa, ControlNetType, ControlnetImageBase64, seed,
+                        texture =>
+                        {
+                            // 將 Texture2D 轉為 Sprite 並灌入 UI Image
+                            Sprite newSprite = Sprite.Create(
+                                    texture,
+                                    new Rect(0, 0, texture.width, texture.height),
+                                    new Vector2(0.5f, 0.5f)
+                                );
+                            imageUI2.sprite = newSprite;
+                        }));
                 break;
             case "Controlnet":
 
@@ -371,11 +395,11 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
             {
                 { "ad_model", "face_yolov8n_v2.pt" },
                 { "ad_prompt", "detail face," + ((infoArray[5] == "none") ? "":infoArray[5])+((infoArray[4] == "old") ? ",wrinkle":"")}
-            },
+            }/*,
             new Dictionary<string, object>
             {
                 { "ad_model", "hand_yolov8n.pt" }
-            }
+            }*/
         };
         Debug.Log("ADetaile:" + infoArray[5]);
         var requestData = new Txt2ImgRequest

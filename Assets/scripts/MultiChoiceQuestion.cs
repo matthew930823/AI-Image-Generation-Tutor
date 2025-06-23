@@ -55,7 +55,7 @@ public class MultiChoiceQuestion : MonoBehaviour
         //{
         //    Debug.Log("找到圖片: " + sprite.name);
         //}
-
+        GenerateQuestions();
     }
     public string ChangeQuestion(int Question)
     {
@@ -161,7 +161,8 @@ public class MultiChoiceQuestion : MonoBehaviour
     public void GenerateQuestions()
     {
         int randomValue = Random.Range(0, 5);// 0 到 4 的整數
-        string type=AllType[randomValue];
+        //string type=AllType[randomValue];
+        string type = "Checkpoint";
         string[] AllCheckpoint = new string[] { "anime_cute.safetensors", "anime-real_hybrid.safetensors", "anime_soft.safetensors", "realistic_anything.safetensors" };
         string randomCheckpoint = AllCheckpoint[UnityEngine.Random.Range(0, AllCheckpoint.Length)];
         switch (type)
