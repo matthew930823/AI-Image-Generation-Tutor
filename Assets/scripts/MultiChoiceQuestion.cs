@@ -9,6 +9,7 @@ public class MultiChoiceQuestion : MonoBehaviour
     public Image BeforeImage;
     public Image AfterImage;
     public Image[] HintImage = new Image[4];
+    public StableDiffusionRegionPrompt stableDiffusionRegionPrompt;
     private string[] AllAnswer = { "DreamShaper",
                                 "Cetus-Mix",
                                 "ReV Animated",
@@ -161,19 +162,23 @@ public class MultiChoiceQuestion : MonoBehaviour
     {
         int randomValue = Random.Range(0, 5);// 0 到 4 的整數
         string type=AllType[randomValue];
+        string[] AllCheckpoint = new string[] { "anime_cute.safetensors", "anime-real_hybrid.safetensors", "anime_soft.safetensors", "realistic_anything.safetensors" };
+        string randomCheckpoint = AllCheckpoint[UnityEngine.Random.Range(0, AllCheckpoint.Length)];
         switch (type)
         {
             case "LoRa":
-
+                string[] LoRaType = new string[] { "漢服", "漫畫", "貓", "水墨", "盒玩", "吉普利", "眼睛", "食物照片" };
+                string LoRa = LoRaType[UnityEngine.Random.Range(0, LoRaType.Length)];
+                StartCoroutine(stableDiffusionRegionPrompt.HandlePromptAndGenerateImage(LoRa, randomCheckpoint,type));
                 break;
             case "Checkpoint":
-
+                StartCoroutine(stableDiffusionRegionPrompt.HandlePromptAndGenerateImage("", randomCheckpoint, type));
                 break;
             case "Prompt":
-
+                StartCoroutine(stableDiffusionRegionPrompt.HandlePromptAndGenerateImage("", randomCheckpoint, type));
                 break;
             case "Resolution":
-                
+                StartCoroutine(stableDiffusionRegionPrompt.HandlePromptAndGenerateImage("", randomCheckpoint, type));
                 break;
             case "Controlnet":
 

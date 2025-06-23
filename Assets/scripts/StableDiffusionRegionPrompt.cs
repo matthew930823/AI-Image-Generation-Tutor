@@ -14,6 +14,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
 {
     //public RawImage imageUI;
     public Image imageUI;
+    public Image imageUI2;
     public GeminiAPI geminiAPI;
     private string Sampler_name = "DPM++ 2M";
     private string Scheduler = "Karras";
@@ -91,7 +92,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
         public bool enable_hr = false;
         public bool restore_faces = false;
         public bool tiling = false;
-        //public int seed = 1;
+        public int seed = 1;
 
         [JsonProperty("alwayson_scripts", NullValueHandling = NullValueHandling.Ignore)]
         public AlwaysonScripts alwayson_scripts;
@@ -124,8 +125,8 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
         // 初始化 List
         AllRegions = new List<Region>();
         allScores = new int[4];
-        
-        StartCoroutine(HandlePromptAndGenerateImage());
+        string LoRa = LoRaType[UnityEngine.Random.Range(0, LoRaType.Length)];
+        StartCoroutine(HandlePromptAndGenerateImage(LoRa, "anime_cute.safetensors","LoRa"));
     }
     string Image2base64(string filename)
     {
@@ -136,17 +137,16 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
         string base64Image = Convert.ToBase64String(controlImage.EncodeToPNG());
         return base64Image;
     }
-    IEnumerator HandlePromptAndGenerateImage()
+    public IEnumerator HandlePromptAndGenerateImage(string LoRa,string checkpoint,string type)
     {
-        string LoRa = LoRaType[UnityEngine.Random.Range(0, LoRaType.Length)];
-
+        int seed = UnityEngine.Random.Range(0, 50);
         // 等待 ReadFileAndSendPrompt 完成
         yield return StartCoroutine(ReadFileAndSendPrompt(LoRa));
 
         yield return StartCoroutine(ReadFileAndSendImformation());
         // 然後執行 GenerateImageForMultipleChoice
 
-        yield return StartCoroutine(GenerateImageForMultipleChoice(768, 768, Prompt, "anime_cute.safetensors", LoRa, ControlNetType, ControlnetImageBase64,
+        yield return StartCoroutine(GenerateImageForMultipleChoice(768, 768, Prompt, checkpoint, LoRa, ControlNetType, ControlnetImageBase64, seed,
             texture =>
             {
             // 將 Texture2D 轉為 Sprite 並灌入 UI Image
@@ -157,6 +157,34 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
                 );
                 imageUI.sprite = newSprite;
             }));
+        switch (type) {
+            case "LoRa":
+                LoRa = "";
+                yield return StartCoroutine(GenerateImageForMultipleChoice(768, 768, Prompt, checkpoint, LoRa, ControlNetType, ControlnetImageBase64, seed,
+                        texture =>
+                        {
+                            // 將 Texture2D 轉為 Sprite 並灌入 UI Image
+                            Sprite newSprite = Sprite.Create(
+                                    texture,
+                                    new Rect(0, 0, texture.width, texture.height),
+                                    new Vector2(0.5f, 0.5f)
+                                );
+                            imageUI2.sprite = newSprite;
+                        }));
+                break;
+            case "Checkpoint":
+                break;
+            case "Prompt":
+                break;
+            case "Resolution":
+                break;
+            case "Controlnet":
+
+                break;
+            default:
+                break;
+        }
+
     }
     List<object> BuildFullArgs(List<Region> regions)
     {
@@ -233,7 +261,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
             true    // Fast Decoder
         };
     }
-    public IEnumerator GenerateImageForMultipleChoice(int Width,int Height,string prompt,string Model_checkpoint,string Lora_Name, string controlNetType, string base64Image, System.Action<Texture2D> callback)
+    public IEnumerator GenerateImageForMultipleChoice(int Width,int Height,string prompt,string Model_checkpoint,string Lora_Name, string controlNetType, string base64Image,int seed, System.Action<Texture2D> callback)
     {
         string url = "http://127.0.0.1:7860/sdapi/v1/txt2img";
 
@@ -360,6 +388,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
             enable_hr = false,
             restore_faces = false,
             tiling = false,
+            seed = seed,
             prompt = prompt+ LoraPrompt+ ", BREAK, (masterpiece:1.2),  best quality, highres, highly detailed, perfect lighting , < lora:add_detail: 0.5 > "+ ((infoArray[4] == "old") ? ",(AS-Elderly:1.5)" : ""),
             negative_prompt = (Lora_Name == "漫畫") ? "easynegative, (badhandv4:1.2), NSFW, watermark jpeg artifacts signature watermark username blurry" : "easynegative, (badhandv4:1.2), NSFW, (worst quality:2), (low quality:2), (normal quality:2), lowres, normal quality, ((monochrome)), ((grayscale)), skin spots, acnes, skin blemishes, age spot, (ugly:1.331), (duplicate:1.331), watermark jpeg artifacts signature watermark username blurry, Stable_Yogis_SD1.5_Negatives-neg",
             override_settings = new Dictionary<string, object>
