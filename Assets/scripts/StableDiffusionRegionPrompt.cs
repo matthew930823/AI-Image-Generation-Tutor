@@ -764,7 +764,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
 
         //Debug.Log(fileContent+ AddLLM);
         // 呼叫 Gemini API 並傳入檔案內容
-        yield return StartCoroutine(geminiAPI.SendRequest(fileContent+ AddLLM+ "，目前的主體有:"+MainBodyLLM+ "，不能重複出現同樣的主體，不能重複出現同樣的主體，不能重複出現同樣的主體", (result) =>
+        yield return StartCoroutine(geminiAPI.SendRequest(fileContent+ AddLLM+ "，不能出現的主體有:"+MainBodyLLM, (result) =>
         {
             //string prompt = result.Split(new string[] { "PROMPT={" }, StringSplitOptions.None)[1].TrimEnd('}');
             Match match = Regex.Match(result, @"\{([^}]*)\}");
