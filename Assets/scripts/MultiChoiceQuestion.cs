@@ -56,7 +56,8 @@ public class MultiChoiceQuestion : MonoBehaviour
         //{
         //    Debug.Log("找到圖片: " + sprite.name);
         //}
-        GenerateQuestions();
+        //GenerateQuestions();
+        StartCoroutine(stableDiffusionRegionPrompt.StartAutoImageUpdate());
     }
     public string ChangeQuestion(int Question)
     {
@@ -159,7 +160,7 @@ public class MultiChoiceQuestion : MonoBehaviour
         return Answer;
     }
 
-    public void GenerateQuestions()
+    public string[] GenerateQuestions()
     {
         string type = "Resolution";
         int[] weights = { 20,20, 200, 200, 20 };// { "LoRa", "Checkpoint", "Prompt", "Resolution","Controlnet" }
@@ -184,22 +185,28 @@ public class MultiChoiceQuestion : MonoBehaviour
             case "LoRa":
                 string[] LoRaType = new string[] { "漢服", "漫畫", "貓", "水墨", "盒玩", "吉普利", "眼睛", "食物照片" };
                 string LoRa = LoRaType[UnityEngine.Random.Range(0, LoRaType.Length)];
-                StartCoroutine(stableDiffusionRegionPrompt.HandlePromptAndGenerateImage(LoRa, randomCheckpoint,type));
-                break;
+                return new string[] { LoRa, randomCheckpoint, type };
+                //StartCoroutine(stableDiffusionRegionPrompt.HandlePromptAndGenerateImage(LoRa, randomCheckpoint,type));
+                //break;
             case "Checkpoint":
                 StartCoroutine(stableDiffusionRegionPrompt.HandlePromptAndGenerateImage("", randomCheckpoint, type));
-                break;
+                return new string[] { "", randomCheckpoint, type };
+                //break;
             case "Prompt":
                 StartCoroutine(stableDiffusionRegionPrompt.HandlePromptAndGenerateImage("", randomCheckpoint, type));
-                break;
+                return new string[] { "", randomCheckpoint, type };
+                //break;
             case "Resolution":
                 StartCoroutine(stableDiffusionRegionPrompt.HandlePromptAndGenerateImage("", randomCheckpoint, type));
-                break;
+                return new string[] { "", randomCheckpoint, type };
+                //break;
             case "Controlnet":
                 StartCoroutine(stableDiffusionRegionPrompt.HandlePromptAndGenerateImage("Controlnet", randomCheckpoint, type));
-                break;
+                return new string[] { "Controlnet", randomCheckpoint, type };
+                //break;
             default:
-                break;
+                return new string[] { "","","" };
+                //break;
         }
     }
     // Update is called once per frame

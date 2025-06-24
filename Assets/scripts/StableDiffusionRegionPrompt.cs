@@ -15,6 +15,8 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
     //public RawImage imageUI;
     public Image imageUI;
     public Image imageUI2;
+    Texture2D img1 = null;
+    Texture2D img2 = null;
     public GeminiAPI geminiAPI;
     private string Sampler_name = "DPM++ 2M";
     private string Scheduler = "Karras";
@@ -23,6 +25,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
     string ControlNetType;
     string[] infoArray;//提取細節
     string[] LoRaType = new string[] { "漢服", "漫畫", "貓", "水墨", "盒玩", "吉普利", "眼睛", "食物照片" };
+    public MultiChoiceQuestion multiChoiceQuestion;
     [System.Serializable]
     public class Region
     {
@@ -150,13 +153,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
             yield return StartCoroutine(GenerateImageForMultipleChoice(768, 768, Prompt, checkpoint, LoRa, ControlNetType, "", ControlnetImageBase64, seed,
                    texture =>
                    {
-                        // 將 Texture2D 轉為 Sprite 並灌入 UI Image
-                        Sprite newSprite = Sprite.Create(
-                                texture,
-                                new Rect(0, 0, texture.width, texture.height),
-                                new Vector2(0.5f, 0.5f)
-                            );
-                       imageUI.sprite = newSprite;
+                       img1 = texture;
                    }));
         }
        
@@ -166,42 +163,24 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
                 yield return StartCoroutine(GenerateImageForMultipleChoice(768, 768, Prompt, checkpoint, LoRa, ControlNetType, "", ControlnetImageBase64, seed,
                         texture =>
                         {
-                            // 將 Texture2D 轉為 Sprite 並灌入 UI Image
-                            Sprite newSprite = Sprite.Create(
-                                    texture,
-                                    new Rect(0, 0, texture.width, texture.height),
-                                    new Vector2(0.5f, 0.5f)
-                                );
-                            imageUI2.sprite = newSprite;
+                            img2 = texture;
                         }));
                 break;
             case "Checkpoint":
                 yield return StartCoroutine(GenerateImageForMultipleChoice(768, 768, Prompt, "v1-5-pruned-emaonly.safetensors [6ce0161689]", LoRa, ControlNetType, "", ControlnetImageBase64, seed,
                         texture =>
                         {
-                            // 將 Texture2D 轉為 Sprite 並灌入 UI Image
-                            Sprite newSprite = Sprite.Create(
-                                    texture,
-                                    new Rect(0, 0, texture.width, texture.height),
-                                    new Vector2(0.5f, 0.5f)
-                                );
-                            imageUI2.sprite = newSprite;
+                            img2 = texture;
                         }));
                 break;
             case "Prompt":
                 string[] add = new string[] { "desert", "forest", "beach", "grassland", "lake", "blizzard", "sunset", "foggy", "thunderstorm", "god rays", "downtown", "cyberpunk", "oil painting","watercolor", "japanese temple" , "castle", "classroom", "bedroom", "magic forest", "lava ground", "space station", "red", "blue", "green", "yellow", "purple", "orange", "pink", "black", "white", "gray", "brown" };
                 string Addresult = add[UnityEngine.Random.Range(0, add.Length)];
                 Debug.Log("新增提示詞為:" + Addresult);
-                yield return StartCoroutine(GenerateImageForMultipleChoice(768, 768, "(" + Addresult + ":2)" + Prompt, checkpoint, LoRa, ControlNetType, "", ControlnetImageBase64, seed,
+                yield return StartCoroutine(GenerateImageForMultipleChoice(768, 768, "(" + Addresult + ":2)," + Prompt, checkpoint, LoRa, ControlNetType, "", ControlnetImageBase64, seed,
                    texture =>
                    {
-                       // 將 Texture2D 轉為 Sprite 並灌入 UI Image
-                       Sprite newSprite = Sprite.Create(
-                               texture,
-                               new Rect(0, 0, texture.width, texture.height),
-                               new Vector2(0.5f, 0.5f)
-                           );
-                       imageUI2.sprite = newSprite;
+                       img2 = texture;
                    }));
                 break;
             case "Resolution":
@@ -211,13 +190,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
                 yield return StartCoroutine(GenerateImageForMultipleChoice(randResolution, randResolution, Prompt, checkpoint, LoRa, ControlNetType,"", ControlnetImageBase64, seed,
                         texture =>
                         {
-                            // 將 Texture2D 轉為 Sprite 並灌入 UI Image
-                            Sprite newSprite = Sprite.Create(
-                                    texture,
-                                    new Rect(0, 0, texture.width, texture.height),
-                                    new Vector2(0.5f, 0.5f)
-                                );
-                            imageUI2.sprite = newSprite;
+                            img2 = texture;
                         }));
                 break;
             case "Controlnet":
@@ -234,19 +207,48 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
                 yield return StartCoroutine(GenerateImageForMultipleChoice(768, 768, Prompt, checkpoint, LoRa, ControlNetType, randControlnet, ControlnetImageBase64, seed,
                         texture =>
                         {
-                            // 將 Texture2D 轉為 Sprite 並灌入 UI Image
-                            Sprite newSprite = Sprite.Create(
-                                    texture,
-                                    new Rect(0, 0, texture.width, texture.height),
-                                    new Vector2(0.5f, 0.5f)
-                                );
-                            imageUI2.sprite = newSprite;
+                            img2 = texture;
                         }));
                 break;
             default:
                 break;
         }
+        
+    }
+    public IEnumerator StartAutoImageUpdate()
+    {
+        const float interval = 180f; // 三分鐘
+        bool first = true;
+        while (true)
+        {
+            float startTime = Time.realtimeSinceStartup;
 
+            Debug.Log("⏳ 開始生成圖片...");
+            string[] result = multiChoiceQuestion.GenerateQuestions();
+            yield return StartCoroutine(HandlePromptAndGenerateImage(result[0], result[1], result[2]));
+            float elapsed = Time.realtimeSinceStartup - startTime;
+            float remaining = 180f;
+            if (first)
+            {
+                imageUI.sprite = Sprite.Create(img1, new Rect(0, 0, img1.width, img1.height), new Vector2(0.5f, 0.5f));
+                imageUI2.sprite = Sprite.Create(img2, new Rect(0, 0, img2.width, img2.height), new Vector2(0.5f, 0.5f));
+                first = false;
+            }
+            else
+            {
+                elapsed = Time.realtimeSinceStartup - startTime;
+                remaining = Mathf.Max(0, interval - elapsed);
+            }
+            
+
+            Debug.Log($"⏱️ 圖片生成耗時：{elapsed:F1} 秒，等待剩餘 {remaining:F1} 秒");
+            yield return new WaitForSeconds(remaining);
+            if (!first)
+            {
+                imageUI.sprite = Sprite.Create(img1, new Rect(0, 0, img1.width, img1.height), new Vector2(0.5f, 0.5f));
+                imageUI2.sprite = Sprite.Create(img2, new Rect(0, 0, img2.width, img2.height), new Vector2(0.5f, 0.5f));
+            }
+        }
     }
     List<object> BuildFullArgs(List<Region> regions)
     {
