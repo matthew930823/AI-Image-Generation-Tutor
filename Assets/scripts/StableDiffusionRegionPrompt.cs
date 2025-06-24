@@ -217,7 +217,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
     }
     public IEnumerator StartAutoImageUpdate()
     {
-        const float interval = 180f; // 三分鐘
+        const float interval = 210f; // 三分鐘半
         bool first = true;
         while (true)
         {
@@ -226,7 +226,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
             Debug.Log("⏳ 開始生成圖片...");
             string[] result;
             float elapsed;
-            float remaining = 180f;
+            float remaining = 210f;
             if (first)
             {
                 result = multiChoiceQuestion.GenerateQuestions();
