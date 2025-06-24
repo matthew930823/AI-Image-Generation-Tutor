@@ -27,10 +27,6 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
     string[] LoRaType = new string[] { "漢服", "漫畫", "貓", "水墨", "盒玩", "吉普利", "眼睛", "食物照片" };
     public MultiChoiceQuestion multiChoiceQuestion;
 
-    public Text countdownText; // ⬅ UI Text，要在 Inspector 指定
-    private float waitStart = 0f;
-    private float remainingTime = 0f;
-    private bool isWaiting = false;
 
     [System.Serializable]
     public class Region
@@ -221,19 +217,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
         }
         
     }
-    void Update()
-    {
-        if (isWaiting)
-        {
-            float timePassed = Time.realtimeSinceStartup - waitStart;
-            float countdown = Mathf.Max(0, remainingTime - timePassed);
-            countdownText.text = $"下一輪倒數：{Mathf.CeilToInt(countdown)} 秒";
-        }
-        else
-        {
-            countdownText.text = "正在生成中"; // 或顯示「正在生成中」等提示
-        }
-    }
+    
 
     private bool skipWait = false;
     public void OnSkipButtonPressed()
@@ -242,7 +226,6 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
     }
     public IEnumerator StartAutoImageUpdate()
     {
-        const float interval = 210f; // 三分鐘半
         bool first = true;
         while (true)
         {
@@ -250,8 +233,6 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
 
             Debug.Log("⏳ 開始生成圖片...");
             string[] result;
-            float elapsed;
-            float remaining = 210f;
             if (first)
             {
                 result = multiChoiceQuestion.GenerateQuestions();
@@ -263,19 +244,9 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
             }
             result = multiChoiceQuestion.GenerateQuestions();
             yield return StartCoroutine(HandlePromptAndGenerateImage(result[0], result[1], result[2]));
-            elapsed = Time.realtimeSinceStartup - startTime;
-            remaining = Mathf.Max(0, interval - elapsed);
-            
-
-            Debug.Log($"⏱️ 圖片生成耗時：{elapsed:F1} 秒，等待剩餘 {remaining:F1} 秒");
-            waitStart = Time.realtimeSinceStartup;
-            remainingTime = Mathf.Max(0, interval - elapsed);
-            isWaiting = true;
             skipWait = false;
 
-            yield return new WaitUntil(() => skipWait || (Time.realtimeSinceStartup - waitStart >= remainingTime));
-
-            isWaiting = false;
+            yield return new WaitUntil(() => skipWait);
             if (!first)
             {
                 imageUI.sprite = Sprite.Create(img1, new Rect(0, 0, img1.width, img1.height), new Vector2(0.5f, 0.5f));
