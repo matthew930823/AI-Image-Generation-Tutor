@@ -25,6 +25,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
     string ControlNetType;
     string[] infoArray;//提取細節
     string[] LoRaType = new string[] { "漢服", "漫畫", "貓", "水墨", "盒玩", "吉普利", "眼睛", "食物照片" };
+    Queue<string> MainBody = new Queue<string>();
     public MultiChoiceQuestion multiChoiceQuestion;
 
 
@@ -230,27 +231,51 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
         while (true)
         {
             float startTime = Time.realtimeSinceStartup;
-
             Debug.Log("⏳ 開始生成圖片...");
             string[] result;
             if (first)
             {
                 result = multiChoiceQuestion.GenerateQuestions();
                 yield return StartCoroutine(HandlePromptAndGenerateImage(result[0], result[1], result[2]));
-                imageUI.sprite = Sprite.Create(img1, new Rect(0, 0, img1.width, img1.height), new Vector2(0.5f, 0.5f));
-                imageUI2.sprite = Sprite.Create(img2, new Rect(0, 0, img2.width, img2.height), new Vector2(0.5f, 0.5f));
+                if(result[2] == "Checkpoint")
+                {
+                    imageUI2.sprite = Sprite.Create(img1, new Rect(0, 0, img1.width, img1.height), new Vector2(0.5f, 0.5f));
+                    imageUI.sprite = Sprite.Create(img2, new Rect(0, 0, img2.width, img2.height), new Vector2(0.5f, 0.5f));
+                }
+                else
+                {
+                    imageUI.sprite = Sprite.Create(img1, new Rect(0, 0, img1.width, img1.height), new Vector2(0.5f, 0.5f));
+                    imageUI2.sprite = Sprite.Create(img2, new Rect(0, 0, img2.width, img2.height), new Vector2(0.5f, 0.5f));
+                }
+                MainBody.Enqueue(Prompt.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries)[0]);
+                if (MainBody.Count > 5)
+                {
+                    MainBody.Dequeue();
+                }
                 first = false;
                 Debug.Log("已經生成完第一組圖 ，開始生成第二組圖");
             }
             result = multiChoiceQuestion.GenerateQuestions();
             yield return StartCoroutine(HandlePromptAndGenerateImage(result[0], result[1], result[2]));
             skipWait = false;
-
+            MainBody.Enqueue(Prompt.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries)[0]);
+            if (MainBody.Count > 5)
+            {
+                MainBody.Dequeue();
+            }
             yield return new WaitUntil(() => skipWait);
             if (!first)
             {
-                imageUI.sprite = Sprite.Create(img1, new Rect(0, 0, img1.width, img1.height), new Vector2(0.5f, 0.5f));
-                imageUI2.sprite = Sprite.Create(img2, new Rect(0, 0, img2.width, img2.height), new Vector2(0.5f, 0.5f));
+                if (result[2] == "Checkpoint")
+                {
+                    imageUI2.sprite = Sprite.Create(img1, new Rect(0, 0, img1.width, img1.height), new Vector2(0.5f, 0.5f));
+                    imageUI.sprite = Sprite.Create(img2, new Rect(0, 0, img2.width, img2.height), new Vector2(0.5f, 0.5f));
+                }
+                else
+                {
+                    imageUI.sprite = Sprite.Create(img1, new Rect(0, 0, img1.width, img1.height), new Vector2(0.5f, 0.5f));
+                    imageUI2.sprite = Sprite.Create(img2, new Rect(0, 0, img2.width, img2.height), new Vector2(0.5f, 0.5f));
+                }
             }
         }
     }
@@ -721,6 +746,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
                 AddLLM = "題目由你來決定";
                 break;
         }
+        string MainBodyLLM = string.Join(",", MainBody);
 #if UNITY_ANDROID && !UNITY_EDITOR
         UnityWebRequest www = UnityWebRequest.Get(path);
         yield return www.SendWebRequest();
@@ -736,7 +762,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
 
         //Debug.Log(fileContent+ AddLLM);
         // 呼叫 Gemini API 並傳入檔案內容
-        yield return StartCoroutine(geminiAPI.SendRequest(fileContent+ AddLLM, (result) =>
+        yield return StartCoroutine(geminiAPI.SendRequest(fileContent+ AddLLM+ "，目前的主體有:"+MainBodyLLM+ "，不能重複出題，不能重複出題，不能重複出題", (result) =>
         {
             //string prompt = result.Split(new string[] { "PROMPT={" }, StringSplitOptions.None)[1].TrimEnd('}');
             Match match = Regex.Match(result, @"\{([^}]*)\}");
