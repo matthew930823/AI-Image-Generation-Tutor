@@ -88,7 +88,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
         public int width = 512;
         public int height = 512;
         //public int n_iter = 2;
-        public int batch_size = 3;
+        public int batch_size = 1;
         public bool enable_hr = false;
         public bool restore_faces = false;
         public bool tiling = false;
