@@ -187,7 +187,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
                    }));
                 break;
             case "Resolution":
-                int[] resolution = new int[] { 128 ,384,1024,512};
+                int[] resolution = new int[] { 128 ,384,1024,512,1280};
                 int randResolution=resolution[UnityEngine.Random.Range(0, resolution.Length)];
                 Debug.Log("randResolution:" + randResolution);
                 yield return StartCoroutine(GenerateImageForMultipleChoice(randResolution, randResolution, Prompt, checkpoint, LoRa, ControlNetType,"", ControlnetImageBase64, seed,
