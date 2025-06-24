@@ -747,6 +747,8 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
                 break;
         }
         string MainBodyLLM = string.Join(",", MainBody);
+
+        Debug.Log("目前有的主體:"+ MainBodyLLM);
 #if UNITY_ANDROID && !UNITY_EDITOR
         UnityWebRequest www = UnityWebRequest.Get(path);
         yield return www.SendWebRequest();
