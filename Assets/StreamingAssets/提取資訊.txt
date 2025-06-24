@@ -11,6 +11,6 @@
 
 你需要告訴我提示字中主體的表情，如果沒有則回答none，例子:我會給你提示字:(1 young Asian woman:1.3), standing, smiling, baking cookies, white apron, modern kitchen, stainless steel appliances, warm light, happy.，你要表情:smiling
 
-1.主體是不是人 2.是人的話性別是什麼 3.是女生的話是girl還是woman 4.人的姿勢是什麼(限定) 5.是不是老人 6.人的表情是什麼
+1.主體是不是人，不是人回答no 2.是人的話性別是什麼 3.是女生的話是girl還是woman 4.人的姿勢是什麼(限定) 5.是不是老人 6.人的表情是什麼
 
 請你依照{1,2,3,4,5,6}(回傳不要有123456)的格式回傳給我

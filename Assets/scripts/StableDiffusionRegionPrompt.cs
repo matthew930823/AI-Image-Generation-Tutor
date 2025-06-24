@@ -436,7 +436,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
         {
             new Dictionary<string, object>
             {
-                { "enabled", (modelString == "")?false:true },
+                { "enabled", (modelString == ""||infoArray[0] == "no")?false:true },
                 { "model", modelString },
                 { "module", moduleString },
                 { "weight", 1.0f },
@@ -455,7 +455,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
         };
         var adetailerArgs = new List<object>
         {
-            true,   // enabled
+            (infoArray[0] == "no")?false:true,   // enabled
             false,  // disable second pass
             new Dictionary<string, object>
             {
@@ -485,7 +485,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
             {
                 { "sd_model_checkpoint", Model_checkpoint },
                 { "CLIP_stop_at_last_layers", 2 }
-            },
+            }, 
             alwayson_scripts = new AlwaysonScripts
             {
                 ControlNet = new ControlNetWrapper{args = controlnetArgs},

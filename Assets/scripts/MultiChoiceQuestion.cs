@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -160,9 +161,22 @@ public class MultiChoiceQuestion : MonoBehaviour
 
     public void GenerateQuestions()
     {
-        int randomValue = Random.Range(0, 5);// 0 到 4 的整數
-        //string type=AllType[randomValue];
         string type = "Resolution";
+        int[] weights = { 20,20, 200, 200, 20 };// { "LoRa", "Checkpoint", "Prompt", "Resolution","Controlnet" }
+
+        int totalWeight = weights.Sum();
+        int rand = Random.Range(0, totalWeight);
+        int cumulative = 0;
+
+        for (int i = 0; i < weights.Length; i++)
+        {
+            cumulative += weights[i];
+            if (rand < cumulative)
+            {
+                type = AllType[i];
+                break;
+            }
+        }
         string[] AllCheckpoint = new string[] { "anime_cute.safetensors", "anime-real_hybrid.safetensors", "anime_soft.safetensors", "realistic_anything.safetensors" };
         string randomCheckpoint = AllCheckpoint[UnityEngine.Random.Range(0, AllCheckpoint.Length)];
         switch (type)
