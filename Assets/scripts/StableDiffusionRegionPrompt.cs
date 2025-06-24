@@ -224,21 +224,22 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
             float startTime = Time.realtimeSinceStartup;
 
             Debug.Log("⏳ 開始生成圖片...");
-            string[] result = multiChoiceQuestion.GenerateQuestions();
-            yield return StartCoroutine(HandlePromptAndGenerateImage(result[0], result[1], result[2]));
-            float elapsed = Time.realtimeSinceStartup - startTime;
+            string[] result;
+            float elapsed;
             float remaining = 180f;
             if (first)
             {
+                result = multiChoiceQuestion.GenerateQuestions();
+                yield return StartCoroutine(HandlePromptAndGenerateImage(result[0], result[1], result[2]));
                 imageUI.sprite = Sprite.Create(img1, new Rect(0, 0, img1.width, img1.height), new Vector2(0.5f, 0.5f));
                 imageUI2.sprite = Sprite.Create(img2, new Rect(0, 0, img2.width, img2.height), new Vector2(0.5f, 0.5f));
                 first = false;
+                Debug.Log("已經生成完第一組圖 ，開始生成第二組圖");
             }
-            else
-            {
-                elapsed = Time.realtimeSinceStartup - startTime;
-                remaining = Mathf.Max(0, interval - elapsed);
-            }
+            result = multiChoiceQuestion.GenerateQuestions();
+            yield return StartCoroutine(HandlePromptAndGenerateImage(result[0], result[1], result[2]));
+            elapsed = Time.realtimeSinceStartup - startTime;
+            remaining = Mathf.Max(0, interval - elapsed);
             
 
             Debug.Log($"⏱️ 圖片生成耗時：{elapsed:F1} 秒，等待剩餘 {remaining:F1} 秒");
