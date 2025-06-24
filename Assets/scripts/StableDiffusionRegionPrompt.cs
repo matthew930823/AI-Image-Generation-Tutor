@@ -189,10 +189,10 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
                         }));
                 break;
             case "Prompt":
-                string[] add = new string[] { "desert", "forest", "beach", "grassland", "lake", "blizzard", "sunset", "foggy", "thunderstorm", "god rays", "downtown", "cyberpunk city", "japanese temple" , "castle", "classroom", "bedroom", "magic forest", "lava ground", "space station", "red", "blue", "green", "yellow", "purple", "orange", "pink", "black", "white", "gray", "brown" };
+                string[] add = new string[] { "desert", "forest", "beach", "grassland", "lake", "blizzard", "sunset", "foggy", "thunderstorm", "god rays", "downtown", "cyberpunk", "oil painting","watercolor", "japanese temple" , "castle", "classroom", "bedroom", "magic forest", "lava ground", "space station", "red", "blue", "green", "yellow", "purple", "orange", "pink", "black", "white", "gray", "brown" };
                 string Addresult = add[UnityEngine.Random.Range(0, add.Length)];
                 Debug.Log("新增提示詞為:" + Addresult);
-                yield return StartCoroutine(GenerateImageForMultipleChoice(768, 768, Prompt, "("+ Addresult + ":2)"+checkpoint, LoRa, ControlNetType, "", ControlnetImageBase64, seed,
+                yield return StartCoroutine(GenerateImageForMultipleChoice(768, 768, "(" + Addresult + ":2)" + Prompt, checkpoint, LoRa, ControlNetType, "", ControlnetImageBase64, seed,
                    texture =>
                    {
                        // 將 Texture2D 轉為 Sprite 並灌入 UI Image
