@@ -189,19 +189,19 @@ public class MultiChoiceQuestion : MonoBehaviour
                 //StartCoroutine(stableDiffusionRegionPrompt.HandlePromptAndGenerateImage(LoRa, randomCheckpoint,type));
                 //break;
             case "Checkpoint":
-                StartCoroutine(stableDiffusionRegionPrompt.HandlePromptAndGenerateImage("", randomCheckpoint, type));
+                //StartCoroutine(stableDiffusionRegionPrompt.HandlePromptAndGenerateImage("", randomCheckpoint, type));
                 return new string[] { "", randomCheckpoint, type };
                 //break;
             case "Prompt":
-                StartCoroutine(stableDiffusionRegionPrompt.HandlePromptAndGenerateImage("", randomCheckpoint, type));
+                //StartCoroutine(stableDiffusionRegionPrompt.HandlePromptAndGenerateImage("", randomCheckpoint, type));
                 return new string[] { "", randomCheckpoint, type };
                 //break;
             case "Resolution":
-                StartCoroutine(stableDiffusionRegionPrompt.HandlePromptAndGenerateImage("", randomCheckpoint, type));
+                //StartCoroutine(stableDiffusionRegionPrompt.HandlePromptAndGenerateImage("", randomCheckpoint, type));
                 return new string[] { "", randomCheckpoint, type };
                 //break;
             case "Controlnet":
-                StartCoroutine(stableDiffusionRegionPrompt.HandlePromptAndGenerateImage("Controlnet", randomCheckpoint, type));
+                //StartCoroutine(stableDiffusionRegionPrompt.HandlePromptAndGenerateImage("Controlnet", randomCheckpoint, type));
                 return new string[] { "Controlnet", randomCheckpoint, type };
                 //break;
             default:
