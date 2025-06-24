@@ -172,6 +172,7 @@ MonoBehaviour:
   imageUI: {fileID: 1033482910}
   imageUI2: {fileID: 585569800}
   geminiAPI: {fileID: 1390141816}
+  multiChoiceQuestion: {fileID: 152257789}
   AllRegions: []
 --- !u!114 &152257787
 MonoBehaviour:
