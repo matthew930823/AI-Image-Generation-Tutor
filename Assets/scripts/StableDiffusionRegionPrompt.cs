@@ -189,17 +189,10 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
                         }));
                 break;
             case "Prompt":
-                
-                var parts = Prompt.Split(',')
-                                  .Select(p => p.Trim())
-                                  .ToList();
-
-                int rand = UnityEngine.Random.Range(1, 5);
-                Debug.Log("去除的字為:"+parts[rand]);
-                parts.RemoveAt(rand);
-                string result = string.Join(", ", parts);
-                Debug.Log("修改為:" + result);
-                yield return StartCoroutine(GenerateImageForMultipleChoice(768, 768, result, checkpoint, LoRa, ControlNetType, "", ControlnetImageBase64, seed,
+                string[] add = new string[] { "desert", "forest", "beach", "grassland", "lake", "blizzard", "sunset", "foggy", "thunderstorm", "god rays", "downtown", "cyberpunk city", "japanese temple" , "castle", "classroom", "bedroom", "magic forest", "lava ground", "space station", "red", "blue", "green", "yellow", "purple", "orange", "pink", "black", "white", "gray", "brown" };
+                string Addresult = add[UnityEngine.Random.Range(0, add.Length)];
+                Debug.Log("新增提示詞為:" + Addresult);
+                yield return StartCoroutine(GenerateImageForMultipleChoice(768, 768, Prompt, "("+ Addresult + ":2)"+checkpoint, LoRa, ControlNetType, "", ControlnetImageBase64, seed,
                    texture =>
                    {
                        // 將 Texture2D 轉為 Sprite 並灌入 UI Image
