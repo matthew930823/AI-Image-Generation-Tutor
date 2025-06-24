@@ -196,7 +196,7 @@ public class MultiChoiceQuestion : MonoBehaviour
                 StartCoroutine(stableDiffusionRegionPrompt.HandlePromptAndGenerateImage("", randomCheckpoint, type));
                 break;
             case "Controlnet":
-                StartCoroutine(stableDiffusionRegionPrompt.HandlePromptAndGenerateImage("", randomCheckpoint, type));
+                StartCoroutine(stableDiffusionRegionPrompt.HandlePromptAndGenerateImage("Controlnet", randomCheckpoint, type));
                 break;
             default:
                 break;

@@ -708,6 +708,9 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
             case "食物照片":
                 AddLLM = "主角是一個食物(禁止壽司)，提示詞需要包含foodphoto，可以使用攝影細節，其他由你自由發揮";
                 break;
+            case "Controlnet":
+                AddLLM = "主角是一個人，其他由你自由發揮";
+                break;
             default:
                 AddLLM = "題目由你來決定";
                 break;
