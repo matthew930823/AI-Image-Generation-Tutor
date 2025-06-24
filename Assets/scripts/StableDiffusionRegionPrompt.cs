@@ -26,6 +26,12 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
     string[] infoArray;//提取細節
     string[] LoRaType = new string[] { "漢服", "漫畫", "貓", "水墨", "盒玩", "吉普利", "眼睛", "食物照片" };
     public MultiChoiceQuestion multiChoiceQuestion;
+
+    public Text countdownText; // ⬅ UI Text，要在 Inspector 指定
+    private float waitStart = 0f;
+    private float remainingTime = 0f;
+    private bool isWaiting = false;
+
     [System.Serializable]
     public class Region
     {
@@ -215,6 +221,25 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
         }
         
     }
+    void Update()
+    {
+        if (isWaiting)
+        {
+            float timePassed = Time.realtimeSinceStartup - waitStart;
+            float countdown = Mathf.Max(0, remainingTime - timePassed);
+            countdownText.text = $"下一輪倒數：{Mathf.CeilToInt(countdown)} 秒";
+        }
+        else
+        {
+            countdownText.text = "正在生成中"; // 或顯示「正在生成中」等提示
+        }
+    }
+
+    private bool skipWait = false;
+    public void OnSkipButtonPressed()
+    {
+        skipWait = true;
+    }
     public IEnumerator StartAutoImageUpdate()
     {
         const float interval = 210f; // 三分鐘半
@@ -243,7 +268,14 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
             
 
             Debug.Log($"⏱️ 圖片生成耗時：{elapsed:F1} 秒，等待剩餘 {remaining:F1} 秒");
-            yield return new WaitForSeconds(remaining);
+            waitStart = Time.realtimeSinceStartup;
+            remainingTime = Mathf.Max(0, interval - elapsed);
+            isWaiting = true;
+            skipWait = false;
+
+            yield return new WaitUntil(() => skipWait || (Time.realtimeSinceStartup - waitStart >= remainingTime));
+
+            isWaiting = false;
             if (!first)
             {
                 imageUI.sprite = Sprite.Create(img1, new Rect(0, 0, img1.width, img1.height), new Vector2(0.5f, 0.5f));
