@@ -203,10 +203,10 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
                 ControlnetImageBase64 = GetRandomControlImageBase64("ConTrolNet參考圖/other");
                 byte[] imageBytes = Convert.FromBase64String(ControlnetImageBase64);
                 Texture2D tex = new Texture2D(2, 2);
-                tex.LoadImage(imageBytes);
-                Rect rect = new Rect(0, 0, tex.width, tex.height);
-                Vector2 pivot = new Vector2(0.5f, 0.5f);
-                imageUI.sprite = Sprite.Create(tex, rect, pivot);
+                img1.LoadImage(imageBytes);
+                //Rect rect = new Rect(0, 0, tex.width, tex.height);
+                //Vector2 pivot = new Vector2(0.5f, 0.5f);
+                //imageUI.sprite = Sprite.Create(tex, rect, pivot);
                 yield return StartCoroutine(GenerateImageForMultipleChoice(768, 768, Prompt, checkpoint, LoRa, ControlNetType, randControlnet, ControlnetImageBase64, seed,
                         texture =>
                         {
