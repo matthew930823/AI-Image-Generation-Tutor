@@ -202,7 +202,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
                 Debug.Log("randControlnet:" + randControlnet);
                 ControlnetImageBase64 = GetRandomControlImageBase64("ConTrolNet參考圖/other");
                 byte[] imageBytes = Convert.FromBase64String(ControlnetImageBase64);
-                Texture2D tex = new Texture2D(2, 2);
+                //Texture2D tex = new Texture2D(2, 2);
                 img1.LoadImage(imageBytes);
                 //Rect rect = new Rect(0, 0, tex.width, tex.height);
                 //Vector2 pivot = new Vector2(0.5f, 0.5f);
