@@ -27,6 +27,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
     string[] LoRaType = new string[] { "漢服", "漫畫", "貓", "水墨", "盒玩", "吉普利", "眼睛", "食物照片" };
     Queue<string> MainBody = new Queue<string>();
     public MultiChoiceQuestion multiChoiceQuestion;
+    string HanfuimageData;
 
 
     [System.Serializable]
@@ -177,7 +178,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
                         }));
                 break;
             case "Prompt":
-                string[] add = new string[] { "desert", "forest", "beach", "grassland", "lake", "blizzard", "sunset", "foggy", "thunderstorm", "god rays", "downtown", "cyberpunk", "oil painting","watercolor", "japanese temple" , "castle", "classroom", "bedroom", "magic forest", "lava ground", "space station", "red", "blue", "green", "yellow", "purple", "orange", "pink", "black", "white", "gray", "brown" };
+                string[] add = new string[] { "desert", "forest", "beach", "grassland", "lake", "blizzard", "sunset", "foggy", "thunderstorm", "god rays", "downtown", "cyberpunk", "oil painting","watercolor", "japanese temple" , "castle", "classroom", "bedroom", "magic forest", "lava ground", "red", "blue", "green", "yellow", "purple", "orange", "pink", "black", "white", "gray", "brown" };
                 string Addresult = add[UnityEngine.Random.Range(0, add.Length)];
                 Debug.Log("新增提示詞為:" + Addresult);
                 yield return StartCoroutine(GenerateImageForMultipleChoice(768, 768, "(" + Addresult + ":2)," + Prompt, checkpoint, LoRa, ControlNetType, "", ControlnetImageBase64, seed,
@@ -187,7 +188,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
                    }));
                 break;
             case "Resolution":
-                int[] resolution = new int[] { 128 ,384,1024,512,1280};
+                int[] resolution = new int[] { 128 ,384,1024,512};
                 int randResolution=resolution[UnityEngine.Random.Range(0, resolution.Length)];
                 Debug.Log("randResolution:" + randResolution);
                 yield return StartCoroutine(GenerateImageForMultipleChoice(randResolution, randResolution, Prompt, checkpoint, LoRa, ControlNetType,"", ControlnetImageBase64, seed,
@@ -422,6 +423,8 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
                     string path = $"ConTrolNet參考圖/female_depth/woman/no hand/{rand}.png";
                     imageData = "data:image/png;base64," + Image2base64(path);
                 }
+
+                HanfuimageData = imageData;
                 break;
             case "漫畫":
                 LoraPrompt = ",lineart, ((monochrome)),<lora:animeoutlineV4_16:1.3>";
@@ -450,6 +453,10 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
                 LoraPrompt = ",<lora:foodphoto:0.6>";
                 CheckpointType = new string[] { "anime_cute", "realistic_anything", "anime_soft" };
                 Model_checkpoint = CheckpointType[UnityEngine.Random.Range(0, CheckpointType.Length)];
+                break;
+            case "漢服對比圖":
+                modelString = "control_v11f1p_sd15_depth [cfd03158]";
+                imageData = HanfuimageData;
                 break;
             default:
                 break;
