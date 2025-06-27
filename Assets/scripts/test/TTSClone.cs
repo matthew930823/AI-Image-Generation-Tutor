@@ -5,8 +5,8 @@ using UnityEngine.Networking;
 public class TTSClone : MonoBehaviour
 {
     private string serverUrl = "http://127.0.0.1:9933"; // 确保 FastAPI 服务器地址正确
-    private string fixedReferenceAudio = "楊紅利1234.wav"; // 服务器上的固定参考音频
-    private string reference_text = "一二三四五六七八九十";
+    private string fixedReferenceAudio = "reference_audio/sayu.wav"; // 服务器上的固定参考音频
+    private string reference_text = "你会爬树吗？我非常擅长这个，可以教你哦。还有，神社那边有棵树特别适合偷…啊不，特别适合小憩。下次你想睡午觉的时候，记得来找我，我们一起爬上去午睡吧。";
     void Start()
     {
         StartCoroutine(RequestTTS("哈囉你好，世界"));
