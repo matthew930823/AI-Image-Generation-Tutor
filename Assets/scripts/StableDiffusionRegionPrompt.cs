@@ -239,7 +239,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
             {
                 result = multiChoiceQuestion.GenerateQuestions();
                 yield return StartCoroutine(HandlePromptAndGenerateImage(result[0], result[1], result[2]));
-                if(result[2] == "Checkpoint")
+                if(result[2] == "Checkpoint"|| result[2] == "LoRa")
                 {
                     imageUI2.sprite = Sprite.Create(img1, new Rect(0, 0, img1.width, img1.height), new Vector2(0.5f, 0.5f));
                     imageUI.sprite = Sprite.Create(img2, new Rect(0, 0, img2.width, img2.height), new Vector2(0.5f, 0.5f));
@@ -268,7 +268,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
             yield return new WaitUntil(() => skipWait);
             if (!first)
             {
-                if (result[2] == "Checkpoint")
+                if (result[2] == "Checkpoint" || result[2] == "LoRa")
                 {
                     imageUI2.sprite = Sprite.Create(img1, new Rect(0, 0, img1.width, img1.height), new Vector2(0.5f, 0.5f));
                     imageUI.sprite = Sprite.Create(img2, new Rect(0, 0, img2.width, img2.height), new Vector2(0.5f, 0.5f));
