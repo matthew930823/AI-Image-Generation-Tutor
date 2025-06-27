@@ -55,7 +55,7 @@ public class GeminiAPI : MonoBehaviour
         string jsonBody;
             // 包含圖片的請求
         jsonBody = "{\"contents\": [{\"parts\": [" +
-                   "{\"inline_data\": {\"data\": \"" + base64Image + "\", \"mimeType\": \"image/jpeg\"}}," + // 假設是 JPEG 格式
+                   "{\"inline_data\": {\"data\": \"" + base64Image + "\", \"mimeType\": \"image/png\"}}," + // 假設是 JPEG 格式
                    "{\"text\": \"" + prompt + "\"}" +
                    "]}]}";
 

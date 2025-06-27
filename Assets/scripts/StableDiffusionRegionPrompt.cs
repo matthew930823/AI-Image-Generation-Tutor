@@ -231,7 +231,6 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
     public IEnumerator StartAutoImageUpdate()
     {
         bool first = true;
-        string temp;
         while (true)
         {
             float startTime = Time.realtimeSinceStartup;
