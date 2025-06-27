@@ -15,6 +15,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
     //public RawImage imageUI;
     public Image imageUI;
     public Image imageUI2;
+    public Text Narrative;
     Texture2D img1 = null;
     Texture2D img2 = null;
     public GeminiAPI geminiAPI;
@@ -239,7 +240,11 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
             {
                 result = multiChoiceQuestion.GenerateQuestions();
                 yield return StartCoroutine(HandlePromptAndGenerateImage(result[0], result[1], result[2]));
-                if(result[2] == "Checkpoint"|| result[2] == "LoRa")
+                yield return StartCoroutine(geminiAPI.SendPhotoRequest("題目會說明主體和他在做什麼，且需要在20個英文字裡說明完，且不能有標點符號，例子:[A young woman stands on a city street]，接下來我會給一張圖片，你要給我符合這個圖片的題目", Convert.ToBase64String(img2.EncodeToPNG()), (result) =>
+                {
+                    Narrative.text = result;
+                }));
+                if (result[2] == "Checkpoint"|| result[2] == "LoRa")
                 {
                     imageUI2.sprite = Sprite.Create(img1, new Rect(0, 0, img1.width, img1.height), new Vector2(0.5f, 0.5f));
                     imageUI.sprite = Sprite.Create(img2, new Rect(0, 0, img2.width, img2.height), new Vector2(0.5f, 0.5f));
