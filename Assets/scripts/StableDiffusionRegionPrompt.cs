@@ -765,7 +765,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
                 AddLLM = "主角是一個人，其他由你自由發揮";
                 break;
             default:
-                AddLLM = "題目由你來決定" + "，不能出現的主體有:" + MainBodyLLM;
+                //AddLLM = "題目由你來決定" + "，不能出現的主體有:" + MainBodyLLM;
                 break;
         }
 #if UNITY_ANDROID && !UNITY_EDITOR
@@ -783,7 +783,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
 
         //Debug.Log(fileContent+ AddLLM);
         // 呼叫 Gemini API 並傳入檔案內容
-        yield return StartCoroutine(geminiAPI.SendRequest(fileContent+ AddLLM, (result) =>
+        yield return StartCoroutine(geminiAPI.SendRequest(fileContent+ AddLLM + "主體只能是人，其他由你自由發揮", (result) =>
         {
             //string prompt = result.Split(new string[] { "PROMPT={" }, StringSplitOptions.None)[1].TrimEnd('}');
             Match match = Regex.Match(result, @"\{([^}]*)\}");
