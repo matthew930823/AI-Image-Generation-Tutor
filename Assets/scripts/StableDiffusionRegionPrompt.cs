@@ -823,7 +823,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
                 {
                     Debug.Log("陣列元素: " + item.Trim());
                 }
-                infoArray[3] = "sit";
+                infoArray[3] = infoArray[3].Trim().ToLower();
                 switch (infoArray[1].Trim().ToLower())
                 {
                     case "man":
