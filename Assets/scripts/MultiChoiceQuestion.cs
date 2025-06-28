@@ -180,6 +180,7 @@ public class MultiChoiceQuestion : MonoBehaviour
         }
         string[] AllCheckpoint = new string[] { "anime_cute.safetensors", "anime-real_hybrid.safetensors", "anime_soft.safetensors", "realistic_anything.safetensors" };
         string randomCheckpoint = AllCheckpoint[UnityEngine.Random.Range(0, AllCheckpoint.Length)];
+        type = "Controlnet";
         switch (type)
         {
             case "LoRa":
