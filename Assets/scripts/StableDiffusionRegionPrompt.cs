@@ -240,7 +240,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
             {
                 result = multiChoiceQuestion.GenerateQuestions();
                 yield return StartCoroutine(HandlePromptAndGenerateImage(result[0], result[1], result[2]));
-                yield return StartCoroutine(geminiAPI.SendPhotoRequest("題目會說明主體和他在做什麼，且需要在20個英文字裡說明完，且不能有標點符號，例子:[A young woman stands on a city street]，接下來我會給一張圖片，你要給我符合這個圖片的題目", Convert.ToBase64String(((result[2] == ("Prompt"||"Resolution")) ?img1:img2).EncodeToPNG()), (result) =>
+                yield return StartCoroutine(geminiAPI.SendPhotoRequest("題目會說明主體和他在做什麼，且需要在20個英文字裡說明完，且不能有標點符號，例子:[A young woman stands on a city street]，接下來我會給一張圖片，你要給我符合這個圖片的題目", Convert.ToBase64String((((result[2] == "Prompt") || (result[2] == "Resolution")) ? img1 : img2).EncodeToPNG()), (result) =>
                 {
                     Narrative.text = result;
                 }));
@@ -273,7 +273,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
             yield return new WaitUntil(() => skipWait);
             if (!first)
             {
-                yield return StartCoroutine(geminiAPI.SendPhotoRequest("題目會說明主體和他在做什麼，且需要在20個英文字裡說明完，且不能有標點符號，例子:[A young woman stands on a city street]，接下來我會給一張圖片，你要給我符合這個圖片的題目", Convert.ToBase64String(((result[2] == "Prompt" || "Resolution") ? img1 : img2).EncodeToPNG()), (result) =>
+                yield return StartCoroutine(geminiAPI.SendPhotoRequest("題目會說明主體和他在做什麼，且需要在20個英文字裡說明完，且不能有標點符號，例子:[A young woman stands on a city street]，接下來我會給一張圖片，你要給我符合這個圖片的題目", Convert.ToBase64String((((result[2] == "Prompt") || (result[2] == "Resolution")) ? img1 : img2).EncodeToPNG()), (result) =>
                 {
                     Narrative.text = result;
                 }));
