@@ -823,6 +823,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
                 {
                     Debug.Log("陣列元素: " + item.Trim());
                 }
+                infoArray[2] = infoArray[2].Trim().ToLower();
                 infoArray[3] = infoArray[3].Trim().ToLower();
                 switch (infoArray[1].Trim().ToLower())
                 {
