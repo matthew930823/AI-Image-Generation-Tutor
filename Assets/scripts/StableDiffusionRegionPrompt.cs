@@ -850,7 +850,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
                 AddLLM = "主角是一個人，其他由你自由發揮";
                 break;
             default:
-                //AddLLM = "題目由你來決定" + "，不能出現的主體有:" + MainBodyLLM;
+                AddLLM = "題目由你來決定" + "，不能出現的主體有:" + MainBodyLLM;
                 break;
         }
 #if UNITY_ANDROID && !UNITY_EDITOR
