@@ -34,6 +34,8 @@ public class GameController : MonoBehaviourPun
 
     public MultiChoiceQuestion multiChoiceQuestion;
     private int NowQuestion = 1;
+
+    public TTSClone tTSClone;
     void Start()
     {
         roomNumber.text = "Room : " + PhotonNetwork.CurrentRoom.Name;
@@ -236,6 +238,7 @@ public class GameController : MonoBehaviourPun
         yield return StartCoroutine(geminiAPI.SendMorePhotoRequest(prompt, images, (result) =>
         {
             multiChoiceQuestion.Explain.text = result;
+            StartCoroutine(tTSClone.RequestTTS(result));
         }));
     }
     private string Uncheckedprompt;

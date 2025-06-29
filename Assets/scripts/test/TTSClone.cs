@@ -14,7 +14,7 @@ public class TTSClone : MonoBehaviour
         //StartCoroutine(DownloadAndPlayAudio(url));
     }
     //TTS
-    IEnumerator RequestTTS(string text)
+    public IEnumerator RequestTTS(string text)
     {
         string cloneUrl = $"{serverUrl}/tts";
         string jsonData = $"{{\"text\": \"{text}\", \"speaker_wav\": \"{fixedReferenceAudio}\"}}";
