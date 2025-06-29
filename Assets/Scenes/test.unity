@@ -165,7 +165,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 152257784}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f9a77fa8c44c1334f8f6188616ab5cfa, type: 3}
   m_Name: 
@@ -173,9 +173,13 @@ MonoBehaviour:
   imageUI: {fileID: 1033482910}
   imageUI2: {fileID: 585569800}
   Narrative: {fileID: 1466616932}
+  img1: {fileID: 0}
+  img2: {fileID: 0}
   geminiAPI: {fileID: 1390141816}
   multiChoiceQuestion: {fileID: 152257789}
+  gameController: {fileID: 0}
   AllRegions: []
+  skipWait: 0
 --- !u!114 &152257787
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -210,7 +214,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 152257784}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5c8cdd6e8d2cccd48829f30bfb6af04c, type: 3}
   m_Name: 
@@ -218,13 +222,20 @@ MonoBehaviour:
   buttons: []
   BeforeImage: {fileID: 0}
   AfterImage: {fileID: 0}
+  QuestionName: {fileID: 0}
+  Result_BeforeImage: {fileID: 0}
+  Result_AfterImage: {fileID: 0}
+  Result_QuestionName: {fileID: 0}
+  Explain: {fileID: 0}
   HintImage:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
   stableDiffusionRegionPrompt: {fileID: 152257786}
-  QuestionName: {fileID: 0}
+  IsResultScreen: 0
+  GameScreen: {fileID: 0}
+  ResultScreen: {fileID: 0}
 --- !u!114 &152257790
 MonoBehaviour:
   m_ObjectHideFlags: 0

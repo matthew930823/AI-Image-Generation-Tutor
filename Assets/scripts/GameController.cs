@@ -238,6 +238,7 @@ public class GameController : MonoBehaviourPun
         yield return StartCoroutine(geminiAPI.SendMorePhotoRequest(prompt, images, (result) =>
         {
             multiChoiceQuestion.Explain.text = result;
+            Debug.Log("µ¹TTSªº¤å¦r:"+ result);
             StartCoroutine(tTSClone.RequestTTS(result));
         }));
     }
