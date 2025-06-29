@@ -163,29 +163,29 @@ public class GameController : MonoBehaviourPun
             {
                 if (stablediffusionregionprompt.ResultLLM.ContainsKey(Buttontext.text))
                 {
-                    StartCoroutine(SendPhotoRequestCoroutine(stablediffusionregionprompt.ResultLLM[Buttontext.text][0], twoImages));
+                    StartCoroutine(SendPhotoRequestCoroutine(stablediffusionregionprompt.ResultLLM[Buttontext.text][0]+"，直接回答我解釋就可以了", twoImages));
                 }
                 else
                 {
-                    StartCoroutine(SendPhotoRequestCoroutine(stablediffusionregionprompt.ResultLLM["Prompt"][0].Replace("(正確答案提示詞)", Buttontext.text), twoImages));
+                    StartCoroutine(SendPhotoRequestCoroutine(stablediffusionregionprompt.ResultLLM["Prompt"][0].Replace("(正確答案提示詞)", Buttontext.text) + "，直接回答我解釋就可以了", twoImages));
                 }
             }
             else
             {
                 if (Buttontext.text == "depth" || Buttontext.text == "openpose" || Buttontext.text == "canny" || Buttontext.text == "shuffle")
                 {
-                    StartCoroutine(SendPhotoRequestCoroutine(stablediffusionregionprompt.ResultLLM[Buttontext.text][1].Replace("(填入正確答案)", Buttontext.text), twoImages));
+                    StartCoroutine(SendPhotoRequestCoroutine(stablediffusionregionprompt.ResultLLM[Buttontext.text][1].Replace("(填入正確答案)", Buttontext.text) + "，直接回答我解釋就可以了", twoImages));
                 }
                 else if (stablediffusionregionprompt.ResultLLM.ContainsKey(Buttontext.text))
                 {
-                    StartCoroutine(SendPhotoRequestCoroutine(stablediffusionregionprompt.ResultLLM[Buttontext.text][1], twoImages));
+                    StartCoroutine(SendPhotoRequestCoroutine(stablediffusionregionprompt.ResultLLM[Buttontext.text][1] + "，直接回答我解釋就可以了", twoImages));
                 }
                 else
                 {
                     resultText = stablediffusionregionprompt.ResultLLM["Prompt"][1];
                     resultText = resultText.Replace("(正確答案提示詞)", answer);
                     resultText = resultText.Replace("(選擇詳解提示詞)", Buttontext.text);
-                    StartCoroutine(SendPhotoRequestCoroutine(resultText, twoImages));
+                    StartCoroutine(SendPhotoRequestCoroutine(resultText + "，直接回答我解釋就可以了", twoImages));
                 }
             }
         }
