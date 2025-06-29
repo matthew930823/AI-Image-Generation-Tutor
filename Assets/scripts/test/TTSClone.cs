@@ -36,7 +36,7 @@ public class TTSClone : MonoBehaviour
 
             string json = cloneRequest.downloadHandler.text;
             string audioPath = JsonUtility.FromJson<AudioPathResponse>(json).audio_path;
-            string fullPath = "file:///C:/Users/matth/Downloads/TTS/" + audioPath.Replace("\\", "/");
+            string fullPath = "file:///C:/Users/user/Desktop/TTS-AI畫畫/" + audioPath.Replace("\\", "/");
 
             Debug.Log($"下載路徑: {fullPath}");
             StartCoroutine(DownloadAndPlayAudio(fullPath));
