@@ -402,7 +402,12 @@ public class MultiChoiceQuestion : MonoBehaviour
         {
             Text btnText = buttons[i].GetComponentInChildren<Text>();
             ColorBlock cb = buttons[i].colors;
-            cb.normalColor = new Color(1f, 1f, 1f);
+            Color targetColor = new Color(1f, 1f, 1f);
+            cb.normalColor = targetColor;
+            cb.highlightedColor = targetColor;
+            cb.pressedColor = targetColor;
+            cb.selectedColor = targetColor;
+            cb.disabledColor = targetColor;
             buttons[i].colors = cb;
         }
     }
