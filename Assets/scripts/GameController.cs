@@ -244,6 +244,8 @@ public class GameController : MonoBehaviourPun
     {
         yield return StartCoroutine(geminiAPI.SendMorePhotoRequest(prompt, images, (result) =>
         {
+            result = result.Replace("[", "");
+            result = result.Replace("]", "");
             multiChoiceQuestion.Explain.text = result;
         }));
     }
