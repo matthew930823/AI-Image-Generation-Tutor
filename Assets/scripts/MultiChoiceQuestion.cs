@@ -50,6 +50,15 @@ public class MultiChoiceQuestion : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        for (int i = 0; i < 4; i++)
+        {
+            HintImage[i].sprite = null;
+            Text btnText = buttons[i].GetComponentInChildren<Text>();
+            btnText.text = "";
+        }
+        BeforeImage.sprite = null;
+        AfterImage.sprite = null;
+        QuestionName.text = "";
         //Sprite[] sprites = Resources.LoadAll<Sprite>("ÃD®w/LoRaHint");
 
         //foreach (Sprite sprite in sprites)
