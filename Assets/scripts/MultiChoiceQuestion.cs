@@ -9,6 +9,11 @@ public class MultiChoiceQuestion : MonoBehaviour
     public Button[] buttons;
     public Image BeforeImage;
     public Image AfterImage;
+    public TMP_Text QuestionName;
+    public Image Result_BeforeImage;
+    public Image Result_AfterImage;
+    public TMP_Text Result_QuestionName;
+    public Text Explain;
     public Image[] HintImage = new Image[4];
     public StableDiffusionRegionPrompt stableDiffusionRegionPrompt;
     private string[] AllAnswer = { "DreamShaper",
@@ -28,7 +33,6 @@ public class MultiChoiceQuestion : MonoBehaviour
                                 "openpose",
                                 "shuffle",
                                 "DreamShaper"};
-    public TMP_Text QuestionName;
     private string[] AllQuestionName = {"A young girl reads a book indoors",
                                         "A red mecha stands in a city ready for battle",
                                         "Red bird fly in a clear sky",
@@ -47,6 +51,10 @@ public class MultiChoiceQuestion : MonoBehaviour
                                         "A little boy playing in the park",
                                         "A young woman singing on stage with an excited expression" };
     private string[] AllType = { "LoRa", "Checkpoint", "Prompt", "Resolution","Controlnet" };
+
+    public bool IsResultScreen = false;
+    public GameObject GameScreen;
+    public GameObject ResultScreen;
     // Start is called before the first frame update
     void Start()
     {
@@ -353,6 +361,41 @@ public class MultiChoiceQuestion : MonoBehaviour
             default:
                 return new string[] { "","","" };
                 //break;
+        }
+    }
+    public void ChangeButtonColor()
+    {
+        GameScreen.SetActive(false);
+        ResultScreen.SetActive(true);
+        Result_AfterImage.sprite = AfterImage.sprite;
+        Result_BeforeImage.sprite = BeforeImage.sprite;
+        Result_QuestionName.text = QuestionName.text;
+        for (int i = 0; i < 4; i++)
+        {
+            Text btnText = buttons[i].GetComponentInChildren<Text>();
+            ColorBlock cb = buttons[i].colors;
+            if (btnText.text == stableDiffusionRegionPrompt.gameController.answer)
+            {
+                cb.normalColor = new Color(1f, 0.5f, 0.5f); // R=1, G=0.5, B=0.5
+                buttons[i].colors = cb;
+            }
+            else
+            {
+                cb.normalColor = new Color(0.5f, 1f, 0.5f); 
+                buttons[i].colors = cb;
+            }
+        }
+    }
+    public void ResetButtonColor()
+    {
+        GameScreen.SetActive(true);
+        ResultScreen.SetActive(false);
+        for (int i = 0; i < 4; i++)
+        {
+            Text btnText = buttons[i].GetComponentInChildren<Text>();
+            ColorBlock cb = buttons[i].colors;
+            cb.normalColor = new Color(1f, 1f, 1f);
+            buttons[i].colors = cb;
         }
     }
     // Update is called once per frame

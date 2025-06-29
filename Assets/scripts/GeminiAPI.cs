@@ -86,4 +86,53 @@ public class GeminiAPI : MonoBehaviour
             }
         }
     }
+    public IEnumerator SendMorePhotoRequest(string prompt, string[] base64Images, Action<string> onComplete)
+    {
+        string jsonBody;
+
+        // 建立 parts 陣列
+        StringBuilder partsBuilder = new StringBuilder();
+        partsBuilder.Append("[");
+
+        // 加入所有圖片
+        for (int i = 0; i < base64Images.Length; i++)
+        {
+            partsBuilder.Append("{\"inline_data\": {\"data\": \"" + base64Images[i] + "\", \"mimeType\": \"image/png\"}}");
+            if (i < base64Images.Length - 1) // 如果不是最後一張圖片，加上逗號
+            {
+                partsBuilder.Append(",");
+            }
+        }
+
+        // 加入文字提示
+        partsBuilder.Append(",{\"text\": \"" + prompt + "\"}");
+        partsBuilder.Append("]");
+
+        // 組合完整的 JSON
+        jsonBody = "{\"contents\": [{\"parts\": " + partsBuilder.ToString() + "}]}";
+
+        using (UnityWebRequest request = new UnityWebRequest($"{apiUrl}?key={apiKey}", "POST"))
+        {
+            // 設定 Header
+            request.SetRequestHeader("Content-Type", "application/json");
+            // 設定 Body
+            byte[] bodyRaw = Encoding.UTF8.GetBytes(jsonBody);
+            request.uploadHandler = new UploadHandlerRaw(bodyRaw);
+            request.downloadHandler = new DownloadHandlerBuffer();
+            // 發送請求
+            yield return request.SendWebRequest();
+            if (request.result == UnityWebRequest.Result.Success)
+            {
+                string jsonResponse = request.downloadHandler.text;
+                JSONNode response = JSON.Parse(jsonResponse);
+                string reply = response["candidates"][0]["content"]["parts"][0]["text"];
+                Debug.Log("Gemini 回應: " + reply);
+                onComplete?.Invoke(reply);
+            }
+            else
+            {
+                Debug.LogError("Error: " + request.error);
+            }
+        }
+    }
 }

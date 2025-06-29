@@ -155,20 +155,62 @@ public class GameController : MonoBehaviourPun
     }
     public void CheckAns(Text Buttontext)
     {
-        if (Buttontext.text == answer)
+        if (multiChoiceQuestion.IsResultScreen)
         {
-            characteranimator.SetTrigger("correct");
-            voiceAudioPlayer.AudioPlay(1);
-            //answer = multiChoiceQuestion.ChangeQuestion(NowQuestion);
-            //if (NowQuestion < 17) NowQuestion++;
-            stablediffusionregionprompt.skipWait = true;
+            string[] twoImages = new string[] { Convert.ToBase64String(stablediffusionregionprompt.img1.EncodeToPNG()), Convert.ToBase64String(stablediffusionregionprompt.img2.EncodeToPNG()) };
+            if (Buttontext.text == answer)
+            {
+                if (stablediffusionregionprompt.ResultLLM.ContainsKey(Buttontext.text))
+                {
+                    StartCoroutine(SendPhotoRequestCoroutine(stablediffusionregionprompt.ResultLLM[Buttontext.text][0], twoImages));
+                }
+                else
+                {
+                    StartCoroutine(SendPhotoRequestCoroutine(stablediffusionregionprompt.ResultLLM["Prompt"][0]+ "(正確答案提示詞)為:"+ Buttontext.text, twoImages));
+                }
+            }
+            else
+            {
+                if (Buttontext.text == "depth" || Buttontext.text == "openpose" || Buttontext.text == "canny" || Buttontext.text == "shuffle")
+                {
+                    StartCoroutine(SendPhotoRequestCoroutine(stablediffusionregionprompt.ResultLLM[Buttontext.text][1] + "(填入正確答案)為:" + Buttontext.text, twoImages));
+                }
+                else if (stablediffusionregionprompt.ResultLLM.ContainsKey(Buttontext.text))
+                {
+                    StartCoroutine(SendPhotoRequestCoroutine(stablediffusionregionprompt.ResultLLM[Buttontext.text][1], twoImages));
+                }
+                else
+                {
+                    StartCoroutine(SendPhotoRequestCoroutine(stablediffusionregionprompt.ResultLLM["Prompt"][1] + "(正確答案提示詞)為:" + Buttontext.text, twoImages));
+                }
+            }
         }
         else
         {
-            //characteranimator.Play("Wrong", 0, 0f);
-            characteranimator.SetTrigger("wrong");
-            voiceAudioPlayer.AudioPlay(2);
+            if (Buttontext.text == answer)
+            {
+                characteranimator.SetTrigger("correct");
+                voiceAudioPlayer.AudioPlay(1);
+                //answer = multiChoiceQuestion.ChangeQuestion(NowQuestion);
+                //if (NowQuestion < 17) NowQuestion++;
+                //stablediffusionregionprompt.skipWait = true;
+                multiChoiceQuestion.IsResultScreen = true;
+                multiChoiceQuestion.ChangeButtonColor();
+            }
+            else
+            {
+                //characteranimator.Play("Wrong", 0, 0f);
+                characteranimator.SetTrigger("wrong");
+                voiceAudioPlayer.AudioPlay(2);
+            }
         }
+    }
+    private IEnumerator SendPhotoRequestCoroutine(string prompt, string[] images)
+    {
+        yield return StartCoroutine(geminiAPI.SendMorePhotoRequest(prompt, images, (result) =>
+        {
+            multiChoiceQuestion.Explain.text = result;
+        }));
     }
     private string Uncheckedprompt;
     private string checkedprompt;
