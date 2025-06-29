@@ -4148,7 +4148,7 @@ GameObject:
   - component: {fileID: 139364533}
   - component: {fileID: 139364532}
   m_Layer: 4
-  m_Name: Text (Legacy)
+  m_Name: "\u89E3\u91CB"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -17890,6 +17890,8 @@ MonoBehaviour:
   imageUI: {fileID: 1079662819}
   imageUI2: {fileID: 0}
   Narrative: {fileID: 0}
+  img1: {fileID: 0}
+  img2: {fileID: 0}
   geminiAPI: {fileID: 1101888630}
   multiChoiceQuestion: {fileID: 1101888633}
   gameController: {fileID: 1101888624}
@@ -17926,6 +17928,7 @@ MonoBehaviour:
   Result_BeforeImage: {fileID: 1329509004}
   Result_AfterImage: {fileID: 352812959}
   Result_QuestionName: {fileID: 752293680}
+  Explain: {fileID: 139364532}
   HintImage:
   - {fileID: 636396139}
   - {fileID: 231618094}

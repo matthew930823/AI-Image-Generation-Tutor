@@ -9,7 +9,7 @@ public class TTSClone : MonoBehaviour
     //private string reference_text = "你会爬树吗？我非常擅长这个，可以教你哦。还有，神社那边有棵树特别适合偷…啊不，特别适合小憩。下次你想睡午觉的时候，记得来找我，我们一起爬上去午睡吧。";
     void Start()
     {
-        StartCoroutine(RequestTTS("哈囉你好，世界"));
+        //StartCoroutine(RequestTTS("哈囉你好，世界"));
         //string url = "C:/Users/matth/Desktop/專題測試/CosyVoice-main/CosyVoice-main/tmp/clone-20250317-194508.wav";
         //StartCoroutine(DownloadAndPlayAudio(url));
     }
