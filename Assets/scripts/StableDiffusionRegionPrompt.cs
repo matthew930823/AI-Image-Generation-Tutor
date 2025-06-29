@@ -317,14 +317,14 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
                 if (result[2] == "Checkpoint"|| result[2] == "LoRa")
                 {
                     multiChoiceQuestion.AfterImage.sprite = Sprite.Create(img1, new Rect(0, 0, img1.width, img1.height), new Vector2(0.5f, 0.5f));
-                    multiChoiceQuestion.BeforeImage.sprite = Sprite.Create(img2, new Rect(0, 0, img1.width, img1.height), new Vector2(0.5f, 0.5f));
+                    multiChoiceQuestion.BeforeImage.sprite = Sprite.Create(img2, new Rect(0, 0, img2.width, img2.height), new Vector2(0.5f, 0.5f));
                     //imageUI2.sprite = Sprite.Create(img1, new Rect(0, 0, img1.width, img1.height), new Vector2(0.5f, 0.5f));
                     //imageUI.sprite = Sprite.Create(img2, new Rect(0, 0, img2.width, img2.height), new Vector2(0.5f, 0.5f));
                 }
                 else
                 {
                     multiChoiceQuestion.BeforeImage.sprite = Sprite.Create(img1, new Rect(0, 0, img1.width, img1.height), new Vector2(0.5f, 0.5f));
-                    multiChoiceQuestion.AfterImage.sprite = Sprite.Create(img2, new Rect(0, 0, img1.width, img1.height), new Vector2(0.5f, 0.5f));
+                    multiChoiceQuestion.AfterImage.sprite = Sprite.Create(img2, new Rect(0, 0, img2.width, img2.height), new Vector2(0.5f, 0.5f));
                     //imageUI.sprite = Sprite.Create(img1, new Rect(0, 0, img1.width, img1.height), new Vector2(0.5f, 0.5f));
                     //imageUI2.sprite = Sprite.Create(img2, new Rect(0, 0, img2.width, img2.height), new Vector2(0.5f, 0.5f));
                 }
@@ -358,14 +358,14 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
                 if (result[2] == "Checkpoint" || result[2] == "LoRa")
                 {
                     multiChoiceQuestion.AfterImage.sprite = Sprite.Create(img1, new Rect(0, 0, img1.width, img1.height), new Vector2(0.5f, 0.5f));
-                    multiChoiceQuestion.BeforeImage.sprite = Sprite.Create(img2, new Rect(0, 0, img1.width, img1.height), new Vector2(0.5f, 0.5f));
+                    multiChoiceQuestion.BeforeImage.sprite = Sprite.Create(img2, new Rect(0, 0, img2.width, img2.height), new Vector2(0.5f, 0.5f));
                     //imageUI2.sprite = Sprite.Create(img1, new Rect(0, 0, img1.width, img1.height), new Vector2(0.5f, 0.5f));
                     //imageUI.sprite = Sprite.Create(img2, new Rect(0, 0, img2.width, img2.height), new Vector2(0.5f, 0.5f));
                 }
                 else
                 {
                     multiChoiceQuestion.BeforeImage.sprite = Sprite.Create(img1, new Rect(0, 0, img1.width, img1.height), new Vector2(0.5f, 0.5f));
-                    multiChoiceQuestion.AfterImage.sprite = Sprite.Create(img2, new Rect(0, 0, img1.width, img1.height), new Vector2(0.5f, 0.5f));
+                    multiChoiceQuestion.AfterImage.sprite = Sprite.Create(img2, new Rect(0, 0, img2.width, img2.height), new Vector2(0.5f, 0.5f));
                     //imageUI.sprite = Sprite.Create(img1, new Rect(0, 0, img1.width, img1.height), new Vector2(0.5f, 0.5f));
                     //imageUI2.sprite = Sprite.Create(img2, new Rect(0, 0, img2.width, img2.height), new Vector2(0.5f, 0.5f));
                 }
