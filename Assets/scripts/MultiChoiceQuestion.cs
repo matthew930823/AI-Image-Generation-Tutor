@@ -391,6 +391,7 @@ public class MultiChoiceQuestion : MonoBehaviour
 
             buttons[i].colors = cb;
         }
+        Explain.text = "如果有不懂的，點擊想知道的選項，這樣我就會幫你說明為什麼這個選項是對的或錯的喔";
     }
     public void ResetButtonColor()
     {
