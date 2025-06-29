@@ -185,7 +185,11 @@ public class GameController : MonoBehaviourPun
             string resultText = "";
             if (Buttontext.text == answer)
             {
-                if (stablediffusionregionprompt.ResultLLM.ContainsKey(Buttontext.text))
+                if (Buttontext.text == "depth" || Buttontext.text == "openpose" || Buttontext.text == "canny" || Buttontext.text == "shuffle")
+                {
+                    StartCoroutine(SendPhotoRequestCoroutine(stablediffusionregionprompt.ResultLLM[Buttontext.text][0] + "，Depth特色:Depth會將人物的形狀控制住，但人物還是會跟參考圖有一些細節上的區別，同時背景也會受到參考圖影響，Openpose特色: 只將人物的姿勢控制住，所以人物對比參考圖可以有更多自己的特色，同時背景也能由生圖模型自由發揮，Canny特色: 會被參考圖的所有邊緣細節控制住，所以在有線條的地方幾乎都會和參考圖一樣，和depth的主要區別在於depth的人物在細節上來是跟參考圖有差異，但canny則會和參考圖相同(例如服裝上的細節)，Shuffle特色: 只會被參考圖的色彩風格控制住，所以人物和背景都會自由發揮，只有色調會和參考圖有關" + "，直接回答我解釋就可以了", twoImages));
+                }
+                else if (stablediffusionregionprompt.ResultLLM.ContainsKey(Buttontext.text))
                 {
                     StartCoroutine(SendPhotoRequestCoroutine(stablediffusionregionprompt.ResultLLM[Buttontext.text][0]+"，直接回答我解釋就可以了", twoImages));
                 }
@@ -198,7 +202,7 @@ public class GameController : MonoBehaviourPun
             {
                 if (Buttontext.text == "depth" || Buttontext.text == "openpose" || Buttontext.text == "canny" || Buttontext.text == "shuffle")
                 {
-                    StartCoroutine(SendPhotoRequestCoroutine(stablediffusionregionprompt.ResultLLM[Buttontext.text][1].Replace("(填入正確答案)", Buttontext.text) + "，直接回答我解釋就可以了", twoImages));
+                    StartCoroutine(SendPhotoRequestCoroutine(stablediffusionregionprompt.ResultLLM[Buttontext.text][1].Replace("(填入正確答案)", Buttontext.text) + "，Depth特色:Depth會將人物的形狀控制住，但人物還是會跟參考圖有一些細節上的區別，同時背景也會受到參考圖影響，Openpose特色: 只將人物的姿勢控制住，所以人物對比參考圖可以有更多自己的特色，同時背景也能由生圖模型自由發揮，Canny特色: 會被參考圖的所有邊緣細節控制住，所以在有線條的地方幾乎都會和參考圖一樣，和depth的主要區別在於depth的人物在細節上來是跟參考圖有差異，但canny則會和參考圖相同(例如服裝上的細節)，Shuffle特色: 只會被參考圖的色彩風格控制住，所以人物和背景都會自由發揮，只有色調會和參考圖有關"  + "，直接回答我解釋就可以了", twoImages));
                 }
                 else if (stablediffusionregionprompt.ResultLLM.ContainsKey(Buttontext.text))
                 {
