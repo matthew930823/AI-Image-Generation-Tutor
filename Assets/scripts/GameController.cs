@@ -228,8 +228,6 @@ public class GameController : MonoBehaviourPun
                 //answer = multiChoiceQuestion.ChangeQuestion(NowQuestion);
                 //if (NowQuestion < 17) NowQuestion++;
                 //stablediffusionregionprompt.skipWait = true;
-                multiChoiceQuestion.IsResultScreen = true;
-                multiChoiceQuestion.ChangeButtonColor();
             }
             else
             {
@@ -237,6 +235,9 @@ public class GameController : MonoBehaviourPun
                 characteranimator.SetTrigger("wrong");
                 voiceAudioPlayer.AudioPlay(2);
             }
+
+            multiChoiceQuestion.IsResultScreen = true;
+            multiChoiceQuestion.ChangeButtonColor();
         }
     }
     private IEnumerator SendPhotoRequestCoroutine(string prompt, string[] images)
