@@ -29,6 +29,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
     Queue<string> MainBody = new Queue<string>();
     public MultiChoiceQuestion multiChoiceQuestion;
     string HanfuimageData;
+    public GameController gameController;
 
 
     [System.Serializable]
@@ -164,6 +165,36 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
        
         switch (type) {
             case "LoRa":
+
+                switch (LoRa)
+                {
+                    case "漢服":
+                        gameController.answer = "Hanfu";
+                        break;
+                    case "漫畫":
+                        gameController.answer = "Lineart";
+                        break;
+                    case "貓":
+                        gameController.answer = "Cutecat";
+                        break;
+                    case "水墨":
+                        gameController.answer = "MoXin";
+                        break;
+                    case "盒玩":
+                        gameController.answer = "Blindbox";
+                        break;
+                    case "吉普利":
+                        gameController.answer = "Ghibli";
+                        break;
+                    case "眼睛":
+                        gameController.answer = "Eye";
+                        break;
+                    case "食物照片":
+                        gameController.answer = "Foodphoto";
+                        break;
+                    default:
+                        break;
+                }
                 LoRa = "";
                 yield return StartCoroutine(GenerateImageForMultipleChoice(768, 768, Prompt, checkpoint, LoRa, ControlNetType, "", ControlnetImageBase64, seed,
                         texture =>
@@ -172,6 +203,26 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
                         }));
                 break;
             case "Checkpoint":
+                switch (checkpoint)
+                {
+                    case "anime_cute.safetensors":
+                        gameController.answer = "CuteYukiMix";
+                        break;
+                    case "anime-real_hybrid.safetensors":
+                        gameController.answer = "ReV Animated";
+                        break;
+                    case "anime_soft.safetensors":
+                        gameController.answer = "Cetus-Mix";
+                        break;
+                    case "realistic_anything.safetensors":
+                        gameController.answer = "DreamShaper";
+                        break;
+                    case "anime_bold.safetensors":
+                        gameController.answer = "Counterfeit";
+                        break;
+                    default:
+                        break;
+                }
                 yield return StartCoroutine(GenerateImageForMultipleChoice(768, 768, Prompt, "v1-5-pruned-emaonly.safetensors [6ce0161689]", LoRa, ControlNetType, "", ControlnetImageBase64, seed,
                         texture =>
                         {
@@ -182,6 +233,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
                 string[] add = new string[] { "desert", "forest", "beach", "grassland", "lake", "blizzard", "sunset", "foggy", "thunderstorm", "god rays", "downtown", "cyberpunk", "oil painting","watercolor", "japanese temple" , "castle", "classroom", "bedroom", "magic forest", "lava ground", "red", "blue", "green", "yellow", "purple", "orange", "pink", "black", "white", "gray", "brown" };
                 string Addresult = add[UnityEngine.Random.Range(0, add.Length)];
                 Debug.Log("新增提示詞為:" + Addresult);
+                gameController.answer = Addresult;
                 yield return StartCoroutine(GenerateImageForMultipleChoice(768, 768, "(" + Addresult + ":2)," + Prompt, checkpoint, LoRa, ControlNetType, "", ControlnetImageBase64, seed,
                    texture =>
                    {
@@ -192,6 +244,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
                 int[] resolution = new int[] { 128 ,384,1024,512};
                 int randResolution=resolution[UnityEngine.Random.Range(0, resolution.Length)];
                 Debug.Log("randResolution:" + randResolution);
+                gameController.answer = randResolution.ToString();
                 yield return StartCoroutine(GenerateImageForMultipleChoice(randResolution, randResolution, Prompt, checkpoint, LoRa, ControlNetType,"", ControlnetImageBase64, seed,
                         texture =>
                         {
@@ -199,7 +252,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
                         }));
                 break;
             case "Controlnet":
-                string[] ControlnetModule = new string[] { "depth_anything_v2", "canny", "openpose_full", "shuffle" };
+                string[] ControlnetModule = new string[] { "depth_anything_v2", "canny", "openpose_hand", "shuffle" };
                 string randControlnet = ControlnetModule[UnityEngine.Random.Range(0, ControlnetModule.Length)];
                 Debug.Log("randControlnet:" + randControlnet);
                 ControlnetImageBase64 = GetRandomControlImageBase64("ConTrolNet參考圖/other");
@@ -207,9 +260,23 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
                 //Texture2D tex = new Texture2D(2, 2);
                 img1 = new Texture2D(2, 2);
                 img1.LoadImage(imageBytes);
-                //Rect rect = new Rect(0, 0, tex.width, tex.height);
-                //Vector2 pivot = new Vector2(0.5f, 0.5f);
-                //imageUI.sprite = Sprite.Create(tex, rect, pivot);
+                switch (randControlnet)
+                {
+                    case "depth_anything_v2":
+                        gameController.answer = "depth";
+                        break;
+                    case "canny":
+                        gameController.answer = "canny";
+                        break;
+                    case "openpose_hand":
+                        gameController.answer = "openpose";
+                        break;
+                    case "shuffle":
+                        gameController.answer = "shuffle";
+                        break;
+                    default:
+                        break;
+                }
                 yield return StartCoroutine(GenerateImageForMultipleChoice(768, 768, Prompt, checkpoint, LoRa, ControlNetType, randControlnet, ControlnetImageBase64, seed,
                         texture =>
                         {
@@ -223,7 +290,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
     }
     
 
-    private bool skipWait = false;
+    public bool skipWait = false;
     public void OnSkipButtonPressed()
     {
         skipWait = true;
@@ -244,18 +311,24 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
                 {
                     Match match = Regex.Match(result, @"\{([^}]*)\}");
                     result = match.Groups[1].Value;
-                    Narrative.text = result;
+                    //Narrative.text = result;
+                    multiChoiceQuestion.QuestionName.text = result;
                 }));
                 if (result[2] == "Checkpoint"|| result[2] == "LoRa")
                 {
-                    imageUI2.sprite = Sprite.Create(img1, new Rect(0, 0, img1.width, img1.height), new Vector2(0.5f, 0.5f));
-                    imageUI.sprite = Sprite.Create(img2, new Rect(0, 0, img2.width, img2.height), new Vector2(0.5f, 0.5f));
+                    multiChoiceQuestion.AfterImage.sprite = Sprite.Create(img1, new Rect(0, 0, img1.width, img1.height), new Vector2(0.5f, 0.5f));
+                    multiChoiceQuestion.BeforeImage.sprite = Sprite.Create(img2, new Rect(0, 0, img1.width, img1.height), new Vector2(0.5f, 0.5f));
+                    //imageUI2.sprite = Sprite.Create(img1, new Rect(0, 0, img1.width, img1.height), new Vector2(0.5f, 0.5f));
+                    //imageUI.sprite = Sprite.Create(img2, new Rect(0, 0, img2.width, img2.height), new Vector2(0.5f, 0.5f));
                 }
                 else
                 {
-                    imageUI.sprite = Sprite.Create(img1, new Rect(0, 0, img1.width, img1.height), new Vector2(0.5f, 0.5f));
-                    imageUI2.sprite = Sprite.Create(img2, new Rect(0, 0, img2.width, img2.height), new Vector2(0.5f, 0.5f));
+                    multiChoiceQuestion.BeforeImage.sprite = Sprite.Create(img1, new Rect(0, 0, img1.width, img1.height), new Vector2(0.5f, 0.5f));
+                    multiChoiceQuestion.AfterImage.sprite = Sprite.Create(img2, new Rect(0, 0, img1.width, img1.height), new Vector2(0.5f, 0.5f));
+                    //imageUI.sprite = Sprite.Create(img1, new Rect(0, 0, img1.width, img1.height), new Vector2(0.5f, 0.5f));
+                    //imageUI2.sprite = Sprite.Create(img2, new Rect(0, 0, img2.width, img2.height), new Vector2(0.5f, 0.5f));
                 }
+                multiChoiceQuestion.ChangeHintImage(result[2]);
                 MainBody.Enqueue(Prompt.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries)[0]);
                 if (MainBody.Count > 5)
                 {
@@ -279,19 +352,24 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
                 {
                     Match match = Regex.Match(result, @"\{([^}]*)\}");
                     result = match.Groups[1].Value;
-                    Narrative.text = result;
+                    //Narrative.text = result;
+                    multiChoiceQuestion.QuestionName.text = result;
                 }));
                 if (result[2] == "Checkpoint" || result[2] == "LoRa")
                 {
-                    imageUI2.sprite = Sprite.Create(img1, new Rect(0, 0, img1.width, img1.height), new Vector2(0.5f, 0.5f));
-                    imageUI.sprite = Sprite.Create(img2, new Rect(0, 0, img2.width, img2.height), new Vector2(0.5f, 0.5f));
+                    multiChoiceQuestion.AfterImage.sprite = Sprite.Create(img1, new Rect(0, 0, img1.width, img1.height), new Vector2(0.5f, 0.5f));
+                    multiChoiceQuestion.BeforeImage.sprite = Sprite.Create(img2, new Rect(0, 0, img1.width, img1.height), new Vector2(0.5f, 0.5f));
+                    //imageUI2.sprite = Sprite.Create(img1, new Rect(0, 0, img1.width, img1.height), new Vector2(0.5f, 0.5f));
+                    //imageUI.sprite = Sprite.Create(img2, new Rect(0, 0, img2.width, img2.height), new Vector2(0.5f, 0.5f));
                 }
                 else
                 {
-                    imageUI.sprite = Sprite.Create(img1, new Rect(0, 0, img1.width, img1.height), new Vector2(0.5f, 0.5f));
-                    imageUI2.sprite = Sprite.Create(img2, new Rect(0, 0, img2.width, img2.height), new Vector2(0.5f, 0.5f));
+                    multiChoiceQuestion.BeforeImage.sprite = Sprite.Create(img1, new Rect(0, 0, img1.width, img1.height), new Vector2(0.5f, 0.5f));
+                    multiChoiceQuestion.AfterImage.sprite = Sprite.Create(img2, new Rect(0, 0, img1.width, img1.height), new Vector2(0.5f, 0.5f));
+                    //imageUI.sprite = Sprite.Create(img1, new Rect(0, 0, img1.width, img1.height), new Vector2(0.5f, 0.5f));
+                    //imageUI2.sprite = Sprite.Create(img2, new Rect(0, 0, img2.width, img2.height), new Vector2(0.5f, 0.5f));
                 }
-                
+                multiChoiceQuestion.ChangeHintImage(result[2]);
             }
         }
     }
@@ -389,7 +467,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
             case "depth_anything_v2":
                 modelString = "control_v11f1p_sd15_depth [cfd03158]";
                 break;
-            case "openpose_full":
+            case "openpose_hand":
                 modelString = "control_v11p_sd15_openpose [cab727d4]";
                 break;
             case "shuffle":

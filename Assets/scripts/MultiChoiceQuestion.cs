@@ -57,7 +57,7 @@ public class MultiChoiceQuestion : MonoBehaviour
         //    Debug.Log("找到圖片: " + sprite.name);
         //}
         //GenerateQuestions();
-        StartCoroutine(stableDiffusionRegionPrompt.StartAutoImageUpdate());
+        //StartCoroutine(stableDiffusionRegionPrompt.StartAutoImageUpdate());
     }
     public string ChangeQuestion(int Question)
     {
@@ -159,11 +159,148 @@ public class MultiChoiceQuestion : MonoBehaviour
         }
         return Answer;
     }
+    public void ChangeHintImage(string type)
+    {
 
+        Sprite answerSprite = null;
+        List<Sprite> remaining = new List<Sprite>();
+        Sprite[] Hint = null;
+        List<Sprite> selected = new List<Sprite>();
+        switch (type)
+        {
+            case "LoRa":
+                Hint = Resources.LoadAll<Sprite>("題庫/LoRaHint");
+                // 尋找名為 Answer 的 Sprite
+
+                foreach (Sprite sprite in Hint)
+                {
+                    if (sprite.name == stableDiffusionRegionPrompt.gameController.answer)
+                    {
+                        answerSprite = sprite;
+                    }
+                    else
+                    {
+                        remaining.Add(sprite);
+                    }
+                }
+                // 隨機從剩下的圖片中選出 3 張
+                while (selected.Count < 3)
+                {
+                    int index = Random.Range(0, remaining.Count);
+                    selected.Add(remaining[index]);
+                    remaining.RemoveAt(index); // 確保不重複
+                }
+
+                // 加入正確答案圖片
+                selected.Add(answerSprite);
+
+                // 打亂順序
+                for (int i = 0; i < selected.Count; i++)
+                {
+                    int rand = Random.Range(i, selected.Count);
+                    var temp = selected[i];
+                    selected[i] = selected[rand];
+                    selected[rand] = temp;
+                }
+
+                // 指派給 HintImage[]
+                for (int i = 0; i < 4; i++)
+                {
+                    HintImage[i].sprite = selected[i];
+                    Text btnText = buttons[i].GetComponentInChildren<Text>();
+                    btnText.text = selected[i].name;
+                }
+                break;
+            case "Checkpoint":
+                Hint = Resources.LoadAll<Sprite>("題庫/dreamboothHint");
+                // 尋找名為 Answer 的 Sprite
+
+                foreach (Sprite sprite in Hint)
+                {
+                    if (sprite.name == stableDiffusionRegionPrompt.gameController.answer)
+                    {
+                        answerSprite = sprite;
+                    }
+                    else
+                    {
+                        remaining.Add(sprite);
+                    }
+                }
+                // 隨機從剩下的圖片中選出 3 張
+                while (selected.Count < 3)
+                {
+                    int index = Random.Range(0, remaining.Count);
+                    selected.Add(remaining[index]);
+                    remaining.RemoveAt(index); // 確保不重複
+                }
+
+                // 加入正確答案圖片
+                selected.Add(answerSprite);
+
+                // 打亂順序
+                for (int i = 0; i < selected.Count; i++)
+                {
+                    int rand = Random.Range(i, selected.Count);
+                    var temp = selected[i];
+                    selected[i] = selected[rand];
+                    selected[rand] = temp;
+                }
+
+                // 指派給 HintImage[]
+                for (int i = 0; i < 4; i++)
+                {
+                    HintImage[i].sprite = selected[i];
+                    Text btnText = buttons[i].GetComponentInChildren<Text>();
+                    btnText.text = selected[i].name;
+                }
+                break;
+            case "Prompt":
+
+                break;
+            case "Resolution":
+                Hint = Resources.LoadAll<Sprite>("題庫/Resolution Hint");
+                for (int i = 0; i < Hint.Length; i++)
+                {
+                    int rand = Random.Range(i, Hint.Length);
+                    Sprite temp = Hint[i];
+                    Hint[i] = Hint[rand];
+                    Hint[rand] = temp;
+                }
+
+                // 取前4張圖片
+                for (int i = 0; i < 4; i++)
+                {
+                    HintImage[i].sprite = Hint[i];
+                    Text btnText = buttons[i].GetComponentInChildren<Text>();
+                    btnText.text = Hint[i].name;
+                }
+                break;
+            case "Controlnet":
+                Hint = Resources.LoadAll<Sprite>("題庫/controlnetHint");
+                for (int i = 0; i < Hint.Length; i++)
+                {
+                    int rand = Random.Range(i, Hint.Length);
+                    Sprite temp = Hint[i];
+                    Hint[i] = Hint[rand];
+                    Hint[rand] = temp;
+                }
+
+                // 取前4張圖片
+                for (int i = 0; i < 4; i++)
+                {
+                    HintImage[i].sprite = Hint[i];
+                    Text btnText = buttons[i].GetComponentInChildren<Text>();
+                    btnText.text = Hint[i].name;
+                }
+                break;
+            default:
+                break;
+        }
+    }
     public string[] GenerateQuestions()
     {
         string type = "Resolution";
-        int[] weights = { 20,20, 20, 20, 20 };// { "LoRa", "Checkpoint", "Prompt", "Resolution","Controlnet" }
+        int[] weights = { 20,20, 0, 20, 20 };// { "LoRa", "Checkpoint", "Prompt", "Resolution","Controlnet" }
 
         int totalWeight = weights.Sum();
         int rand = Random.Range(0, totalWeight);
@@ -178,7 +315,7 @@ public class MultiChoiceQuestion : MonoBehaviour
                 break;
             }
         }
-        string[] AllCheckpoint = new string[] { "anime_cute.safetensors", "anime-real_hybrid.safetensors", "anime_soft.safetensors", "realistic_anything.safetensors" };
+        string[] AllCheckpoint = new string[] { "anime_cute.safetensors", "anime-real_hybrid.safetensors", "anime_soft.safetensors", "realistic_anything.safetensors" , "anime_bold.safetensors" };
         string randomCheckpoint = AllCheckpoint[UnityEngine.Random.Range(0, AllCheckpoint.Length)];
         switch (type)
         {

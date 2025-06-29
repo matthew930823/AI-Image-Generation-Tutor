@@ -15783,6 +15783,7 @@ MonoBehaviour:
   - {fileID: 952664254}
   - {fileID: 1732264614}
   - {fileID: 860738032}
+  answer: 
   trueAns: {fileID: 21300000, guid: 7b68aea92f6c2314cb2027995e61ac82, type: 3}
   falseAns: {fileID: 21300000, guid: 0101018dce9c8d5479fcd3fbaad7473a, type: 3}
   characteranimator: {fileID: 15557114}
@@ -15942,7 +15943,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   imageUI: {fileID: 1079662819}
+  imageUI2: {fileID: 0}
+  Narrative: {fileID: 0}
   geminiAPI: {fileID: 1101888630}
+  multiChoiceQuestion: {fileID: 1101888633}
+  gameController: {fileID: 1101888624}
   AllRegions:
   - x: 0
     y: 0
@@ -15976,6 +15981,7 @@ MonoBehaviour:
   - {fileID: 231618094}
   - {fileID: 415376719}
   - {fileID: 1898129411}
+  stableDiffusionRegionPrompt: {fileID: 1101888632}
   QuestionName: {fileID: 826398773}
 --- !u!43 &1105912834
 Mesh:

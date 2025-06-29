@@ -19,7 +19,7 @@ public class GameController : MonoBehaviourPun
 
     public List<Button> OptionButton;
 
-    private string answer;
+    public string answer;
     //public Image uiImage;
     public Sprite trueAns;
     public Sprite falseAns;
@@ -112,7 +112,8 @@ public class GameController : MonoBehaviourPun
             //answer = keywords[1];
             //StartCoroutine(huggingFaceAPI.GenerateImageFromText(keywords[0], OnImageGenerated));
 
-            answer = multiChoiceQuestion.ChangeQuestion(NowQuestion++);
+            //answer = multiChoiceQuestion.ChangeQuestion(NowQuestion++);//ÃD®w¼Ò¦¡
+            StartCoroutine(multiChoiceQuestion.stableDiffusionRegionPrompt.StartAutoImageUpdate());
         }
         else if(mode == 2)
         {
@@ -158,8 +159,9 @@ public class GameController : MonoBehaviourPun
         {
             characteranimator.SetTrigger("correct");
             voiceAudioPlayer.AudioPlay(1);
-            answer = multiChoiceQuestion.ChangeQuestion(NowQuestion);
-            if (NowQuestion < 17) NowQuestion++;
+            //answer = multiChoiceQuestion.ChangeQuestion(NowQuestion);
+            //if (NowQuestion < 17) NowQuestion++;
+            stablediffusionregionprompt.skipWait = true;
         }
         else
         {
