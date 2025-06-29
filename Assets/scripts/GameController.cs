@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
@@ -7,11 +7,13 @@ using UnityEngine.UI;
 using Photon.Pun;
 using Photon.Realtime;
 using System.IO;
+using System.Linq;
+
 public class GameController : MonoBehaviourPun
 {
-    //public HuggingFaceAPI huggingFaceAPI; // HuggingFaceAPI ªº¤Ş¥Î
-    //public InputField descriptionInput;  // ª±®a´y­zªº¿é¤J®Ø
-    public Image resultImage;            // ¥Î©óÅã¥Ü¥Í¦¨¹Ï¤ùªº UI Image
+    //public HuggingFaceAPI huggingFaceAPI; // HuggingFaceAPI çš„å¼•ç”¨
+    //public InputField descriptionInput;  // ç©å®¶æè¿°çš„è¼¸å…¥æ¡†
+    public Image resultImage;            // ç”¨æ–¼é¡¯ç¤ºç”Ÿæˆåœ–ç‰‡çš„ UI Image
     public Text roomNumber;
 
     public GeminiAPI geminiAPI;
@@ -49,10 +51,10 @@ public class GameController : MonoBehaviourPun
         }
         Debug.Log(diff);
         NowDifficulty = diff;
-        if (diff == "Easy") { /* ³]©wÂ²³æ¼Ò¦¡°Ñ¼Æ */
+        if (diff == "Easy") { /* è¨­å®šç°¡å–®æ¨¡å¼åƒæ•¸ */
             StartCoroutine(GetGeminiKeywords(1));
         }
-        else if (diff == "Hard") { /* ³]©w§xÃø¼Ò¦¡°Ñ¼Æ */
+        else if (diff == "Hard") { /* è¨­å®šå›°é›£æ¨¡å¼åƒæ•¸ */
             StartCoroutine(GetGeminiKeywords(2));
         }
         else
@@ -71,12 +73,12 @@ public class GameController : MonoBehaviourPun
             //    imageBytes = result;
             //}));
             photonView.RPC("SyncImage", RpcTarget.All, imageBytes);
-            // ¶}©l©µ¿ğ¶Ç°e¹Ï¤ù
-            //StartCoroutine(DelayedSyncImage(imageBytes, 30f)); // 300 ¬í©µ¿ğ
+            // é–‹å§‹å»¶é²å‚³é€åœ–ç‰‡
+            //StartCoroutine(DelayedSyncImage(imageBytes, 30f)); // 300 ç§’å»¶é²
         }
         else
         {
-            Debug.LogError("¹Ï¤ù¥Í¦¨¥¢±Ñ¡I");
+            Debug.LogError("åœ–ç‰‡ç”Ÿæˆå¤±æ•—ï¼");
         }
     }
     //private IEnumerator DelayedSyncImage(byte[] imageBytes, float delaySeconds)
@@ -90,40 +92,40 @@ public class GameController : MonoBehaviourPun
     {
         Texture2D texture = new Texture2D(2, 2);
         texture.LoadImage(imageBytes);
-        Debug.Log("¹Ï¤ù¥[¸ü§¹¦¨");
+        Debug.Log("åœ–ç‰‡åŠ è¼‰å®Œæˆ");
         resultImage.sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
     }
 
     private IEnumerator GetGeminiKeywords(int mode)
     {
 
-        // ©I¥s API¡Aµ¥¥¦§¹¦¨
-        //yield return StartCoroutine(geminiAPI.SendRequest("§Ú­Ì·Q°µ¤@­Ó¹CÀ¸¡A¹CÀ¸¤º®e¬O·|¦³¼Æ¦Wª±®a©M¤@­ÓAI¡AAI·|®Ú¾ÚÃD¥Ø¤À¶¥¬qªºµ¹¥Í¹Ï¼Ò«¬ÃöÁä¦r¡A¤@¶}©lªºÃöÁä¦r·|Åı¥Í¹Ï¼Ò«¬¥Í¥X¨Óªº¹Ï¤£¨º»ò¹³ÃD¥Ø¡AµM«áÅıª±®a¬İ¹Ï²qÃD¥Ø¬O¤°»ò¡A¦pªGª±®a³£µª¿ù¨ºAI´N·|ÅıÃöÁä¦r¥i¥H¥Íªº§ó¹³ÃD¥Ø¡A¤@ª½«ùÄò¨ìª±®a¥i¥H³z¹L¥Í¥Xªº¹Ï¤ù²q¨ìÃD¥Ø¬°¤î¡C¨Ò¦pÃD¥Ø¬O:¡uªEÀY¡v¡A²Ä¤@¶¥¬q´£¥Ü¡G ¡u¬X³n¡BµÎ¾A¡B©ñÃP¡v¡÷ ¹Ï¤ù¥i¯à¶È§e²{¤@ºØ·ÅÄÉ©Î¦wÀRªºª^³ò¡C²Ä¤G¶¥¬q´£¥Ü¡G ¡uª×«Ç¡B©]±ß¡B³­¦ñ¡v¡÷ ¹Ï¤ù¥i¯à¶}©l¥X²{ª×«Ç¤¸¯À©Î·t¥ÜºÎ¯v±¡¹Ò¡C²Ä¤T¶¥¬q´£¥Ü¡G ¡uÀYÃäªº¦uÅ@ªÌ¡Bª×«Ç¥²³Æ¡v¡÷ ¹Ï¤ù§ó¥i¯à¨ãÅé´yÃ¸¥X¤@­ÓªEÀY©Î¨ä§Î¶H¤Æ¯S¼x¡C³Ì²×´£¥Ü¡]¦pªG¤´¥¼²q¤¤¡^¡G ¡u¬X³n¶ñ¥R¡BºÎ¯v¦ñ«Q¡X³o´N¬OªEÀY¡I¡v ¡÷ ¹Ï¤ù©M´£¥Ü³Ì²×ª½«üµª®×¡C§A±µ¤U¨Ó±N·í§@¤@¦W¥XÃDªÌ¡A¥u­nµ¹§Ú¨C­Ó¶¥¬qªºÃöÁä¦r´N¦n¡A®æ¦¡¬°¡iÃD¥Ø:¡u§AªºÃD¥Ø¡v¡A²Ä¤@¶¥¬q:¡uÃöÁä¦r¡BÃöÁä¦r¡BÃöÁä¦r...¡v¡A²Ä¤G¶¥¬q:¡uÃöÁä¦r¡BÃöÁä¦r¡BÃöÁä¦r...¡v¡A²Ä¤T¶¥¬q:¡uÃöÁä¦r¡BÃöÁä¦r¡BÃöÁä¦r...¡v¡A²Ä¥|¶¥¬q:¡uÃöÁä¦r¡BÃöÁä¦r¡BÃöÁä¦r...¡v¡j¡A¤£­n¦³¦h¾lªº¦r¡A½Ğ¶}©l¥XÀH¾÷¤@­ÓÃD¥Ø¡AÃöÁä¦r¥Î­^¤åªí¥Ü¡A¦ı¼ĞÂI²Å¸¹¤£ÅÜ¡C", (result) =>
+        // å‘¼å« APIï¼Œç­‰å®ƒå®Œæˆ
+        //yield return StartCoroutine(geminiAPI.SendRequest("æˆ‘å€‘æƒ³åšä¸€å€‹éŠæˆ²ï¼ŒéŠæˆ²å…§å®¹æ˜¯æœƒæœ‰æ•¸åç©å®¶å’Œä¸€å€‹AIï¼ŒAIæœƒæ ¹æ“šé¡Œç›®åˆ†éšæ®µçš„çµ¦ç”Ÿåœ–æ¨¡å‹é—œéµå­—ï¼Œä¸€é–‹å§‹çš„é—œéµå­—æœƒè®“ç”Ÿåœ–æ¨¡å‹ç”Ÿå‡ºä¾†çš„åœ–ä¸é‚£éº¼åƒé¡Œç›®ï¼Œç„¶å¾Œè®“ç©å®¶çœ‹åœ–çŒœé¡Œç›®æ˜¯ä»€éº¼ï¼Œå¦‚æœç©å®¶éƒ½ç­”éŒ¯é‚£AIå°±æœƒè®“é—œéµå­—å¯ä»¥ç”Ÿçš„æ›´åƒé¡Œç›®ï¼Œä¸€ç›´æŒçºŒåˆ°ç©å®¶å¯ä»¥é€éç”Ÿå‡ºçš„åœ–ç‰‡çŒœåˆ°é¡Œç›®ç‚ºæ­¢ã€‚ä¾‹å¦‚é¡Œç›®æ˜¯:ã€Œæ•é ­ã€ï¼Œç¬¬ä¸€éšæ®µæç¤ºï¼š ã€ŒæŸ”è»Ÿã€èˆ’é©ã€æ”¾é¬†ã€â†’ åœ–ç‰‡å¯èƒ½åƒ…å‘ˆç¾ä¸€ç¨®æº«é¦¨æˆ–å®‰éœçš„æ°›åœã€‚ç¬¬äºŒéšæ®µæç¤ºï¼š ã€Œè‡¥å®¤ã€å¤œæ™šã€é™ªä¼´ã€â†’ åœ–ç‰‡å¯èƒ½é–‹å§‹å‡ºç¾è‡¥å®¤å…ƒç´ æˆ–æš—ç¤ºç¡çœ æƒ…å¢ƒã€‚ç¬¬ä¸‰éšæ®µæç¤ºï¼š ã€Œé ­é‚Šçš„å®ˆè­·è€…ã€è‡¥å®¤å¿…å‚™ã€â†’ åœ–ç‰‡æ›´å¯èƒ½å…·é«”æç¹ªå‡ºä¸€å€‹æ•é ­æˆ–å…¶å½¢è±¡åŒ–ç‰¹å¾µã€‚æœ€çµ‚æç¤ºï¼ˆå¦‚æœä»æœªçŒœä¸­ï¼‰ï¼š ã€ŒæŸ”è»Ÿå¡«å……ã€ç¡çœ ä¼´ä¾¶â€”é€™å°±æ˜¯æ•é ­ï¼ã€ â†’ åœ–ç‰‡å’Œæç¤ºæœ€çµ‚ç›´æŒ‡ç­”æ¡ˆã€‚ä½ æ¥ä¸‹ä¾†å°‡ç•¶ä½œä¸€åå‡ºé¡Œè€…ï¼Œåªè¦çµ¦æˆ‘æ¯å€‹éšæ®µçš„é—œéµå­—å°±å¥½ï¼Œæ ¼å¼ç‚ºã€é¡Œç›®:ã€Œä½ çš„é¡Œç›®ã€ï¼Œç¬¬ä¸€éšæ®µ:ã€Œé—œéµå­—ã€é—œéµå­—ã€é—œéµå­—...ã€ï¼Œç¬¬äºŒéšæ®µ:ã€Œé—œéµå­—ã€é—œéµå­—ã€é—œéµå­—...ã€ï¼Œç¬¬ä¸‰éšæ®µ:ã€Œé—œéµå­—ã€é—œéµå­—ã€é—œéµå­—...ã€ï¼Œç¬¬å››éšæ®µ:ã€Œé—œéµå­—ã€é—œéµå­—ã€é—œéµå­—...ã€ã€‘ï¼Œä¸è¦æœ‰å¤šé¤˜çš„å­—ï¼Œè«‹é–‹å§‹å‡ºéš¨æ©Ÿä¸€å€‹é¡Œç›®ï¼Œé—œéµå­—ç”¨è‹±æ–‡è¡¨ç¤ºï¼Œä½†æ¨™é»ç¬¦è™Ÿä¸è®Šã€‚", (result) =>
         //{
         //    keywords = result;
         //}));
 
         if(mode == 1)
         {
-            //yield return StartCoroutine(geminiAPI.SendRequest("§Ú­Ì·Q°µ¤@­Ó¹CÀ¸¡A¹CÀ¸¤º®e¬O·|¦³¼Æ¦Wª±®a©M¤@­ÓAI¡AµM«áÅıª±®a¬İ¹Ï²qÃD¥Ø¬O¤°»ò¡A¦pªGª±®a³£µª¿ù¨ºAI´N·|ÅıÃöÁä¦r¥i¥H¥Íªº§ó¹³ÃD¥Ø¡A¤@ª½«ùÄò¨ìª±®a¥i¥H³z¹L¥Í¥Xªº¹Ï¤ù²q¨ìÃD¥Ø¬°¤î¡C¦^µª·|¬O¿ï¾ÜÃDªº¼Ë¦¡¡A·|¦³¥|­Ó¿ï¶µ¡A¤@­Ó¥¿½T¡A¤T­Ó¿ù»~¡A½Ğ§A¥XÃD¥Ø¡A§A­n¦^µªªº¼Ë¦¡¬°¡AÃD¥Ø:¡u´£¥Ü¦r¡v¡A¿ï¶µA:¡uµª®×´£¥Ü¦r¡v¡A¿ï¶µB:¡u´£¥Ü¦r¡v¡A¿ï¶µC:¡u´£¥Ü¦r¡v¡A¿ï¶µD:¡u´£¥Ü¦r¡v¡A¥¿½Tµª®×¬°:¡u´£¥Ü¦r¡v¡AºÉ¶q¬°©ú½Tª««~¡AÃD¥Ø¥Î­^¤å¡A¿ï¶µ¥Î¤¤¤å¡A¤£­n¦³¦h¾lªº¦r¡Aµ¹§Ú¤@ÃD´N¦n¤F¡A¼ĞÂI²Å¸¹¤£­nÅÜ¡A¤@©w­n¨Ï¥Î¡u¡v®Ø¦í´£¥Ü¦r¡C", (result) =>
+            //yield return StartCoroutine(geminiAPI.SendRequest("æˆ‘å€‘æƒ³åšä¸€å€‹éŠæˆ²ï¼ŒéŠæˆ²å…§å®¹æ˜¯æœƒæœ‰æ•¸åç©å®¶å’Œä¸€å€‹AIï¼Œç„¶å¾Œè®“ç©å®¶çœ‹åœ–çŒœé¡Œç›®æ˜¯ä»€éº¼ï¼Œå¦‚æœç©å®¶éƒ½ç­”éŒ¯é‚£AIå°±æœƒè®“é—œéµå­—å¯ä»¥ç”Ÿçš„æ›´åƒé¡Œç›®ï¼Œä¸€ç›´æŒçºŒåˆ°ç©å®¶å¯ä»¥é€éç”Ÿå‡ºçš„åœ–ç‰‡çŒœåˆ°é¡Œç›®ç‚ºæ­¢ã€‚å›ç­”æœƒæ˜¯é¸æ“‡é¡Œçš„æ¨£å¼ï¼Œæœƒæœ‰å››å€‹é¸é …ï¼Œä¸€å€‹æ­£ç¢ºï¼Œä¸‰å€‹éŒ¯èª¤ï¼Œè«‹ä½ å‡ºé¡Œç›®ï¼Œä½ è¦å›ç­”çš„æ¨£å¼ç‚ºï¼Œé¡Œç›®:ã€Œæç¤ºå­—ã€ï¼Œé¸é …A:ã€Œç­”æ¡ˆæç¤ºå­—ã€ï¼Œé¸é …B:ã€Œæç¤ºå­—ã€ï¼Œé¸é …C:ã€Œæç¤ºå­—ã€ï¼Œé¸é …D:ã€Œæç¤ºå­—ã€ï¼Œæ­£ç¢ºç­”æ¡ˆç‚º:ã€Œæç¤ºå­—ã€ï¼Œç›¡é‡ç‚ºæ˜ç¢ºç‰©å“ï¼Œé¡Œç›®ç”¨è‹±æ–‡ï¼Œé¸é …ç”¨ä¸­æ–‡ï¼Œä¸è¦æœ‰å¤šé¤˜çš„å­—ï¼Œçµ¦æˆ‘ä¸€é¡Œå°±å¥½äº†ï¼Œæ¨™é»ç¬¦è™Ÿä¸è¦è®Šï¼Œä¸€å®šè¦ä½¿ç”¨ã€Œã€æ¡†ä½æç¤ºå­—ã€‚", (result) =>
             //{
             //    keywords = ExtractTextInsideQuotes(result);
             //}));
-            //Debug.Log("Àò¨ú¨ìªºÃöÁä¦r: " + string.Join(", ", keywords));
+            //Debug.Log("ç²å–åˆ°çš„é—œéµå­—: " + string.Join(", ", keywords));
             ////GetOption();
             //answer = keywords[1];
             //StartCoroutine(huggingFaceAPI.GenerateImageFromText(keywords[0], OnImageGenerated));
 
-            //answer = multiChoiceQuestion.ChangeQuestion(NowQuestion++);//ÃD®w¼Ò¦¡
+            //answer = multiChoiceQuestion.ChangeQuestion(NowQuestion++);//é¡Œåº«æ¨¡å¼
             StartCoroutine(multiChoiceQuestion.stableDiffusionRegionPrompt.StartAutoImageUpdate());
         }
         else if(mode == 2)
         {
-            yield return StartCoroutine(geminiAPI.SendRequest("§Ú­Ì·Q°µ¤@­Ó¹CÀ¸¡A¹CÀ¸¤º®e¬O·|¦³¼Æ¦Wª±®a©M¤@­ÓAI¡AµM«áÅıª±®a¬İ¹Ï²qÃD¥Ø¬O¤°»ò¡A¦pªGª±®a³£µª¿ù¨ºAI´N·|ÅıÃöÁä¦r¥i¥H¥Íªº§ó¹³ÃD¥Ø¡A¤@ª½«ùÄò¨ìª±®a¥i¥H³z¹L¥Í¥Xªº¹Ï¤ù²q¨ìÃD¥Ø¬°¤î¡C¦^µª·|¬O¿ï¾ÜÃDªº¼Ë¦¡¡A·|¦³¥|­Ó¿ï¶µ¡A¤@­Ó¥¿½T¡A¤T­Ó¿ù»~¡A½Ğ§A¥XÃD¥Ø¡A¨C¦¸³£¤£¤@¼ËªºÃD¥Ø¡AÃD¥Ø¬°¤¤¤å¦¨»y¥Î­^¤å¥hªí¹F¡A§A­n¦^À³ªº¼Ë¦¡¬°¡AÃD¥Ø:¡u´£¥Ü¦r¡v¡A¿ï¶µA:¡uµª®×´£¥Ü¦r¡v¡A¿ï¶µB:¡u´£¥Ü¦r¡v¡A¿ï¶µC:¡u´£¥Ü¦r¡v¡A¿ï¶µD:¡u´£¥Ü¦r¡v¡A¥¿½Tµª®×¬°:¡u´£¥Ü¦r¡v¡AÃD¥Ø¥Î­^¤å´y­z¡A¿ï¶µ¥Î¤¤¤å¡A¤£­n¦³¦h¾lªº¦r¡Aµ¹§Ú¤@ÃD´N¦n¤F¡A¼ĞÂI²Å¸¹¤£­nÅÜ¡A¤@©w­n¨Ï¥Î¡u¡v®Ø¦í´£¥Ü¦r¡C", (result) =>
+            yield return StartCoroutine(geminiAPI.SendRequest("æˆ‘å€‘æƒ³åšä¸€å€‹éŠæˆ²ï¼ŒéŠæˆ²å…§å®¹æ˜¯æœƒæœ‰æ•¸åç©å®¶å’Œä¸€å€‹AIï¼Œç„¶å¾Œè®“ç©å®¶çœ‹åœ–çŒœé¡Œç›®æ˜¯ä»€éº¼ï¼Œå¦‚æœç©å®¶éƒ½ç­”éŒ¯é‚£AIå°±æœƒè®“é—œéµå­—å¯ä»¥ç”Ÿçš„æ›´åƒé¡Œç›®ï¼Œä¸€ç›´æŒçºŒåˆ°ç©å®¶å¯ä»¥é€éç”Ÿå‡ºçš„åœ–ç‰‡çŒœåˆ°é¡Œç›®ç‚ºæ­¢ã€‚å›ç­”æœƒæ˜¯é¸æ“‡é¡Œçš„æ¨£å¼ï¼Œæœƒæœ‰å››å€‹é¸é …ï¼Œä¸€å€‹æ­£ç¢ºï¼Œä¸‰å€‹éŒ¯èª¤ï¼Œè«‹ä½ å‡ºé¡Œç›®ï¼Œæ¯æ¬¡éƒ½ä¸ä¸€æ¨£çš„é¡Œç›®ï¼Œé¡Œç›®ç‚ºä¸­æ–‡æˆèªç”¨è‹±æ–‡å»è¡¨é”ï¼Œä½ è¦å›æ‡‰çš„æ¨£å¼ç‚ºï¼Œé¡Œç›®:ã€Œæç¤ºå­—ã€ï¼Œé¸é …A:ã€Œç­”æ¡ˆæç¤ºå­—ã€ï¼Œé¸é …B:ã€Œæç¤ºå­—ã€ï¼Œé¸é …C:ã€Œæç¤ºå­—ã€ï¼Œé¸é …D:ã€Œæç¤ºå­—ã€ï¼Œæ­£ç¢ºç­”æ¡ˆç‚º:ã€Œæç¤ºå­—ã€ï¼Œé¡Œç›®ç”¨è‹±æ–‡æè¿°ï¼Œé¸é …ç”¨ä¸­æ–‡ï¼Œä¸è¦æœ‰å¤šé¤˜çš„å­—ï¼Œçµ¦æˆ‘ä¸€é¡Œå°±å¥½äº†ï¼Œæ¨™é»ç¬¦è™Ÿä¸è¦è®Šï¼Œä¸€å®šè¦ä½¿ç”¨ã€Œã€æ¡†ä½æç¤ºå­—ã€‚", (result) =>
             {
                 keywords = ExtractTextInsideQuotes(result);
             }));
-            //Debug.Log("Àò¨ú¨ìªºÃöÁä¦r: " + string.Join(", ", keywords));
+            //Debug.Log("ç²å–åˆ°çš„é—œéµå­—: " + string.Join(", ", keywords));
             ////GetOption();
             //answer = keywords[1];
             //StartCoroutine(huggingFaceAPI.GenerateImageFromText(keywords[0], OnImageGenerated));
@@ -133,22 +135,22 @@ public class GameController : MonoBehaviourPun
             StartCoroutine(ChainCoroutines());
         }
 
-        // µ¥«İ API ¦^À³
+        // ç­‰å¾… API å›æ‡‰
         //StartCoroutine(ChangeEvery10Seconds());
     }
     //IEnumerator ChangeEvery10Seconds()
     //{
-    //    for (int i = 1; i <= 4; i++)  // ­«½Æ 4 ¦¸
+    //    for (int i = 1; i <= 4; i++)  // é‡è¤‡ 4 æ¬¡
     //    {
     //        Debug.Log(keywords[i]);
     //        string prompt = keywords[i];
     //        StartCoroutine(huggingFaceAPI.GenerateImageFromText(prompt, OnImageGenerated));
-    //        yield return new WaitForSeconds(10f);  // µ¥«İ 10 ¬í
+    //        yield return new WaitForSeconds(10f);  // ç­‰å¾… 10 ç§’
     //    }
     //}
     void GetOption()
     {
-        for (int i = 1; i <= 4; i++)  // ­«½Æ 4 ¦¸
+        for (int i = 1; i <= 4; i++)  // é‡è¤‡ 4 æ¬¡
         {
             string prompt = keywords[i];
             Text buttonText = OptionButton[i-1].GetComponentInChildren<Text>();
@@ -157,10 +159,10 @@ public class GameController : MonoBehaviourPun
     }
     public string SpriteToBase64String(Sprite sprite)
     {
-        // «Ø¥ß·sªº Texture2D¡]¶È­­°Ï°ì¡^
+        // å»ºç«‹æ–°çš„ Texture2Dï¼ˆåƒ…é™å€åŸŸï¼‰
         Texture2D texture = new Texture2D((int)sprite.rect.width, (int)sprite.rect.height, TextureFormat.RGBA32, false);
 
-        // ±q sprite ­ì©l texture ¤¤Â^¨ú¹³¯À¨ì·s Texture2D
+        // å¾ sprite åŸå§‹ texture ä¸­æ“·å–åƒç´ åˆ°æ–° Texture2D
         Color[] pixels = sprite.texture.GetPixels(
             (int)sprite.textureRect.x,
             (int)sprite.textureRect.y,
@@ -170,10 +172,10 @@ public class GameController : MonoBehaviourPun
         texture.SetPixels(pixels);
         texture.Apply();
 
-        // ±N Texture2D Âà¬° PNG byte[]
+        // å°‡ Texture2D è½‰ç‚º PNG byte[]
         byte[] pngBytes = texture.EncodeToPNG();
 
-        // ±N byte[] Âà¬° base64 ¦r¦ê
+        // å°‡ byte[] è½‰ç‚º base64 å­—ä¸²
         return Convert.ToBase64String(pngBytes);
     }
 
@@ -187,33 +189,33 @@ public class GameController : MonoBehaviourPun
             {
                 if (Buttontext.text == "depth" || Buttontext.text == "openpose" || Buttontext.text == "canny" || Buttontext.text == "shuffle")
                 {
-                    StartCoroutine(SendPhotoRequestCoroutine(stablediffusionregionprompt.ResultLLM[Buttontext.text][0] + "¡ADepth¯S¦â:Depth·|±N¤Hª«ªº§Îª¬±±¨î¦í¡A¦ı¤Hª«ÁÙ¬O·|¸ò°Ñ¦Ò¹Ï¦³¤@¨Ç²Ó¸`¤Wªº°Ï§O¡A¦P®É­I´º¤]·|¨ü¨ì°Ñ¦Ò¹Ï¼vÅT¡AOpenpose¯S¦â: ¥u±N¤Hª«ªº«º¶Õ±±¨î¦í¡A©Ò¥H¤Hª«¹ï¤ñ°Ñ¦Ò¹Ï¥i¥H¦³§ó¦h¦Û¤vªº¯S¦â¡A¦P®É­I´º¤]¯à¥Ñ¥Í¹Ï¼Ò«¬¦Û¥Ñµo´§¡ACanny¯S¦â: ·|³Q°Ñ¦Ò¹Ïªº©Ò¦³Ãä½t²Ó¸`±±¨î¦í¡A©Ò¥H¦b¦³½u±øªº¦a¤è´X¥G³£·|©M°Ñ¦Ò¹Ï¤@¼Ë¡A©Mdepthªº¥D­n°Ï§O¦b©ódepthªº¤Hª«¦b²Ó¸`¤W¨Ó¬O¸ò°Ñ¦Ò¹Ï¦³®t²§¡A¦ıcanny«h·|©M°Ñ¦Ò¹Ï¬Û¦P(¨Ò¦pªA¸Ë¤Wªº²Ó¸`)¡AShuffle¯S¦â: ¥u·|³Q°Ñ¦Ò¹Ïªº¦â±m­·®æ±±¨î¦í¡A©Ò¥H¤Hª«©M­I´º³£·|¦Û¥Ñµo´§¡A¥u¦³¦â½Õ·|©M°Ñ¦Ò¹Ï¦³Ãö" + "¡Aª½±µ¦^µª§Ú¸ÑÄÀ´N¥i¥H¤F", twoImages));
+                    StartCoroutine(SendPhotoRequestCoroutine(stablediffusionregionprompt.ResultLLM[Buttontext.text][0] + "ï¼ŒDepthç‰¹è‰²:Depthæœƒå°‡äººç‰©çš„å½¢ç‹€æ§åˆ¶ä½ï¼Œä½†äººç‰©é‚„æ˜¯æœƒè·Ÿåƒè€ƒåœ–æœ‰ä¸€äº›ç´°ç¯€ä¸Šçš„å€åˆ¥ï¼ŒåŒæ™‚èƒŒæ™¯ä¹Ÿæœƒå—åˆ°åƒè€ƒåœ–å½±éŸ¿ï¼ŒOpenposeç‰¹è‰²: åªå°‡äººç‰©çš„å§¿å‹¢æ§åˆ¶ä½ï¼Œæ‰€ä»¥äººç‰©å°æ¯”åƒè€ƒåœ–å¯ä»¥æœ‰æ›´å¤šè‡ªå·±çš„ç‰¹è‰²ï¼ŒåŒæ™‚èƒŒæ™¯ä¹Ÿèƒ½ç”±ç”Ÿåœ–æ¨¡å‹è‡ªç”±ç™¼æ®ï¼ŒCannyç‰¹è‰²: æœƒè¢«åƒè€ƒåœ–çš„æ‰€æœ‰é‚Šç·£ç´°ç¯€æ§åˆ¶ä½ï¼Œæ‰€ä»¥åœ¨æœ‰ç·šæ¢çš„åœ°æ–¹å¹¾ä¹éƒ½æœƒå’Œåƒè€ƒåœ–ä¸€æ¨£ï¼Œå’Œdepthçš„ä¸»è¦å€åˆ¥åœ¨æ–¼depthçš„äººç‰©åœ¨ç´°ç¯€ä¸Šä¾†æ˜¯è·Ÿåƒè€ƒåœ–æœ‰å·®ç•°ï¼Œä½†cannyå‰‡æœƒå’Œåƒè€ƒåœ–ç›¸åŒ(ä¾‹å¦‚æœè£ä¸Šçš„ç´°ç¯€)ï¼ŒShuffleç‰¹è‰²: åªæœƒè¢«åƒè€ƒåœ–çš„è‰²å½©é¢¨æ ¼æ§åˆ¶ä½ï¼Œæ‰€ä»¥äººç‰©å’ŒèƒŒæ™¯éƒ½æœƒè‡ªç”±ç™¼æ®ï¼Œåªæœ‰è‰²èª¿æœƒå’Œåƒè€ƒåœ–æœ‰é—œ" + "ï¼Œç›´æ¥å›ç­”æˆ‘è§£é‡‹å°±å¯ä»¥äº†", twoImages));
                 }
                 else if (stablediffusionregionprompt.ResultLLM.ContainsKey(Buttontext.text))
                 {
-                    StartCoroutine(SendPhotoRequestCoroutine(stablediffusionregionprompt.ResultLLM[Buttontext.text][0]+"¡Aª½±µ¦^µª§Ú¸ÑÄÀ´N¥i¥H¤F", twoImages));
+                    StartCoroutine(SendPhotoRequestCoroutine(stablediffusionregionprompt.ResultLLM[Buttontext.text][0]+"ï¼Œç›´æ¥å›ç­”æˆ‘è§£é‡‹å°±å¯ä»¥äº†", twoImages));
                 }
                 else
                 {
-                    StartCoroutine(SendPhotoRequestCoroutine(stablediffusionregionprompt.ResultLLM["Prompt"][0].Replace("(¥¿½Tµª®×´£¥Üµü)", Buttontext.text) + "¡Aª½±µ¦^µª§Ú¸ÑÄÀ´N¥i¥H¤F", twoImages));
+                    StartCoroutine(SendPhotoRequestCoroutine(stablediffusionregionprompt.ResultLLM["Prompt"][0].Replace("(æ­£ç¢ºç­”æ¡ˆæç¤ºè©)", Buttontext.text) + "ï¼Œç›´æ¥å›ç­”æˆ‘è§£é‡‹å°±å¯ä»¥äº†", twoImages));
                 }
             }
             else
             {
                 if (Buttontext.text == "depth" || Buttontext.text == "openpose" || Buttontext.text == "canny" || Buttontext.text == "shuffle")
                 {
-                    StartCoroutine(SendPhotoRequestCoroutine(stablediffusionregionprompt.ResultLLM[Buttontext.text][1].Replace("(¶ñ¤J¥¿½Tµª®×)", Buttontext.text) + "¡ADepth¯S¦â:Depth·|±N¤Hª«ªº§Îª¬±±¨î¦í¡A¦ı¤Hª«ÁÙ¬O·|¸ò°Ñ¦Ò¹Ï¦³¤@¨Ç²Ó¸`¤Wªº°Ï§O¡A¦P®É­I´º¤]·|¨ü¨ì°Ñ¦Ò¹Ï¼vÅT¡AOpenpose¯S¦â: ¥u±N¤Hª«ªº«º¶Õ±±¨î¦í¡A©Ò¥H¤Hª«¹ï¤ñ°Ñ¦Ò¹Ï¥i¥H¦³§ó¦h¦Û¤vªº¯S¦â¡A¦P®É­I´º¤]¯à¥Ñ¥Í¹Ï¼Ò«¬¦Û¥Ñµo´§¡ACanny¯S¦â: ·|³Q°Ñ¦Ò¹Ïªº©Ò¦³Ãä½t²Ó¸`±±¨î¦í¡A©Ò¥H¦b¦³½u±øªº¦a¤è´X¥G³£·|©M°Ñ¦Ò¹Ï¤@¼Ë¡A©Mdepthªº¥D­n°Ï§O¦b©ódepthªº¤Hª«¦b²Ó¸`¤W¨Ó¬O¸ò°Ñ¦Ò¹Ï¦³®t²§¡A¦ıcanny«h·|©M°Ñ¦Ò¹Ï¬Û¦P(¨Ò¦pªA¸Ë¤Wªº²Ó¸`)¡AShuffle¯S¦â: ¥u·|³Q°Ñ¦Ò¹Ïªº¦â±m­·®æ±±¨î¦í¡A©Ò¥H¤Hª«©M­I´º³£·|¦Û¥Ñµo´§¡A¥u¦³¦â½Õ·|©M°Ñ¦Ò¹Ï¦³Ãö"  + "¡Aª½±µ¦^µª§Ú¸ÑÄÀ´N¥i¥H¤F", twoImages));
+                    StartCoroutine(SendPhotoRequestCoroutine(stablediffusionregionprompt.ResultLLM[Buttontext.text][1].Replace("(å¡«å…¥æ­£ç¢ºç­”æ¡ˆ)", Buttontext.text) + "ï¼ŒDepthç‰¹è‰²:Depthæœƒå°‡äººç‰©çš„å½¢ç‹€æ§åˆ¶ä½ï¼Œä½†äººç‰©é‚„æ˜¯æœƒè·Ÿåƒè€ƒåœ–æœ‰ä¸€äº›ç´°ç¯€ä¸Šçš„å€åˆ¥ï¼ŒåŒæ™‚èƒŒæ™¯ä¹Ÿæœƒå—åˆ°åƒè€ƒåœ–å½±éŸ¿ï¼ŒOpenposeç‰¹è‰²: åªå°‡äººç‰©çš„å§¿å‹¢æ§åˆ¶ä½ï¼Œæ‰€ä»¥äººç‰©å°æ¯”åƒè€ƒåœ–å¯ä»¥æœ‰æ›´å¤šè‡ªå·±çš„ç‰¹è‰²ï¼ŒåŒæ™‚èƒŒæ™¯ä¹Ÿèƒ½ç”±ç”Ÿåœ–æ¨¡å‹è‡ªç”±ç™¼æ®ï¼ŒCannyç‰¹è‰²: æœƒè¢«åƒè€ƒåœ–çš„æ‰€æœ‰é‚Šç·£ç´°ç¯€æ§åˆ¶ä½ï¼Œæ‰€ä»¥åœ¨æœ‰ç·šæ¢çš„åœ°æ–¹å¹¾ä¹éƒ½æœƒå’Œåƒè€ƒåœ–ä¸€æ¨£ï¼Œå’Œdepthçš„ä¸»è¦å€åˆ¥åœ¨æ–¼depthçš„äººç‰©åœ¨ç´°ç¯€ä¸Šä¾†æ˜¯è·Ÿåƒè€ƒåœ–æœ‰å·®ç•°ï¼Œä½†cannyå‰‡æœƒå’Œåƒè€ƒåœ–ç›¸åŒ(ä¾‹å¦‚æœè£ä¸Šçš„ç´°ç¯€)ï¼ŒShuffleç‰¹è‰²: åªæœƒè¢«åƒè€ƒåœ–çš„è‰²å½©é¢¨æ ¼æ§åˆ¶ä½ï¼Œæ‰€ä»¥äººç‰©å’ŒèƒŒæ™¯éƒ½æœƒè‡ªç”±ç™¼æ®ï¼Œåªæœ‰è‰²èª¿æœƒå’Œåƒè€ƒåœ–æœ‰é—œ"  + "ï¼Œç›´æ¥å›ç­”æˆ‘è§£é‡‹å°±å¯ä»¥äº†", twoImages));
                 }
                 else if (stablediffusionregionprompt.ResultLLM.ContainsKey(Buttontext.text))
                 {
-                    StartCoroutine(SendPhotoRequestCoroutine(stablediffusionregionprompt.ResultLLM[Buttontext.text][1] + "¡Aª½±µ¦^µª§Ú¸ÑÄÀ´N¥i¥H¤F", twoImages));
+                    StartCoroutine(SendPhotoRequestCoroutine(stablediffusionregionprompt.ResultLLM[Buttontext.text][1] + "ï¼Œç›´æ¥å›ç­”æˆ‘è§£é‡‹å°±å¯ä»¥äº†", twoImages));
                 }
                 else
                 {
                     resultText = stablediffusionregionprompt.ResultLLM["Prompt"][1];
-                    resultText = resultText.Replace("(¥¿½Tµª®×´£¥Üµü)", answer);
-                    resultText = resultText.Replace("(¿ï¾Ü¸Ô¸Ñ´£¥Üµü)", Buttontext.text);
-                    StartCoroutine(SendPhotoRequestCoroutine(resultText + "¡Aª½±µ¦^µª§Ú¸ÑÄÀ´N¥i¥H¤F", twoImages));
+                    resultText = resultText.Replace("(æ­£ç¢ºç­”æ¡ˆæç¤ºè©)", answer);
+                    resultText = resultText.Replace("(é¸æ“‡è©³è§£æç¤ºè©)", Buttontext.text);
+                    StartCoroutine(SendPhotoRequestCoroutine(resultText + "ï¼Œç›´æ¥å›ç­”æˆ‘è§£é‡‹å°±å¯ä»¥äº†", twoImages));
                 }
             }
         }
@@ -242,22 +244,20 @@ public class GameController : MonoBehaviourPun
         yield return StartCoroutine(geminiAPI.SendMorePhotoRequest(prompt, images, (result) =>
         {
             multiChoiceQuestion.Explain.text = result;
-            Debug.Log("µ¹TTSªº¤å¦r:"+ result);
-            StartCoroutine(tTSClone.RequestTTS(result));
         }));
     }
     private string Uncheckedprompt;
     private string checkedprompt;
     IEnumerator ReadSettingFileAndSend()
     {
-        string path = System.IO.Path.Combine(Application.streamingAssetsPath, "LLM³]©w.txt");
+        string path = System.IO.Path.Combine(Application.streamingAssetsPath, "LLMè¨­å®š.txt");
 
     #if UNITY_ANDROID && !UNITY_EDITOR
         UnityWebRequest www = UnityWebRequest.Get(path);
         yield return www.SendWebRequest();
         if (www.result != UnityWebRequest.Result.Success)
         {
-            Debug.LogError("ÅªÀÉ¥¢±Ñ: " + www.error);
+            Debug.LogError("è®€æª”å¤±æ•—: " + www.error);
             yield break;
         }
         string fileContent = www.downloadHandler.text;
@@ -265,7 +265,7 @@ public class GameController : MonoBehaviourPun
             string fileContent = System.IO.File.ReadAllText(path);
     #endif
 
-        // ©I¥s Gemini API ¨Ã¶Ç¤JÀÉ®×¤º®e
+        // å‘¼å« Gemini API ä¸¦å‚³å…¥æª”æ¡ˆå…§å®¹
         yield return StartCoroutine(geminiAPI.SendRequest(fileContent, (result) =>
         {
             Uncheckedprompt = result;
@@ -285,14 +285,14 @@ public class GameController : MonoBehaviourPun
     }
     IEnumerator ReadCheckFileAndSend()
     {
-        string path = System.IO.Path.Combine(Application.streamingAssetsPath, "ÀË¬d°T®§.txt");
+        string path = System.IO.Path.Combine(Application.streamingAssetsPath, "æª¢æŸ¥è¨Šæ¯.txt");
 
 #if UNITY_ANDROID && !UNITY_EDITOR
         UnityWebRequest www = UnityWebRequest.Get(path);
         yield return www.SendWebRequest();
         if (www.result != UnityWebRequest.Result.Success)
         {
-            Debug.LogError("ÅªÀÉ¥¢±Ñ: " + www.error);
+            Debug.LogError("è®€æª”å¤±æ•—: " + www.error);
             yield break;
         }
         string fileContent = www.downloadHandler.text;
@@ -301,7 +301,7 @@ public class GameController : MonoBehaviourPun
 #endif
         checkedprompt = Uncheckedprompt + fileContent;
 
-        // ©I¥s Gemini API ¨Ã¶Ç¤JÀÉ®×¤º®e
+        // å‘¼å« Gemini API ä¸¦å‚³å…¥æª”æ¡ˆå…§å®¹
         yield return StartCoroutine(geminiAPI.SendRequest(checkedprompt, (result) =>
         {
             Debug.Log(result);
@@ -328,7 +328,7 @@ public class GameController : MonoBehaviourPun
         foreach (Match match in matchCollection)
         {
             string insideBraces = match.Groups[1].Value;
-            // ¥Î '-' ¤À³Î
+            // ç”¨ '-' åˆ†å‰²
             string[] parts = insideBraces.Split('=');
 
             foreach (var part in parts)
@@ -345,7 +345,7 @@ public class GameController : MonoBehaviourPun
     static List<string> ExtractTextInsideQuotes(string input)
     {
         List<string> results = new List<string>();
-        MatchCollection matches = Regex.Matches(input, "[¡u\"](.*?)[¡v\"]");
+        MatchCollection matches = Regex.Matches(input, "[ã€Œ\"](.*?)[ã€\"]");
 
         foreach (Match match in matches)
         {
@@ -367,12 +367,12 @@ public class GameController : MonoBehaviourPun
     }
     private IEnumerator CheckAnswer(String MyAnswer)
     {
-        String CheckAnswerPrompt = $"§A¬O­t³d¤ñ¹ï¹Ï¹³±Ô­z¥¿½T©Êªº§U¤â¡C½Ğ°Ñ¦Ò¥H¤UÃD¥Ø©Ò¥]§tªºÃöÁäµü´y­z¡A¨C­Ó¶µ¥Ø¦U¥Nªí¤@­Óª«¥ó©Î¯S¼x¡A¨Ò¦p:{{Background=0=0=1=1=lush green rainforest, dense foliage, dappled sunlight, mist hanging low=0}}À³¸Ó­n°O¿ı[1.lush green rainforest 2.dense foliage 3.dappled sunlight 4.mist hanging low]¡A¥H¤U¬°ÃD¥Ø:{answer}¡A¨Ï¥ÎªÌ¦^µª¦p¤U:{MyAnswer}¡A½ĞÀË¬d¨Ï¥ÎªÌªº¦^µª¤¤¬O§_¦³´y­z¨ì¤W­z­ş¨Ç¶µ¥Ø¡C§Y¨Ï¨Ï¥Îªº¬O¦P¸qµü¡A¥u­n»y·N¬Û¦P¤]ºâ©R¤¤¡C¨C©R¤¤¤@¶µ´N±o¤@¤À¡C½Ğ¦^ÂĞ¤@­Ó¾ã¼Æ¡A¥Nªí¸Ó¦^µª©R¤¤¤F´X­Ó¶µ¥Ø¡]0~N ¤À¡^¡AµM«áÂ²­n¦C¥X©R¤¤ªº¶µ¥Ø¡C¥u»İ­nÂ²³æ²M·¡ªº»¡©ú§Y¥i¡C";
+        String CheckAnswerPrompt = $"ä½ æ˜¯è² è²¬æ¯”å°åœ–åƒæ•˜è¿°æ­£ç¢ºæ€§çš„åŠ©æ‰‹ã€‚è«‹åƒè€ƒä»¥ä¸‹é¡Œç›®æ‰€åŒ…å«çš„é—œéµè©æè¿°ï¼Œæ¯å€‹é …ç›®å„ä»£è¡¨ä¸€å€‹ç‰©ä»¶æˆ–ç‰¹å¾µï¼Œä¾‹å¦‚:{{Background=0=0=1=1=lush green rainforest, dense foliage, dappled sunlight, mist hanging low=0}}æ‡‰è©²è¦è¨˜éŒ„[1.lush green rainforest 2.dense foliage 3.dappled sunlight 4.mist hanging low]ï¼Œä»¥ä¸‹ç‚ºé¡Œç›®:{answer}ï¼Œä½¿ç”¨è€…å›ç­”å¦‚ä¸‹:{MyAnswer}ï¼Œè«‹æª¢æŸ¥ä½¿ç”¨è€…çš„å›ç­”ä¸­æ˜¯å¦æœ‰æè¿°åˆ°ä¸Šè¿°å“ªäº›é …ç›®ã€‚å³ä½¿ä½¿ç”¨çš„æ˜¯åŒç¾©è©ï¼Œåªè¦èªæ„ç›¸åŒä¹Ÿç®—å‘½ä¸­ã€‚æ¯å‘½ä¸­ä¸€é …å°±å¾—ä¸€åˆ†ã€‚è«‹å›è¦†ä¸€å€‹æ•´æ•¸ï¼Œä»£è¡¨è©²å›ç­”å‘½ä¸­äº†å¹¾å€‹é …ç›®ï¼ˆ0~N åˆ†ï¼‰ï¼Œç„¶å¾Œç°¡è¦åˆ—å‡ºå‘½ä¸­çš„é …ç›®ã€‚åªéœ€è¦ç°¡å–®æ¸…æ¥šçš„èªªæ˜å³å¯ã€‚";
         
         yield return StartCoroutine(geminiAPI.SendRequest(CheckAnswerPrompt, (result) => {
             Match match = Regex.Match(result, @"\d+");
             int score = int.Parse(match.Value);
-            Debug.Log($"§A®³¨ì¤F{score}¤À¡C");
+            Debug.Log($"ä½ æ‹¿åˆ°äº†{score}åˆ†ã€‚");
             if (score > 0)
             {
                 characteranimator.SetTrigger("correct");
