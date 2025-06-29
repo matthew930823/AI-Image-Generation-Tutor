@@ -374,20 +374,27 @@ public class MultiChoiceQuestion : MonoBehaviour
         {
             Text btnText = buttons[i].GetComponentInChildren<Text>();
             ColorBlock cb = buttons[i].colors;
-            if (btnText.text == stableDiffusionRegionPrompt.gameController.answer)
-            {
-                cb.normalColor = new Color(0.5f, 1f, 0.5f); // R=1, G=0.5, B=0.5
-                buttons[i].colors = cb;
-            }
-            else
-            {
-                cb.normalColor = new Color(1f, 0.5f, 0.5f); 
-                buttons[i].colors = cb;
-            }
+
+            Color correctColor = new Color(0.5f, 1f, 0.5f);  // 綠色
+            Color wrongColor = new Color(1f, 0.5f, 0.5f);     // 紅色
+
+            Color targetColor = (btnText.text == stableDiffusionRegionPrompt.gameController.answer)
+                                ? correctColor
+                                : wrongColor;
+
+            // 設定所有顏色狀態為目標顏色
+            cb.normalColor = targetColor;
+            cb.highlightedColor = targetColor;
+            cb.pressedColor = targetColor;
+            cb.selectedColor = targetColor;
+            cb.disabledColor = targetColor;
+
+            buttons[i].colors = cb;
         }
     }
     public void ResetButtonColor()
     {
+        IsResultScreen = false;
         GameScreen.SetActive(true);
         ResultScreen.SetActive(false);
         for (int i = 0; i < 4; i++)
