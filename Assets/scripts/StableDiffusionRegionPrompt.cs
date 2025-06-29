@@ -1012,31 +1012,31 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
         ["ReV Animated"] = new string[]
         {
             "ReV Animated這個模型生成的圖片風格會介於動畫和現實之間，現在我會給你一張由ReV Animated生成的圖片，請解釋為什麼這張圖片是由ReV Animated這個模型生成的，解釋的長度限制在50個字以內，解釋用[因此可以判斷這張圖是用ReV Animated生成的]來做結尾",
-            "ReV Animated這個模型生成的圖片風格會介於動畫和現實之間，現在我會給你一張由ReV Animated生成的圖片，請解釋為什麼這張圖片不是由ReV Animated這個模型生成的，解釋的長度限制在50個字以內，解釋用[因此可以判斷這張圖不是用ReV Animated生成的]來做結尾"
+            "ReV Animated這個模型生成的圖片風格會介於動畫和現實之間，現在我會給你一張不是由ReV Animated生成的圖片，請解釋為什麼這張圖片不是由ReV Animated這個模型生成的，解釋的長度限制在50個字以內，解釋用[因此可以判斷這張圖不是用ReV Animated生成的]來做結尾"
         },
 
         ["CuteYukiMix"] = new string[]
         {
             "CuteYukiMix這個模型生成的圖片是動畫風格，且生成的圖片會很可愛，現在我會給你一張由CuteYukiMix生成的圖片，請解釋為什麼這張圖片是由CuteYukiMix這個模型生成的，解釋的長度限制在50個字以內，解釋用[因此可以判斷這張圖是用CuteYukiMix生成的]來做結尾",
-            "CuteYukiMix這個模型生成的圖片風格會很可愛，現在我會給你一張由CuteYukiMix生成的圖片，請解釋為什麼這張圖片不是由CuteYukiMix這個模型生成的，解釋的長度限制在50個字以內，解釋用[因此可以判斷這張圖不是用CuteYukiMix生成的]來做結尾"
+            "CuteYukiMix這個模型生成的圖片風格會很可愛，現在我會給你一張不是由CuteYukiMix生成的圖片，請解釋為什麼這張圖片不是由CuteYukiMix這個模型生成的，解釋的長度限制在50個字以內，解釋用[因此可以判斷這張圖不是用CuteYukiMix生成的]來做結尾"
         },
 
         ["Counterfeit"] = new string[]
         {
             "Counterfeit這個模型生成的圖片是動畫風格，生成的圖片會線條明顯，色彩鮮豔且對比度高，現在我會給你一張由Counterfeit生成的圖片，請解釋為什麼這張圖片是由Counterfeit這個模型生成的，解釋的長度限制在50個字以內，解釋用[因此可以判斷這張圖是用Counterfeit生成的]來做結尾",
-            "Counterfeit這個模型生成的圖片是動畫風格，生成的圖片會線條明顯，色彩鮮豔，現在我會給你一張由Counterfeit生成的圖片，請解釋為什麼這張圖片不是由Counterfeit這個模型生成的，解釋的長度限制在50個字以內，解釋用[因此可以判斷這張圖不是用Counterfeit生成的]來做結尾"
+            "Counterfeit這個模型生成的圖片是動畫風格，生成的圖片會線條明顯，色彩鮮豔，現在我會給你一張不是由Counterfeit生成的圖片，請解釋為什麼這張圖片不是由Counterfeit這個模型生成的，解釋的長度限制在50個字以內，解釋用[因此可以判斷這張圖不是用Counterfeit生成的]來做結尾"
         },
 
         ["Cetus-Mix"] = new string[]
         {
             "Cetus-Mix這個模型生成的圖片是動畫風格，生成的圖片會較柔和、細緻，現在我會給你一張由Cetus-Mix生成的圖片，請解釋為什麼這張圖片是由Cetus-Mix這個模型生成的，解釋的長度限制在50個字以內，解釋用[因此可以判斷這張圖是用Cetus-Mix生成的]來做結尾",
-            "Cetus-Mix這個模型生成的圖片是動畫風格，生成的圖片會較柔和、細緻，現在我會給你一張由Cetus-Mix生成的圖片，請解釋為什麼這張圖片不是由Cetus-Mix這個模型生成的，解釋的長度限制在50個字以內，解釋用[因此可以判斷這張圖不是用Cetus-Mix生成的]來做結尾"
+            "Cetus-Mix這個模型生成的圖片是動畫風格，生成的圖片會較柔和、細緻，現在我會給你一張不是由Cetus-Mix生成的圖片，請解釋為什麼這張圖片不是由Cetus-Mix這個模型生成的，解釋的長度限制在50個字以內，解釋用[因此可以判斷這張圖不是用Cetus-Mix生成的]來做結尾"
         },
 
         ["DreamShaper"] = new string[]
         {
             "DreamShaper這個模型生成的圖片是現實風格，現在我會給你一張由DreamShaper生成的圖片，請解釋為什麼這張圖片是由DreamShaper這個模型生成的，解釋的長度限制在50個字以內，解釋用[因此可以判斷這張圖是用DreamShaper生成的]來做結尾",
-            "DreamShaper這個模型生成的圖片是現實風格，現在我會給你一張由DreamShaper生成的圖片，請解釋為什麼這張圖片不是由DreamShaper這個模型生成的，解釋的長度限制在50個字以內，解釋用[因此可以判斷這張圖不是用DreamShaper生成的]來做結尾"
+            "DreamShaper這個模型生成的圖片是現實風格，現在我會給你一張不是由DreamShaper生成的圖片，請解釋為什麼這張圖片不是由DreamShaper這個模型生成的，解釋的長度限制在50個字以內，解釋用[因此可以判斷這張圖不是用DreamShaper生成的]來做結尾"
         },
 
         // ---------------------LoRa---------------------
