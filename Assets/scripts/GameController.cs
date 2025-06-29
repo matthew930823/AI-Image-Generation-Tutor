@@ -153,11 +153,33 @@ public class GameController : MonoBehaviourPun
             buttonText.text = prompt;
         }
     }
+    public string SpriteToBase64String(Sprite sprite)
+    {
+        // 建立新的 Texture2D（僅限區域）
+        Texture2D texture = new Texture2D((int)sprite.rect.width, (int)sprite.rect.height, TextureFormat.RGBA32, false);
+
+        // 從 sprite 原始 texture 中擷取像素到新 Texture2D
+        Color[] pixels = sprite.texture.GetPixels(
+            (int)sprite.textureRect.x,
+            (int)sprite.textureRect.y,
+            (int)sprite.textureRect.width,
+            (int)sprite.textureRect.height
+        );
+        texture.SetPixels(pixels);
+        texture.Apply();
+
+        // 將 Texture2D 轉為 PNG byte[]
+        byte[] pngBytes = texture.EncodeToPNG();
+
+        // 將 byte[] 轉為 base64 字串
+        return Convert.ToBase64String(pngBytes);
+    }
+
     public void CheckAns(Text Buttontext)
     {
         if (multiChoiceQuestion.IsResultScreen)
         {
-            string[] twoImages = new string[] { Convert.ToBase64String(stablediffusionregionprompt.img1.EncodeToPNG()), Convert.ToBase64String(stablediffusionregionprompt.img2.EncodeToPNG()) };
+            string[] twoImages = new string[] { SpriteToBase64String(multiChoiceQuestion.BeforeImage.sprite), SpriteToBase64String(multiChoiceQuestion.AfterImage.sprite) };
             string resultText = "";
             if (Buttontext.text == answer)
             {
