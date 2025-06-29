@@ -376,12 +376,12 @@ public class MultiChoiceQuestion : MonoBehaviour
             ColorBlock cb = buttons[i].colors;
             if (btnText.text == stableDiffusionRegionPrompt.gameController.answer)
             {
-                cb.normalColor = new Color(1f, 0.5f, 0.5f); // R=1, G=0.5, B=0.5
+                cb.normalColor = new Color(0.5f, 1f, 0.5f); // R=1, G=0.5, B=0.5
                 buttons[i].colors = cb;
             }
             else
             {
-                cb.normalColor = new Color(0.5f, 1f, 0.5f); 
+                cb.normalColor = new Color(1f, 0.5f, 0.5f); 
                 buttons[i].colors = cb;
             }
         }
