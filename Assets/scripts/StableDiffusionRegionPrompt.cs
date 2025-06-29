@@ -30,7 +30,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
     public MultiChoiceQuestion multiChoiceQuestion;
     string HanfuimageData;
     public GameController gameController;
-
+    private string tempAnswer;
 
     [System.Serializable]
     public class Region
@@ -169,28 +169,28 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
                 switch (LoRa)
                 {
                     case "漢服":
-                        gameController.answer = "Hanfu";
+                        tempAnswer = "Hanfu";
                         break;
                     case "漫畫":
-                        gameController.answer = "Lineart";
+                        tempAnswer = "Lineart";
                         break;
                     case "貓":
-                        gameController.answer = "Cutecat";
+                        tempAnswer = "Cutecat";
                         break;
                     case "水墨":
-                        gameController.answer = "MoXin";
+                        tempAnswer = "MoXin";
                         break;
                     case "盒玩":
-                        gameController.answer = "Blindbox";
+                        tempAnswer = "Blindbox";
                         break;
                     case "吉普利":
-                        gameController.answer = "Ghibli";
+                        tempAnswer = "Ghibli";
                         break;
                     case "眼睛":
-                        gameController.answer = "Eye";
+                        tempAnswer = "Eye";
                         break;
                     case "食物照片":
-                        gameController.answer = "Foodphoto";
+                        tempAnswer = "Foodphoto";
                         break;
                     default:
                         break;
@@ -206,19 +206,19 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
                 switch (checkpoint)
                 {
                     case "anime_cute.safetensors":
-                        gameController.answer = "CuteYukiMix";
+                        tempAnswer = "CuteYukiMix";
                         break;
                     case "anime-real_hybrid.safetensors":
-                        gameController.answer = "ReV Animated";
+                        tempAnswer = "ReV Animated";
                         break;
                     case "anime_soft.safetensors":
-                        gameController.answer = "Cetus-Mix";
+                        tempAnswer = "Cetus-Mix";
                         break;
                     case "realistic_anything.safetensors":
-                        gameController.answer = "DreamShaper";
+                        tempAnswer = "DreamShaper";
                         break;
                     case "anime_bold.safetensors":
-                        gameController.answer = "Counterfeit";
+                        tempAnswer = "Counterfeit";
                         break;
                     default:
                         break;
@@ -233,7 +233,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
                 string[] add = new string[] { "desert", "forest", "beach", "grassland", "lake", "blizzard", "sunset", "foggy", "thunderstorm", "god rays", "downtown", "cyberpunk", "oil painting","watercolor", "japanese temple" , "castle", "classroom", "bedroom", "magic forest", "lava ground", "red", "blue", "green", "yellow", "purple", "orange", "pink", "black", "white", "gray", "brown" };
                 string Addresult = add[UnityEngine.Random.Range(0, add.Length)];
                 Debug.Log("新增提示詞為:" + Addresult);
-                gameController.answer = Addresult;
+                tempAnswer = Addresult;
                 yield return StartCoroutine(GenerateImageForMultipleChoice(768, 768, "(" + Addresult + ":2)," + Prompt, checkpoint, LoRa, ControlNetType, "", ControlnetImageBase64, seed,
                    texture =>
                    {
@@ -244,7 +244,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
                 int[] resolution = new int[] { 128 ,384,1024,512};
                 int randResolution=resolution[UnityEngine.Random.Range(0, resolution.Length)];
                 Debug.Log("randResolution:" + randResolution);
-                gameController.answer = randResolution.ToString();
+                tempAnswer = randResolution.ToString();
                 yield return StartCoroutine(GenerateImageForMultipleChoice(randResolution, randResolution, Prompt, checkpoint, LoRa, ControlNetType,"", ControlnetImageBase64, seed,
                         texture =>
                         {
@@ -263,16 +263,16 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
                 switch (randControlnet)
                 {
                     case "depth_anything_v2":
-                        gameController.answer = "depth";
+                        tempAnswer = "depth";
                         break;
                     case "canny":
-                        gameController.answer = "canny";
+                        tempAnswer = "canny";
                         break;
                     case "openpose_hand":
-                        gameController.answer = "openpose";
+                        tempAnswer = "openpose";
                         break;
                     case "shuffle":
-                        gameController.answer = "shuffle";
+                        tempAnswer = "shuffle";
                         break;
                     default:
                         break;
@@ -328,6 +328,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
                     //imageUI.sprite = Sprite.Create(img1, new Rect(0, 0, img1.width, img1.height), new Vector2(0.5f, 0.5f));
                     //imageUI2.sprite = Sprite.Create(img2, new Rect(0, 0, img2.width, img2.height), new Vector2(0.5f, 0.5f));
                 }
+                gameController.answer = tempAnswer;
                 multiChoiceQuestion.ChangeHintImage(result[2]);
                 MainBody.Enqueue(Prompt.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries)[0]);
                 if (MainBody.Count > 5)
@@ -369,6 +370,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
                     //imageUI.sprite = Sprite.Create(img1, new Rect(0, 0, img1.width, img1.height), new Vector2(0.5f, 0.5f));
                     //imageUI2.sprite = Sprite.Create(img2, new Rect(0, 0, img2.width, img2.height), new Vector2(0.5f, 0.5f));
                 }
+                gameController.answer = tempAnswer;
                 multiChoiceQuestion.ChangeHintImage(result[2]);
             }
         }
