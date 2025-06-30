@@ -195,6 +195,7 @@ public class GameController : MonoBehaviourPun
     {
         if (multiChoiceQuestion.IsResultScreen && !ResultCool)
         {
+            voiceAudioPlayer.AudioPlay(3);
             StartCoroutine(CountdownCoroutine(60));
             string[] twoImages; twoImages = new string[] { SpriteToBase64String(multiChoiceQuestion.AfterImage.sprite) };
             string resultText = "";
@@ -271,7 +272,12 @@ public class GameController : MonoBehaviourPun
                 }
             }
         }
-        else
+
+        else if (multiChoiceQuestion.IsResultScreen && ResultCool)
+        {
+            voiceAudioPlayer.AudioPlay(4);//詳解生成冷卻時點及生成詳解
+        }
+        else if(!multiChoiceQuestion.IsResultScreen)
         {
             if (Buttontext.text == answer)
             {

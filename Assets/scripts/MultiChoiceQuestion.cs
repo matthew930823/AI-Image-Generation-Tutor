@@ -395,6 +395,7 @@ public class MultiChoiceQuestion : MonoBehaviour
     }
     public void ResetButtonColor()
     {
+        PrepareQuestions = false;
         IsResultScreen = false;
         GameScreen.SetActive(true);
         ResultScreen.SetActive(false);
@@ -411,9 +412,14 @@ public class MultiChoiceQuestion : MonoBehaviour
             buttons[i].colors = cb;
         }
     }
+    bool PrepareQuestions = false;
     // Update is called once per frame
     void Update()
     {
-        
+        if(ResultScreen.activeSelf && stableDiffusionRegionPrompt.SkipButton.activeSelf && !PrepareQuestions)
+        {
+            stableDiffusionRegionPrompt.gameController.voiceAudioPlayer.AudioPlay(5);
+            PrepareQuestions = true;
+        }
     }
 }

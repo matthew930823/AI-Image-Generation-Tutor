@@ -297,6 +297,14 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
     {
         skipWait = true;
     }
+    public GameObject IntroScreen;
+    public GameObject GameStartScreen;
+    public GameObject GameStartButton;
+    public void OnClickStartGame()
+    {
+        IntroScreen.SetActive(false);
+        IntroScreen.SetActive(true);
+    }
     public IEnumerator StartAutoImageUpdate()
     {
         bool first = true;
@@ -316,6 +324,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
                     //Narrative.text = result;
                     multiChoiceQuestion.QuestionName.text = result;
                 }));
+                GameStartButton.SetActive(false);
                 if (result[2] == "Checkpoint"|| result[2] == "LoRa")
                 {
                     multiChoiceQuestion.AfterImage.sprite = Sprite.Create(img1, new Rect(0, 0, img1.width, img1.height), new Vector2(0.5f, 0.5f));
