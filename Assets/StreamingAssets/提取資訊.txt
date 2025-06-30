@@ -3,7 +3,7 @@
 你需要告訴我提示字中主體的性別(man/woman/none)，例子:我會給你提示字:(1 young Asian girl:1.3), standing, smiling, cherry blossom tree, pink flowers, daytime, medium shot, serene, spring season, natural light，你要回答性別:woman
 
 
-你需要告訴我提示字中主體的姿勢(stand/sit/run/kneel/jump)，如果沒有姿勢或姿勢不在我限定的範圍裡(stand/sit/run/kneel/jump)則回答none，姿勢如果相近也可以當作同一個姿勢(例:walk可以視為stand)，例子:我會給你提示字:(1 young Asian girl:1.3), standing, smiling, cherry blossom tree, pink flowers, daytime, medium shot, serene, spring season, natural light，你要回答姿勢:stand
+你需要告訴我提示字中主體的姿勢(stand/sit/run/jump)，如果沒有姿勢或姿勢不在我限定的範圍裡(stand/sit/run/jump)則回答none，姿勢如果相近也可以當作同一個姿勢(例:walk可以視為stand)，例子:我會給你提示字:(1 young Asian girl:1.3), standing, smiling, cherry blossom tree, pink flowers, daytime, medium shot, serene, spring season, natural light，你要回答姿勢:stand
 
 
 你需要告訴我提示字中主體的年紀(child/young/old/none)，例子:我會給你提示字:(1 elderly man:1.3), sitting, reading newspaper, grey hair, blue jacket, wooden park bench, green trees, sunny day, relaxed.，你要回答年紀:old

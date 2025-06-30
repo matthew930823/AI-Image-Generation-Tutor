@@ -32,6 +32,8 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
     public GameController gameController;
     private string tempAnswer;
 
+    public GameObject SkipButton;
+
     [System.Serializable]
     public class Region
     {
@@ -340,6 +342,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
             }
             result = multiChoiceQuestion.GenerateQuestions();
             yield return StartCoroutine(HandlePromptAndGenerateImage(result[0], result[1], result[2]));
+            SkipButton.SetActive(true);
             skipWait = false;
             MainBody.Enqueue(Prompt.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries)[0]);
             if (MainBody.Count > 5)
@@ -347,6 +350,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
                 MainBody.Dequeue();
             }
             yield return new WaitUntil(() => skipWait);
+            SkipButton.SetActive(false);
             if (!first)
             {
                 yield return StartCoroutine(geminiAPI.SendPhotoRequest("題目會說明主體和他在做什麼，且需要在20個英文字裡說明完，且不能有標點符號，例子:[A young woman stands on a city street]，接下來我會給一張圖片，你要給我符合這個圖片的題目，請你依照{說明}回傳給我，說明要包在大括號內。", Convert.ToBase64String((((result[2] == "Prompt") || (result[2] == "Resolution")) ? img1 : img2).EncodeToPNG()), (result) =>
@@ -914,7 +918,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
                 {
                     case "man":
                         ControlNetType = "Openpose";
-                        if (infoArray[3] == "stand" || infoArray[3] == "sit" || infoArray[3] == "run" || infoArray[3] == "kneel" || infoArray[3] == "jump")
+                        if (infoArray[3] == "stand" || infoArray[3] == "sit" || infoArray[3] == "run" || infoArray[3] == "jump")
                             ControlnetImageBase64 = GetRandomControlImageBase64("ConTrolNet參考圖/openpose/"+ infoArray[3]);
                         else
                             ControlnetImageBase64 = GetRandomControlImageBase64("ConTrolNet參考圖/openpose/stand");
@@ -923,12 +927,12 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
                     case "woman":
                         ControlNetType = "Depth";
                         if (infoArray[2]=="woman")
-                            if (infoArray[3] == "stand" || infoArray[3] == "sit" || infoArray[3] == "run" || infoArray[3] == "kneel" || infoArray[3] == "jump")
+                            if (infoArray[3] == "stand" || infoArray[3] == "sit" || infoArray[3] == "run"  || infoArray[3] == "jump")
                                 ControlnetImageBase64 = GetRandomControlImageBase64("ConTrolNet參考圖/female_depth/woman/" + infoArray[3]);
                             else
                                 ControlnetImageBase64 = GetRandomControlImageBase64("ConTrolNet參考圖/female_depth/woman/stand");
                         else
-                            if (infoArray[3] == "stand" || infoArray[3] == "sit" || infoArray[3] == "run" || infoArray[3] == "kneel" || infoArray[3] == "jump")
+                            if (infoArray[3] == "stand" || infoArray[3] == "sit" || infoArray[3] == "run" || infoArray[3] == "jump")
                                 ControlnetImageBase64 = GetRandomControlImageBase64("ConTrolNet參考圖/female_depth/girl/" + infoArray[3]);
                             else
                                 ControlnetImageBase64 = GetRandomControlImageBase64("ConTrolNet參考圖/female_depth/girl/stand");

@@ -179,10 +179,23 @@ public class GameController : MonoBehaviourPun
         return Convert.ToBase64String(pngBytes);
     }
 
+    bool ResultCool = false;
+    IEnumerator CountdownCoroutine(int seconds)
+    {
+        int remaining = seconds;
+        ResultCool = true;
+        while (remaining > 0)
+        {
+            yield return new WaitForSeconds(1);
+            remaining--;
+        }
+        ResultCool = false;
+    }
     public void CheckAns(Text Buttontext)
     {
-        if (multiChoiceQuestion.IsResultScreen)
+        if (multiChoiceQuestion.IsResultScreen && !ResultCool)
         {
+            StartCoroutine(CountdownCoroutine(60));
             string[] twoImages; twoImages = new string[] { SpriteToBase64String(multiChoiceQuestion.AfterImage.sprite) };
             string resultText = "";
             if (Buttontext.text == answer)

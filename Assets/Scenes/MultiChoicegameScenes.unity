@@ -12240,12 +12240,12 @@ GameObject:
   - component: {fileID: 736774773}
   - component: {fileID: 736774775}
   m_Layer: 5
-  m_Name: arrow
+  m_Name: skipButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &736774772
 RectTransform:
   m_ObjectHideFlags: 0
@@ -17897,6 +17897,7 @@ MonoBehaviour:
   geminiAPI: {fileID: 1101888630}
   multiChoiceQuestion: {fileID: 1101888633}
   gameController: {fileID: 1101888624}
+  SkipButton: {fileID: 736774771}
   AllRegions:
   - x: 0
     y: 0
