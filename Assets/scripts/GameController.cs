@@ -210,6 +210,22 @@ public class GameController : MonoBehaviourPun
                     twoImages = new string[] { SpriteToBase64String(multiChoiceQuestion.BeforeImage.sprite), SpriteToBase64String(multiChoiceQuestion.AfterImage.sprite) };
                     StartCoroutine(SendPhotoRequestCoroutine(stablediffusionregionprompt.ResultLLM[Buttontext.text][0] + "，直接回答我解釋就可以了", twoImages));
                 }
+                else if (Buttontext.text == "128")
+                {
+                    multiChoiceQuestion.Explain.text = "128x128解析度生成的圖片會模糊，所以如果圖片糊糊的，就可以判斷圖片的解析度應該是128x128";
+                }
+                else if (Buttontext.text == "384")
+                {
+                    multiChoiceQuestion.Explain.text = "384x384解析度生成的圖片會缺少圖片的內容物，所以如果少了些什麼但有不會到很模糊，就可以判斷是384x384解析度的圖片";
+                }
+                else if (Buttontext.text == "512")
+                {
+                    multiChoiceQuestion.Explain.text = "512x512解析度生成的圖片通常不會有問題，但有時會缺少一些圖片的細節，所以如果覺得圖片差不多只有一些細小的差異，就可以判斷圖片的解析度為512x512";
+                }
+                else if (Buttontext.text == "1024")
+                {
+                    multiChoiceQuestion.Explain.text = "1024x1024解析度生成的圖片有時會多出許多不需要的內容，所以如果發現圖片有一些奇怪的內容，就可以判斷圖片的解析度應該是1024";
+                }
                 else if (stablediffusionregionprompt.ResultLLM.ContainsKey(Buttontext.text))
                 {
                     StartCoroutine(SendPhotoRequestCoroutine(stablediffusionregionprompt.ResultLLM[Buttontext.text][0]+"，直接回答我解釋就可以了", twoImages));
@@ -225,6 +241,22 @@ public class GameController : MonoBehaviourPun
                 {
                     twoImages = new string[] { SpriteToBase64String(multiChoiceQuestion.BeforeImage.sprite), SpriteToBase64String(multiChoiceQuestion.AfterImage.sprite) };
                     StartCoroutine(SendPhotoRequestCoroutine(stablediffusionregionprompt.ResultLLM[Buttontext.text][1].Replace("(填入正確答案)", Buttontext.text) + "，Depth特色:Depth會將人物的形狀控制住，但人物還是會跟參考圖有一些細節上的區別，同時背景也會受到參考圖影響，Openpose特色: 只將人物的姿勢控制住，所以人物對比參考圖可以有更多自己的特色，同時背景也能由生圖模型自由發揮，Canny特色: 會被參考圖的所有邊緣細節控制住，所以在有線條的地方幾乎都會和參考圖一樣，和depth的主要區別在於depth的人物在細節上來是跟參考圖有差異，但canny則會和參考圖相同(例如服裝上的細節)，Shuffle特色: 只會被參考圖的色彩風格控制住，所以人物和背景都會自由發揮，只有色調會和參考圖有關"  + "，直接回答我解釋就可以了", twoImages));
+                }
+                else if (Buttontext.text == "128")
+                {
+                    multiChoiceQuestion.Explain.text = "128x128解析度生成的圖片會模糊，所以如果圖片糊糊的，就可以判斷圖片的解析度應該是128x128";
+                }
+                else if (Buttontext.text == "384")
+                {
+                    multiChoiceQuestion.Explain.text = "384x384解析度生成的圖片會缺少圖片的內容物，所以如果少了些什麼但有不會到很模糊，就可以判斷是384x384解析度的圖片";
+                }
+                else if (Buttontext.text == "512")
+                {
+                    multiChoiceQuestion.Explain.text = "512x512解析度生成的圖片通常不會有問題，但有時會缺少一些圖片的細節，所以如果覺得圖片差不多只有一些細小的差異，就可以判斷圖片的解析度為512x512";
+                }
+                else if (Buttontext.text == "1024")
+                {
+                    multiChoiceQuestion.Explain.text = "1024x1024解析度生成的圖片有時會多出許多不需要的內容，所以如果發現圖片有一些奇怪的內容，就可以判斷圖片的解析度應該是1024";
                 }
                 else if (stablediffusionregionprompt.ResultLLM.ContainsKey(Buttontext.text))
                 {
