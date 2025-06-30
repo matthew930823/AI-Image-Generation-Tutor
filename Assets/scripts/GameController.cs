@@ -40,7 +40,7 @@ public class GameController : MonoBehaviourPun
     public TTSClone tTSClone;
     void Start()
     {
-        roomNumber.text = "Room : " + PhotonNetwork.CurrentRoom.Name;
+        //roomNumber.text = "Room : " + PhotonNetwork.CurrentRoom.Name;
     }
     public void ApplyDifficultySettings(string diff)
     {

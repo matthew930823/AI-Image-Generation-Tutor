@@ -324,6 +324,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
                     //Narrative.text = result;
                     multiChoiceQuestion.QuestionName.text = result;
                 }));
+                gameController.voiceAudioPlayer.AudioPlay(6);
                 GameStartButton.SetActive(true);
                 if (result[2] == "Checkpoint"|| result[2] == "LoRa")
                 {

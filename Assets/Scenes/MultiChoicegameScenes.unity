@@ -6455,6 +6455,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: bbaefd6f2002857499568d562c2f3a99, type: 3}
   - {fileID: 8300000, guid: 3b4acef998dae2b4a991f7b34e28d3de, type: 3}
   - {fileID: 8300000, guid: 4c8043e95fd2122418212f0d5c499521, type: 3}
+  - {fileID: 8300000, guid: 936d46d1d20092b4aaf7938d95ea9113, type: 3}
   videoPlayer: {fileID: 0}
 --- !u!114 &311400825
 MonoBehaviour:
@@ -12635,7 +12636,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 736774773}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1101888632}
+        m_TargetAssemblyTypeName: StableDiffusionRegionPrompt, Assembly-CSharp
+        m_MethodName: OnClickStartGame
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &748431854
 GameObject:
   m_ObjectHideFlags: 0
