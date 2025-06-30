@@ -196,7 +196,7 @@ public class GameController : MonoBehaviourPun
         if (multiChoiceQuestion.IsResultScreen && !ResultCool)
         {
             voiceAudioPlayer.AudioPlay(3);
-            StartCoroutine(CountdownCoroutine(60));
+            StartCoroutine(CountdownCoroutine(30));
             string[] twoImages; twoImages = new string[] { SpriteToBase64String(multiChoiceQuestion.AfterImage.sprite) };
             string resultText = "";
             if (Buttontext.text == answer)
