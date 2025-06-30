@@ -295,7 +295,8 @@ public class GameController : MonoBehaviourPun
             }
 
             multiChoiceQuestion.IsResultScreen = true;
-            multiChoiceQuestion.ChangeButtonColor();
+            StartCoroutine(multiChoiceQuestion.ChangeButtonColor());
+        
         }
     }
     private IEnumerator SendPhotoRequestCoroutine(string prompt, string[] images)
