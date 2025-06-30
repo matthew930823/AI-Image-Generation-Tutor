@@ -272,7 +272,22 @@ public class MultiChoiceQuestion : MonoBehaviour
                 }
                 break;
             case "Prompt":
+                Hint = Resources.LoadAll<Sprite>("題庫/PromptHint");
+                for (int i = 0; i < Hint.Length; i++)
+                {
+                    int rand = Random.Range(i, Hint.Length);
+                    Sprite temp = Hint[i];
+                    Hint[i] = Hint[rand];
+                    Hint[rand] = temp;
+                }
 
+                // 取前4張圖片
+                for (int i = 0; i < 4; i++)
+                {
+                    HintImage[i].sprite = Hint[i];
+                    Text btnText = buttons[i].GetComponentInChildren<Text>();
+                    btnText.text = Hint[i].name;
+                }
                 break;
             case "Resolution":
                 Hint = Resources.LoadAll<Sprite>("題庫/Resolution Hint");
@@ -317,7 +332,7 @@ public class MultiChoiceQuestion : MonoBehaviour
     public string[] GenerateQuestions()
     {
         string type = "Resolution";
-        int[] weights = { 20,20, 0, 20, 20 };// { "LoRa", "Checkpoint", "Prompt", "Resolution","Controlnet" }
+        int[] weights = { 0,0, 100, 0, 0 };// { "LoRa", "Checkpoint", "Prompt", "Resolution","Controlnet" }
 
         int totalWeight = weights.Sum();
         int rand = Random.Range(0, totalWeight);
