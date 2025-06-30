@@ -363,9 +363,9 @@ public class MultiChoiceQuestion : MonoBehaviour
                 //break;
         }
     }
-    public IEnumerator ChangeButtonColor()
+    public IEnumerator ChangeButtonColor(float waitSec)
     {
-        yield return new WaitForSeconds(6f);
+        yield return new WaitForSeconds(waitSec);
         GameScreen.SetActive(false);
         ResultScreen.SetActive(true);
         Result_AfterImage.sprite = AfterImage.sprite;

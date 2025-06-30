@@ -286,16 +286,18 @@ public class GameController : MonoBehaviourPun
                 //answer = multiChoiceQuestion.ChangeQuestion(NowQuestion);
                 //if (NowQuestion < 17) NowQuestion++;
                 //stablediffusionregionprompt.skipWait = true;
+                StartCoroutine(multiChoiceQuestion.ChangeButtonColor(4f));
             }
             else
             {
                 //characteranimator.Play("Wrong", 0, 0f);
                 characteranimator.SetTrigger("wrong");
                 voiceAudioPlayer.AudioPlay(2);
+
+                StartCoroutine(multiChoiceQuestion.ChangeButtonColor(6f));
             }
 
             multiChoiceQuestion.IsResultScreen = true;
-            StartCoroutine(multiChoiceQuestion.ChangeButtonColor());
         
         }
     }
