@@ -18451,7 +18451,7 @@ MonoBehaviour:
   geminiAPI: {fileID: 1101888630}
   multiChoiceQuestion: {fileID: 1101888633}
   gameController: {fileID: 1101888624}
-  SkipButton: {fileID: 736774771}
+  SkipButton: {fileID: 427331628}
   AllRegions:
   - x: 0
     y: 0
@@ -18464,7 +18464,7 @@ MonoBehaviour:
   skipWait: 0
   IntroScreen: {fileID: 1506400243}
   GameStartScreen: {fileID: 541176384}
-  GameStartButton: {fileID: 427331628}
+  GameStartButton: {fileID: 736774771}
 --- !u!114 &1101888633
 MonoBehaviour:
   m_ObjectHideFlags: 0
