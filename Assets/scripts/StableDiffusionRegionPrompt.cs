@@ -554,7 +554,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
                 break;
             case "吉普利":
                 LoraPrompt = ",<lora:ghibli_style_offset:1>";
-                CheckpointType = new string[] { "anime_cute", "anime-real_hybrid", "anime_soft" };
+                CheckpointType = new string[] { "anime_cute", "anime_soft" };
                 Model_checkpoint = CheckpointType[UnityEngine.Random.Range(0, CheckpointType.Length)];
                 break;
             case "眼睛":
