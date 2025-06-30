@@ -365,7 +365,7 @@ public class MultiChoiceQuestion : MonoBehaviour
     }
     public IEnumerator ChangeButtonColor()
     {
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(6f);
         GameScreen.SetActive(false);
         ResultScreen.SetActive(true);
         Result_AfterImage.sprite = AfterImage.sprite;
