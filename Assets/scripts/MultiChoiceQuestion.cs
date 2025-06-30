@@ -273,20 +273,43 @@ public class MultiChoiceQuestion : MonoBehaviour
                 break;
             case "Prompt":
                 Hint = Resources.LoadAll<Sprite>("題庫/PromptHint");
-                for (int i = 0; i < Hint.Length; i++)
+                foreach (Sprite sprite in Hint)
                 {
-                    int rand = Random.Range(i, Hint.Length);
-                    Sprite temp = Hint[i];
-                    Hint[i] = Hint[rand];
-                    Hint[rand] = temp;
+                    if (sprite.name == stableDiffusionRegionPrompt.gameController.answer)
+                    {
+                        answerSprite = sprite;
+                    }
+                    else
+                    {
+                        remaining.Add(sprite);
+                    }
+                }
+                // 隨機從剩下的圖片中選出 3 張
+                while (selected.Count < 3)
+                {
+                    int index = Random.Range(0, remaining.Count);
+                    selected.Add(remaining[index]);
+                    remaining.RemoveAt(index); // 確保不重複
                 }
 
-                // 取前4張圖片
+                // 加入正確答案圖片
+                selected.Add(answerSprite);
+
+                // 打亂順序
+                for (int i = 0; i < selected.Count; i++)
+                {
+                    int rand = Random.Range(i, selected.Count);
+                    var temp = selected[i];
+                    selected[i] = selected[rand];
+                    selected[rand] = temp;
+                }
+
+                // 指派給 HintImage[]
                 for (int i = 0; i < 4; i++)
                 {
-                    HintImage[i].sprite = Hint[i];
+                    HintImage[i].sprite = selected[i];
                     Text btnText = buttons[i].GetComponentInChildren<Text>();
-                    btnText.text = Hint[i].name;
+                    btnText.text = selected[i].name;
                 }
                 break;
             case "Resolution":
