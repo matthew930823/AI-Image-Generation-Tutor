@@ -303,7 +303,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
     public void OnClickStartGame()
     {
         IntroScreen.SetActive(false);
-        IntroScreen.SetActive(true);
+        GameStartScreen.SetActive(true);
     }
     public IEnumerator StartAutoImageUpdate()
     {
