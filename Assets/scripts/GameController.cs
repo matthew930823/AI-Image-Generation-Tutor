@@ -52,14 +52,14 @@ public class GameController : MonoBehaviourPun
         Debug.Log(diff);
         NowDifficulty = diff;
         if (diff == "Easy") { /* 設定簡單模式參數 */
-            StartCoroutine(GetGeminiKeywords(1));
+            GetGeminiKeywords(1);
         }
         else if (diff == "Hard") { /* 設定困難模式參數 */
-            StartCoroutine(GetGeminiKeywords(2));
+            GetGeminiKeywords(2);
         }
         else
         {
-            StartCoroutine(GetGeminiKeywords(3));
+            GetGeminiKeywords(3);
         }
     }
 
@@ -96,7 +96,7 @@ public class GameController : MonoBehaviourPun
         resultImage.sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
     }
 
-    private IEnumerator GetGeminiKeywords(int mode)
+    private void GetGeminiKeywords(int mode)
     {
 
         // 呼叫 API，等它完成
@@ -121,14 +121,7 @@ public class GameController : MonoBehaviourPun
         }
         else if(mode == 2)
         {
-            yield return StartCoroutine(geminiAPI.SendRequest("我們想做一個遊戲，遊戲內容是會有數名玩家和一個AI，然後讓玩家看圖猜題目是什麼，如果玩家都答錯那AI就會讓關鍵字可以生的更像題目，一直持續到玩家可以透過生出的圖片猜到題目為止。回答會是選擇題的樣式，會有四個選項，一個正確，三個錯誤，請你出題目，每次都不一樣的題目，題目為中文成語用英文去表達，你要回應的樣式為，題目:「提示字」，選項A:「答案提示字」，選項B:「提示字」，選項C:「提示字」，選項D:「提示字」，正確答案為:「提示字」，題目用英文描述，選項用中文，不要有多餘的字，給我一題就好了，標點符號不要變，一定要使用「」框住提示字。", (result) =>
-            {
-                keywords = ExtractTextInsideQuotes(result);
-            }));
-            //Debug.Log("獲取到的關鍵字: " + string.Join(", ", keywords));
-            ////GetOption();
-            //answer = keywords[1];
-            //StartCoroutine(huggingFaceAPI.GenerateImageFromText(keywords[0], OnImageGenerated));
+            StartCoroutine(multiChoiceQuestion.stableDiffusionRegionPrompt.StartAutoImageUpdateForHardMode());
         }
         else
         {
@@ -299,6 +292,20 @@ public class GameController : MonoBehaviourPun
 
             multiChoiceQuestion.IsResultScreen = true;
         
+        }
+    }
+
+    public void CheckAnsForHardMode(Text Buttontext)
+    {
+        if (Buttontext.text == answer)
+        {
+            characteranimator.SetTrigger("correct");
+            voiceAudioPlayer.AudioPlay(1);
+        }
+        else
+        {
+            characteranimator.SetTrigger("wrong");
+            voiceAudioPlayer.AudioPlay(2);
         }
     }
     private IEnumerator SendPhotoRequestCoroutine(string prompt, string[] images)

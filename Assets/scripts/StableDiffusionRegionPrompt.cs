@@ -148,6 +148,67 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
         string base64Image = Convert.ToBase64String(controlImage.EncodeToPNG());
         return base64Image;
     }
+    public IEnumerator HandlePromptAndGenerateImageForHardMode(System.Action<string[]> callback)
+    {
+        int seed = UnityEngine.Random.Range(0, 50);
+
+        string[] AllCheckpoint = new string[] { "anime_cute.safetensors", "anime-real_hybrid.safetensors", "anime_soft.safetensors", "realistic_anything.safetensors", "anime_bold.safetensors" };
+        string checkpoint = AllCheckpoint[UnityEngine.Random.Range(0, AllCheckpoint.Length)];
+        string[] LoRaType = new string[] { "漢服", "漫畫", "貓", "水墨", "盒玩", "吉普利", "眼睛", "食物照片", ""};
+        string LoRa = LoRaType[UnityEngine.Random.Range(0, LoRaType.Length)];
+        string tempLoRa = "";
+        switch (LoRa)
+        {
+            case "漢服":
+                tempLoRa = "Hanfu";
+                break;
+            case "漫畫":
+                tempLoRa = "Lineart";
+                break;
+            case "貓":
+                tempLoRa = "Cutecat";
+                break;
+            case "水墨":
+                tempLoRa = "MoXin";
+                break;
+            case "盒玩":
+                tempLoRa = "Blindbox";
+                break;
+            case "吉普利":
+                tempLoRa = "Ghibli";
+                break;
+            case "眼睛":
+                tempLoRa = "Eye";
+                break;
+            case "食物照片":
+                tempLoRa = "Foodphoto";
+                break;
+            case "":
+                tempLoRa = "沒有使用LoRa";
+                break;
+            default:
+                tempLoRa = "沒有使用LoRa";
+                break;
+        }
+        string[] add = new string[] { "desert", "forest", "beach", "grassland", "lake", "blizzard", "sunset", "foggy", "thunderstorm", "god rays", "downtown", "cyberpunk", "oil painting", "watercolor", "japanese temple", "castle", "classroom", "bedroom", "magic forest", "lava ground", "red", "blue", "green", "yellow", "purple", "orange", "pink", "black", "white", "gray", "brown" };
+        string Addresult = add[UnityEngine.Random.Range(0, add.Length)];
+        int[] resolution = new int[] { 128, 384, 1024, 512 , 768 };
+        int Resolution = resolution[UnityEngine.Random.Range(0, resolution.Length)];
+        string[] TempAnswer = new string[] { checkpoint, tempLoRa, Addresult , Resolution.ToString() };
+        
+        // 等待 ReadFileAndSendPrompt 完成
+        yield return StartCoroutine(ReadFileAndSendPrompt(LoRa));
+
+        yield return StartCoroutine(ReadFileAndSendImformation());
+        // 然後執行 GenerateImageForMultipleChoice
+        
+        yield return StartCoroutine(GenerateImageForMultipleChoice(Resolution, Resolution, Prompt, checkpoint, LoRa, ControlNetType, "", ControlnetImageBase64, seed,
+                   texture =>
+                   {
+                       img1 = texture;
+                   }));
+        callback?.Invoke(TempAnswer);
+    }
     public IEnumerator HandlePromptAndGenerateImage(string LoRa,string checkpoint,string type)
     {
         int seed = UnityEngine.Random.Range(0, 50);
@@ -305,12 +366,67 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
         IntroScreen.SetActive(false);
         GameStartScreen.SetActive(true);
     }
+    public IEnumerator StartAutoImageUpdateForHardMode()
+    {
+        bool first = true;
+        string[] tempAns=new string[] { };
+        while (true)
+        {
+            Debug.Log("⏳ 開始生成圖片...");
+            if (first)
+            {
+                yield return StartCoroutine(HandlePromptAndGenerateImageForHardMode(back=> { tempAns = back; }));
+                yield return StartCoroutine(geminiAPI.SendPhotoRequest("題目會說明主體和他在做什麼，且需要在20個英文字裡說明完，且不能有標點符號，例子:[A young woman stands on a city street]，接下來我會給一張圖片，你要給我符合這個圖片的題目，請你依照{說明}回傳給我，說明要包在大括號內。", Convert.ToBase64String((img1).EncodeToPNG()), (result) =>
+                {
+                    Match match = Regex.Match(result, @"\{([^}]*)\}");
+                    result = match.Groups[1].Value;
+                    multiChoiceQuestion.QuestionName.text = result;
+                }));
+                gameController.voiceAudioPlayer.AudioPlay(6);
+                GameStartButton.SetActive(true);
+                multiChoiceQuestion.ChangeOptionsForHardMode(tempAns);
+                multiChoiceQuestion.AfterImage.sprite = Sprite.Create(img1, new Rect(0, 0, img1.width, img1.height), new Vector2(0.5f, 0.5f));
+                //gameController.answer = tempAnswer;
+                MainBody.Enqueue(Prompt.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries)[0]);
+                if (MainBody.Count > 5)
+                {
+                    MainBody.Dequeue();
+                }
+                first = false;
+                Debug.Log("已經生成完第一組圖 ，開始生成第二組圖");
+            };
+            yield return StartCoroutine(HandlePromptAndGenerateImageForHardMode(back => { tempAns = back; }));
+            string temp = "";
+            yield return StartCoroutine(geminiAPI.SendPhotoRequest("題目會說明主體和他在做什麼，且需要在20個英文字裡說明完，且不能有標點符號，例子:[A young woman stands on a city street]，接下來我會給一張圖片，你要給我符合這個圖片的題目，請你依照{說明}回傳給我，說明要包在大括號內。", Convert.ToBase64String((img1).EncodeToPNG()), (result) =>
+            {
+                Match match = Regex.Match(result, @"\{([^}]*)\}");
+                result = match.Groups[1].Value;
+                temp = result;
+            }));
+            SkipButton.SetActive(true);
+            skipWait = false;
+            MainBody.Enqueue(Prompt.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries)[0]);
+            if (MainBody.Count > 5)
+            {
+                MainBody.Dequeue();
+            }
+            yield return new WaitUntil(() => skipWait);
+            SkipButton.SetActive(false);
+            if (!first)
+            {
+                multiChoiceQuestion.QuestionName.text = temp;
+                //multiChoiceQuestion.ResetButtonColor();
+                multiChoiceQuestion.ChangeOptionsForHardMode(tempAns);
+                multiChoiceQuestion.AfterImage.sprite = Sprite.Create(img1, new Rect(0, 0, img1.width, img1.height), new Vector2(0.5f, 0.5f));
+                //gameController.answer = tempAnswer;
+            }
+        }
+    }
     public IEnumerator StartAutoImageUpdate()
     {
         bool first = true;
         while (true)
         {
-            float startTime = Time.realtimeSinceStartup;
             Debug.Log("⏳ 開始生成圖片...");
             string[] result;
             if (first)

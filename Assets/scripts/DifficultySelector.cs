@@ -27,8 +27,10 @@ public class DifficultySelector : MonoBehaviourPunCallbacks
     public void StartGame()
     {
         if (!PhotonNetwork.IsMasterClient) return; // 只有房主可以開始遊戲
-        if(Diff == "Easy"|| Diff == "Hard")
+        if(Diff == "Easy" )
             PhotonNetwork.LoadLevel("MultiChoicegameScenes"); // 房主切換場景，其他玩家會同步
+        else if(Diff == "Hard")
+            PhotonNetwork.LoadLevel("HardModegameScenes");
         else
             PhotonNetwork.LoadLevel("gameScenes"); // 房主切換場景，其他玩家會同步
     }

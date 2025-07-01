@@ -58,15 +58,15 @@ public class MultiChoiceQuestion : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        for (int i = 0; i < 4; i++)
-        {
-            HintImage[i].sprite = null;
-            Text btnText = buttons[i].GetComponentInChildren<Text>();
-            btnText.text = "";
-        }
-        BeforeImage.sprite = null;
-        AfterImage.sprite = null;
-        QuestionName.text = "";
+        //for (int i = 0; i < 4; i++)
+        //{
+        //    HintImage[i].sprite = null;
+        //    Text btnText = buttons[i].GetComponentInChildren<Text>();
+        //    btnText.text = "";
+        //}
+        //BeforeImage.sprite = null;
+        //AfterImage.sprite = null;
+        //QuestionName.text = "";
         //Sprite[] sprites = Resources.LoadAll<Sprite>("題庫/LoRaHint");
 
         //foreach (Sprite sprite in sprites)
@@ -175,6 +175,35 @@ public class MultiChoiceQuestion : MonoBehaviour
             }
         }
         return Answer;
+    }
+    public void ChangeOptionsForHardMode(string[] tempAns)
+    {
+        string[] AllOptions = new string[] { "Blindbox", "Cutecat", "Eye", "Foodphoto", "Ghibli", "Hanfu", "Lineart", "MoXin", "沒有使用LoRa", "Cetus-Mix", "Counterfeit", "CuteYukiMix", "DreamShaper", "ReV Animated", "desert", "forest", "beach", "grassland", "lake", "blizzard", "sunset", "foggy", "thunderstorm", "god rays", "downtown", "cyberpunk", "oil painting", "watercolor", "japanese temple", "castle", "classroom", "bedroom", "magic forest", "lava ground", "red", "blue", "green", "yellow", "purple", "orange", "pink", "black", "white", "gray", "brown" , "128", "384", "1024", "512", "768" };
+        string[] result = AllOptions.Except(tempAns).ToArray();
+        List<string> selected = new List<string>();
+        while (selected.Count < 3)
+        {
+            int index = Random.Range(0, AllOptions.Length);
+            selected.Add(AllOptions[index]);
+            AllOptions = AllOptions.Where(s => s != AllOptions[index]).ToArray();
+        }
+        int Ansindex = Random.Range(0, tempAns.Length);
+        selected.Add(tempAns[Ansindex]);
+        stableDiffusionRegionPrompt.gameController.answer = tempAns[Ansindex];
+        // 打亂順序
+        for (int i = 0; i < selected.Count; i++)
+        {
+            int rand = Random.Range(i, selected.Count);
+            var temp = selected[i];
+            selected[i] = selected[rand];
+            selected[rand] = temp;
+        }
+
+        for (int i = 0; i < 4; i++)
+        {
+            Text btnText = buttons[i].GetComponentInChildren<Text>();
+            btnText.text = selected[i];
+        }
     }
     public void ChangeHintImage(string type)
     {
@@ -352,6 +381,7 @@ public class MultiChoiceQuestion : MonoBehaviour
                 break;
         }
     }
+    
     public string[] GenerateQuestions()
     {
         string type = "Resolution";
