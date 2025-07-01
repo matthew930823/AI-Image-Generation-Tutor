@@ -385,7 +385,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
                 gameController.voiceAudioPlayer.AudioPlay(6);
                 GameStartButton.SetActive(true);
                 multiChoiceQuestion.ChangeOptionsForHardMode(tempAns);
-                multiChoiceQuestion.AfterImage.sprite = Sprite.Create(img1, new Rect(0, 0, img1.width, img1.height), new Vector2(0.5f, 0.5f));
+                multiChoiceQuestion.BeforeImage.sprite = Sprite.Create(img1, new Rect(0, 0, img1.width, img1.height), new Vector2(0.5f, 0.5f));
                 //gameController.answer = tempAnswer;
                 MainBody.Enqueue(Prompt.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries)[0]);
                 if (MainBody.Count > 5)
@@ -417,7 +417,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
                 multiChoiceQuestion.QuestionName.text = temp;
                 //multiChoiceQuestion.ResetButtonColor();
                 multiChoiceQuestion.ChangeOptionsForHardMode(tempAns);
-                multiChoiceQuestion.AfterImage.sprite = Sprite.Create(img1, new Rect(0, 0, img1.width, img1.height), new Vector2(0.5f, 0.5f));
+                multiChoiceQuestion.BeforeImage.sprite = Sprite.Create(img1, new Rect(0, 0, img1.width, img1.height), new Vector2(0.5f, 0.5f));
                 //gameController.answer = tempAnswer;
             }
         }
