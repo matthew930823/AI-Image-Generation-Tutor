@@ -375,7 +375,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
             Debug.Log("⏳ 開始生成圖片...");
             if (first)
             {
-                yield return StartCoroutine(HandlePromptAndGenerateImageForHardMode(back=> { tempAns = back; }));
+                    
                 yield return StartCoroutine(geminiAPI.SendPhotoRequest("題目會說明主體和他在做什麼，且需要在20個英文字裡說明完，且不能有標點符號，例子:[A young woman stands on a city street]，接下來我會給一張圖片，你要給我符合這個圖片的題目，請你依照{說明}回傳給我，說明要包在大括號內。", Convert.ToBase64String((img1).EncodeToPNG()), (result) =>
                 {
                     Match match = Regex.Match(result, @"\{([^}]*)\}");
@@ -384,7 +384,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
                 }));
                 gameController.voiceAudioPlayer.AudioPlay(6);
                 GameStartButton.SetActive(true);
-                Debug.Log("選中的答案有:"+tempAns);
+                Debug.Log("選中的答案有:"+ string.Join(", ", tempAns));
 
                 multiChoiceQuestion.ChangeOptionsForHardMode(tempAns);
                 multiChoiceQuestion.BeforeImage.sprite = Sprite.Create(img1, new Rect(0, 0, img1.width, img1.height), new Vector2(0.5f, 0.5f));
