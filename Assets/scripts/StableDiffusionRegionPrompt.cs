@@ -154,6 +154,27 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
 
         string[] AllCheckpoint = new string[] { "anime_cute.safetensors", "anime-real_hybrid.safetensors", "anime_soft.safetensors", "realistic_anything.safetensors", "anime_bold.safetensors" };
         string checkpoint = AllCheckpoint[UnityEngine.Random.Range(0, AllCheckpoint.Length)];
+        string tempCP = "";
+        switch (checkpoint)
+        {
+            case "anime_cute.safetensors":
+                tempCP = "CuteYukiMix";
+                break;
+            case "anime-real_hybrid.safetensors":
+                tempCP = "ReV Animated";
+                break;
+            case "anime_soft.safetensors":
+                tempCP = "Cetus-Mix";
+                break;
+            case "realistic_anything.safetensors":
+                tempCP = "DreamShaper";
+                break;
+            case "anime_bold.safetensors":
+                tempCP = "Counterfeit";
+                break;
+            default:
+                break;
+        }
         string[] LoRaType = new string[] { "漢服", "漫畫", "貓", "水墨", "盒玩", "吉普利", "眼睛", "食物照片", ""};
         string LoRa = LoRaType[UnityEngine.Random.Range(0, LoRaType.Length)];
         string tempLoRa = "";
@@ -194,7 +215,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
         string Addresult = add[UnityEngine.Random.Range(0, add.Length)];
         int[] resolution = new int[] { 128, 384, 1024, 512 , 768 };
         int Resolution = resolution[UnityEngine.Random.Range(0, resolution.Length)];
-        string[] TempAnswer = new string[] { checkpoint, tempLoRa, Addresult , Resolution.ToString() };
+        string[] TempAnswer = new string[] { tempCP, tempLoRa, Addresult , Resolution.ToString() };
         
         // 等待 ReadFileAndSendPrompt 完成
         yield return StartCoroutine(ReadFileAndSendPrompt(LoRa));
