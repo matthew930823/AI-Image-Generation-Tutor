@@ -384,6 +384,8 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
                 }));
                 gameController.voiceAudioPlayer.AudioPlay(6);
                 GameStartButton.SetActive(true);
+                Debug.Log("選中的答案有:"+tempAns);
+
                 multiChoiceQuestion.ChangeOptionsForHardMode(tempAns);
                 multiChoiceQuestion.BeforeImage.sprite = Sprite.Create(img1, new Rect(0, 0, img1.width, img1.height), new Vector2(0.5f, 0.5f));
                 //gameController.answer = tempAnswer;

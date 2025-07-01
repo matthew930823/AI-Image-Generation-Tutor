@@ -178,33 +178,49 @@ public class MultiChoiceQuestion : MonoBehaviour
     }
     public void ChangeOptionsForHardMode(string[] tempAns)
     {
-        string[] AllOptions = new string[] { "Blindbox", "Cutecat", "Eye", "Foodphoto", "Ghibli", "Hanfu", "Lineart", "MoXin", "沒有使用LoRa", "Cetus-Mix", "Counterfeit", "CuteYukiMix", "DreamShaper", "ReV Animated", "desert", "forest", "beach", "grassland", "lake", "blizzard", "sunset", "foggy", "thunderstorm", "god rays", "downtown", "cyberpunk", "oil painting", "watercolor", "japanese temple", "castle", "classroom", "bedroom", "magic forest", "lava ground", "red", "blue", "green", "yellow", "purple", "orange", "pink", "black", "white", "gray", "brown" , "128", "384", "1024", "512", "768" };
-        string[] result = AllOptions.Except(tempAns).ToArray();
+        // 所有可能選項
+        string[] AllOptions = new string[] {
+            "Blindbox", "Cutecat", "Eye", "Foodphoto", "Ghibli", "Hanfu", "Lineart", "MoXin", "沒有使用LoRa",
+            "Cetus-Mix", "Counterfeit", "CuteYukiMix", "DreamShaper", "ReV Animated",
+            "desert", "forest", "beach", "grassland", "lake", "blizzard", "sunset", "foggy", "thunderstorm",
+            "god rays", "downtown", "cyberpunk", "oil painting", "watercolor", "japanese temple", "castle",
+            "classroom", "bedroom", "magic forest", "lava ground", "red", "blue", "green", "yellow", "purple",
+            "orange", "pink", "black", "white", "gray", "brown", "128", "384", "1024", "512", "768"
+        };
+
+        // 排除 tempAns 中的正確答案
+        List<string> remainingOptions = AllOptions.Except(tempAns).ToList();
+
+        // 隨機選 3 個干擾選項（不重複）
         List<string> selected = new List<string>();
-        while (selected.Count < 3)
+        while (selected.Count < 3 && remainingOptions.Count > 0)
         {
-            int index = Random.Range(0, AllOptions.Length);
-            selected.Add(AllOptions[index]);
-            AllOptions = AllOptions.Where(s => s != AllOptions[index]).ToArray();
-        }
-        int Ansindex = Random.Range(0, tempAns.Length);
-        selected.Add(tempAns[Ansindex]);
-        stableDiffusionRegionPrompt.gameController.answer = tempAns[Ansindex];
-        // 打亂順序
-        for (int i = 0; i < selected.Count; i++)
-        {
-            int rand = Random.Range(i, selected.Count);
-            var temp = selected[i];
-            selected[i] = selected[rand];
-            selected[rand] = temp;
+            int index = Random.Range(0, remainingOptions.Count);
+            selected.Add(remainingOptions[index]);
+            remainingOptions.RemoveAt(index);
         }
 
+        // 加入正確答案中的其中一個（隨機）
+        int answerIndex = Random.Range(0, tempAns.Length);
+        string correctAnswer = tempAns[answerIndex];
+        selected.Add(correctAnswer);
+        stableDiffusionRegionPrompt.gameController.answer = correctAnswer;
+
+        // 打亂順序（Fisher–Yates shuffle）
+        for (int i = selected.Count - 1; i > 0; i--)
+        {
+            int j = Random.Range(0, i + 1);
+            (selected[i], selected[j]) = (selected[j], selected[i]);
+        }
+
+        // 顯示到按鈕上
         for (int i = 0; i < 4; i++)
         {
             Text btnText = buttons[i].GetComponentInChildren<Text>();
             btnText.text = selected[i];
         }
     }
+
     public void ChangeHintImage(string type)
     {
 
