@@ -475,6 +475,7 @@ public class MultiChoiceQuestion : MonoBehaviour
         Result_AfterImage.sprite = AfterImage.sprite;
         Result_BeforeImage.sprite = BeforeImage.sprite;
         Result_QuestionName.text = QuestionName.text;
+        Debug.Log(string.Join(", ", stableDiffusionRegionPrompt.HardTempAnswer));
         for (int i = 0; i < buttons.Length; i++)
         {
             Text btnText = buttons[i].GetComponentInChildren<Text>();
