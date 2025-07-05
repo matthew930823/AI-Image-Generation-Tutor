@@ -148,6 +148,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
         string base64Image = Convert.ToBase64String(controlImage.EncodeToPNG());
         return base64Image;
     }
+    public string[] HardTempAnswer;
     public IEnumerator HandlePromptAndGenerateImageForHardMode(System.Action<string[]> callback)
     {
         int seed = UnityEngine.Random.Range(0, 50);
@@ -175,60 +176,44 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
             default:
                 break;
         }
-        string[] LoRaType = new string[] { "漢服", "漫畫", "貓", "水墨", "盒玩", "吉普利", "眼睛", "食物照片", ""};
-        string LoRa = LoRaType[UnityEngine.Random.Range(0, LoRaType.Length)];
-        string tempLoRa = "";
-        switch (LoRa)
+        string tempControlnet = "";
+        switch (ControlNetType)
         {
-            case "漢服":
-                tempLoRa = "Hanfu";
+            case "Canny":
+                tempControlnet = "canny";
                 break;
-            case "漫畫":
-                tempLoRa = "Lineart";
+            case "Depth":
+                tempControlnet = "depth_anything_v2";
                 break;
-            case "貓":
-                tempLoRa = "Cutecat";
+            case "Openpose":
+                tempControlnet = "openpose_hand";
                 break;
-            case "水墨":
-                tempLoRa = "MoXin";
-                break;
-            case "盒玩":
-                tempLoRa = "Blindbox";
-                break;
-            case "吉普利":
-                tempLoRa = "Ghibli";
-                break;
-            case "眼睛":
-                tempLoRa = "Eye";
-                break;
-            case "食物照片":
-                tempLoRa = "Foodphoto";
-                break;
-            case "":
-                tempLoRa = "沒有使用LoRa";
+            case "Shuffle":
+                tempControlnet = "shuffle";
                 break;
             default:
-                tempLoRa = "沒有使用LoRa";
                 break;
         }
         string[] add = new string[] { "desert", "forest", "beach", "grassland", "lake", "blizzard", "sunset", "foggy", "thunderstorm", "god rays", "downtown", "cyberpunk", "oil painting", "watercolor", "japanese temple", "castle", "classroom", "bedroom", "magic forest", "lava ground", "red", "blue", "green", "yellow", "purple", "orange", "pink", "black", "white", "gray", "brown" };
         string Addresult = add[UnityEngine.Random.Range(0, add.Length)];
         int[] resolution = new int[] { 128, 384, 1024, 512 , 768 };
         int Resolution = resolution[UnityEngine.Random.Range(0, resolution.Length)];
-        string[] TempAnswer = new string[] { tempCP, tempLoRa, Addresult , Resolution.ToString() };
+        HardTempAnswer = new string[] { tempCP, ControlNetType, Addresult , Resolution.ToString() };
         
         // 等待 ReadFileAndSendPrompt 完成
-        yield return StartCoroutine(ReadFileAndSendPrompt(LoRa));
+        yield return StartCoroutine(ReadFileAndSendPrompt("HardMode"));
 
         yield return StartCoroutine(ReadFileAndSendImformation());
         // 然後執行 GenerateImageForMultipleChoice
-        
-        yield return StartCoroutine(GenerateImageForMultipleChoice(Resolution, Resolution, Prompt, checkpoint, LoRa, ControlNetType, "", ControlnetImageBase64, seed,
+        byte[] imageBytes = Convert.FromBase64String(ControlnetImageBase64);
+        img1 = new Texture2D(2, 2);
+        img1.LoadImage(imageBytes);
+        yield return StartCoroutine(GenerateImageForMultipleChoice(Resolution, Resolution, Prompt, checkpoint, "", ControlNetType, tempControlnet, ControlnetImageBase64, seed,
                    texture =>
                    {
-                       img1 = texture;
+                       img2 = texture;
                    }));
-        callback?.Invoke(TempAnswer);
+        callback?.Invoke(HardTempAnswer);
     }
     public IEnumerator HandlePromptAndGenerateImage(string LoRa,string checkpoint,string type)
     {
@@ -409,6 +394,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
 
                 multiChoiceQuestion.ChangeOptionsForHardMode(tempAns);
                 multiChoiceQuestion.BeforeImage.sprite = Sprite.Create(img1, new Rect(0, 0, img1.width, img1.height), new Vector2(0.5f, 0.5f));
+                multiChoiceQuestion.AfterImage.sprite = Sprite.Create(img2, new Rect(0, 0, img2.width, img2.height), new Vector2(0.5f, 0.5f));
                 //gameController.answer = tempAnswer;
                 MainBody.Enqueue(Prompt.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries)[0]);
                 if (MainBody.Count > 5)
@@ -428,20 +414,15 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
             }));
             SkipButton.SetActive(true);
             skipWait = false;
-            MainBody.Enqueue(Prompt.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries)[0]);
-            if (MainBody.Count > 5)
-            {
-                MainBody.Dequeue();
-            }
             yield return new WaitUntil(() => skipWait);
             SkipButton.SetActive(false);
             if (!first)
             {
                 multiChoiceQuestion.QuestionName.text = temp;
-                //multiChoiceQuestion.ResetButtonColor();
+                multiChoiceQuestion.ResetButtonColor();
                 multiChoiceQuestion.ChangeOptionsForHardMode(tempAns);
                 multiChoiceQuestion.BeforeImage.sprite = Sprite.Create(img1, new Rect(0, 0, img1.width, img1.height), new Vector2(0.5f, 0.5f));
-                //gameController.answer = tempAnswer;
+                multiChoiceQuestion.AfterImage.sprite = Sprite.Create(img2, new Rect(0, 0, img2.width, img2.height), new Vector2(0.5f, 0.5f));
             }
         }
     }
@@ -1002,6 +983,9 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
                 AddLLM = "主角是一個食物(禁止壽司)，提示詞需要包含foodphoto，可以使用攝影細節，其他由你自由發揮";
                 break;
             case "Controlnet":
+                AddLLM = "主角是一個人，其他由你自由發揮";
+                break;
+            case "HardMode":
                 AddLLM = "主角是一個人，其他由你自由發揮";
                 break;
             default:

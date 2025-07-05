@@ -13390,7 +13390,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Start
+  m_text: Next
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: b464eda3163aa2341b5480e6294350cf, type: 2}
   m_sharedMaterial: {fileID: -4064543440630920393, guid: b464eda3163aa2341b5480e6294350cf, type: 2}
@@ -18461,6 +18461,7 @@ MonoBehaviour:
     negative_prompt: 
     blendMode: 
     feather: 0
+  HardTempAnswer: []
   skipWait: 0
   IntroScreen: {fileID: 1506400243}
   GameStartScreen: {fileID: 541176384}

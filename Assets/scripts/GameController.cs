@@ -295,17 +295,42 @@ public class GameController : MonoBehaviourPun
         }
     }
 
+
+    int correctCount = 0;
+    int falseCount = 0;
+    List<string> Hardlist = new List<string>();
     public void CheckAnsForHardMode(Text Buttontext)
     {
-        if (Buttontext.text == answer)
+        if (!multiChoiceQuestion.IsResultScreen)
         {
-            characteranimator.SetTrigger("correct");
-            voiceAudioPlayer.AudioPlay(1);
-        }
-        else
-        {
-            characteranimator.SetTrigger("wrong");
-            voiceAudioPlayer.AudioPlay(2);
+            if (Hardlist.Contains(Buttontext.text))
+            {
+                return;
+            }
+            if (stablediffusionregionprompt.HardTempAnswer.Contains(Buttontext.text))
+            {
+                characteranimator.SetTrigger("correct");
+                voiceAudioPlayer.AudioPlay(1);
+                Hardlist.Add(Buttontext.text);
+                correctCount++;
+            }
+            else
+            {
+                characteranimator.SetTrigger("wrong");
+                voiceAudioPlayer.AudioPlay(2);
+                Hardlist.Add(Buttontext.text);
+                falseCount++;
+            }
+            if (correctCount == 3 || falseCount == 2)
+            {
+                if(correctCount == 3)
+                    StartCoroutine(multiChoiceQuestion.ChangeButtonColor(4f));
+                else
+                    StartCoroutine(multiChoiceQuestion.ChangeButtonColor(6f));
+                multiChoiceQuestion.IsResultScreen = true;
+                correctCount = 0;
+                falseCount = 0;
+            }
         }
     }
     private IEnumerator SendPhotoRequestCoroutine(string prompt, string[] images)
