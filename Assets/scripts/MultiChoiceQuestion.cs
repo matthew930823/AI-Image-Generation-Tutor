@@ -475,7 +475,7 @@ public class MultiChoiceQuestion : MonoBehaviour
         Result_AfterImage.sprite = AfterImage.sprite;
         Result_BeforeImage.sprite = BeforeImage.sprite;
         Result_QuestionName.text = QuestionName.text;
-        for (int i = 0; i < 4; i++)
+        for (int i = 0; i < buttons.Length; i++)
         {
             Text btnText = buttons[i].GetComponentInChildren<Text>();
             ColorBlock cb = buttons[i].colors;
@@ -504,7 +504,7 @@ public class MultiChoiceQuestion : MonoBehaviour
         IsResultScreen = false;
         GameScreen.SetActive(true);
         ResultScreen.SetActive(false);
-        for (int i = 0; i < 4; i++)
+        for (int i = 0; i < buttons.Length; i++)
         {
             Text btnText = buttons[i].GetComponentInChildren<Text>();
             ColorBlock cb = buttons[i].colors;

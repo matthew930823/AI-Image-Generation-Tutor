@@ -176,20 +176,22 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
             default:
                 break;
         }
+        string[] ControlnetModule = new string[] { "depth_anything_v2", "canny", "openpose_hand", "shuffle" };
+        string randControlnet = ControlnetModule[UnityEngine.Random.Range(0, ControlnetModule.Length)];
         string tempControlnet = "";
-        switch (ControlNetType)
+        switch (randControlnet)
         {
-            case "Canny":
-                tempControlnet = "canny";
+            case "canny":
+                tempControlnet = "Canny";
                 break;
-            case "Depth":
-                tempControlnet = "depth_anything_v2";
+            case "depth_anything_v2":
+                tempControlnet = "Depth";
                 break;
-            case "Openpose":
-                tempControlnet = "openpose_hand";
+            case "openpose_hand":
+                tempControlnet = "Openpose";
                 break;
-            case "Shuffle":
-                tempControlnet = "shuffle";
+            case "shuffle":
+                tempControlnet = "Shuffle";
                 break;
             default:
                 break;
@@ -198,17 +200,18 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
         string Addresult = add[UnityEngine.Random.Range(0, add.Length)];
         int[] resolution = new int[] { 128, 384, 1024, 512 , 768 };
         int Resolution = resolution[UnityEngine.Random.Range(0, resolution.Length)];
-        HardTempAnswer = new string[] { tempCP, ControlNetType, Addresult , Resolution.ToString() };
-        
         // 等待 ReadFileAndSendPrompt 完成
         yield return StartCoroutine(ReadFileAndSendPrompt("HardMode"));
 
         yield return StartCoroutine(ReadFileAndSendImformation());
+
+        ControlnetImageBase64 = GetRandomControlImageBase64("ConTrolNet參考圖/other");
+        HardTempAnswer = new string[] { tempCP, tempControlnet, Addresult, Resolution.ToString() };
         // 然後執行 GenerateImageForMultipleChoice
         byte[] imageBytes = Convert.FromBase64String(ControlnetImageBase64);
         img1 = new Texture2D(2, 2);
         img1.LoadImage(imageBytes);
-        yield return StartCoroutine(GenerateImageForMultipleChoice(Resolution, Resolution, Prompt, checkpoint, "", ControlNetType, tempControlnet, ControlnetImageBase64, seed,
+        yield return StartCoroutine(GenerateImageForMultipleChoice(Resolution, Resolution, Prompt, checkpoint, "", ControlNetType, randControlnet, ControlnetImageBase64, seed,
                    texture =>
                    {
                        img2 = texture;
@@ -422,7 +425,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
                 multiChoiceQuestion.ResetButtonColor();
                 multiChoiceQuestion.ChangeOptionsForHardMode(tempAns);
                 multiChoiceQuestion.BeforeImage.sprite = Sprite.Create(img1, new Rect(0, 0, img1.width, img1.height), new Vector2(0.5f, 0.5f));
-                multiChoiceQuestion.AfterImage.sprite = Sprite.Create(img2, new Rect(0, 0, img2.width, img2.height), new Vector2(0.5f, 0.5f));
+                multiChoiceQuestion.AfterImage.sprite = Sprite.Create(img2, new Rect(0, 0, img2.width, img2.height), new Vector2(0.5f, 0.5f));  
             }
         }
     }
