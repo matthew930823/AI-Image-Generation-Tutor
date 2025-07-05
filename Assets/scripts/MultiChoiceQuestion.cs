@@ -483,7 +483,7 @@ public class MultiChoiceQuestion : MonoBehaviour
             Color correctColor = new Color(0.5f, 1f, 0.5f);  // ºñ¦â
             Color wrongColor = new Color(1f, 0.5f, 0.5f);     // ¬õ¦â
 
-            Color targetColor = (btnText.text == stableDiffusionRegionPrompt.gameController.answer)
+            Color targetColor = (stableDiffusionRegionPrompt.HardTempAnswer.Contains(btnText.text))
                                 ? correctColor
                                 : wrongColor;
 
