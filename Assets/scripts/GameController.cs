@@ -298,7 +298,7 @@ public class GameController : MonoBehaviourPun
 
     int correctCount = 0;
     int falseCount = 0;
-    List<string> Hardlist = new List<string>();
+    public List<string> Hardlist = new List<string>();
     public void CheckAnsForHardMode(Text Buttontext)
     {
         if (!multiChoiceQuestion.IsResultScreen)

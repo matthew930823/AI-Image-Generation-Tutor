@@ -421,6 +421,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
             SkipButton.SetActive(false);
             if (!first)
             {
+                gameController.Hardlist.Clear();
                 multiChoiceQuestion.QuestionName.text = temp;
                 multiChoiceQuestion.ResetButtonColor();
                 HardTempAnswer = tempAns;
