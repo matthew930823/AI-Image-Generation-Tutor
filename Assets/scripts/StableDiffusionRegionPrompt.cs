@@ -206,7 +206,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
         yield return StartCoroutine(ReadFileAndSendImformation());
 
         ControlnetImageBase64 = GetRandomControlImageBase64("ConTrolNet參考圖/other");
-        HardTempAnswer = new string[] { tempCP, tempControlnet, Addresult, Resolution.ToString() };
+        string[] TempAnswer = new string[] { tempCP, tempControlnet, Addresult, Resolution.ToString() };
         // 然後執行 GenerateImageForMultipleChoice
         byte[] imageBytes = Convert.FromBase64String(ControlnetImageBase64);
         img1 = new Texture2D(2, 2);
@@ -216,7 +216,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
                    {
                        img2 = texture;
                    }));
-        callback?.Invoke(HardTempAnswer);
+        callback?.Invoke(TempAnswer);
     }
     public IEnumerator HandlePromptAndGenerateImage(string LoRa,string checkpoint,string type)
     {
@@ -394,7 +394,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
                 gameController.voiceAudioPlayer.AudioPlay(6);
                 GameStartButton.SetActive(true);
                 Debug.Log("選中的答案有:"+ string.Join(", ", tempAns));
-
+                HardTempAnswer = tempAns;
                 multiChoiceQuestion.ChangeOptionsForHardMode(tempAns);
                 multiChoiceQuestion.BeforeImage.sprite = Sprite.Create(img1, new Rect(0, 0, img1.width, img1.height), new Vector2(0.5f, 0.5f));
                 multiChoiceQuestion.AfterImage.sprite = Sprite.Create(img2, new Rect(0, 0, img2.width, img2.height), new Vector2(0.5f, 0.5f));
@@ -423,6 +423,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
             {
                 multiChoiceQuestion.QuestionName.text = temp;
                 multiChoiceQuestion.ResetButtonColor();
+                HardTempAnswer = tempAns;
                 multiChoiceQuestion.ChangeOptionsForHardMode(tempAns);
                 multiChoiceQuestion.BeforeImage.sprite = Sprite.Create(img1, new Rect(0, 0, img1.width, img1.height), new Vector2(0.5f, 0.5f));
                 multiChoiceQuestion.AfterImage.sprite = Sprite.Create(img2, new Rect(0, 0, img2.width, img2.height), new Vector2(0.5f, 0.5f));  
