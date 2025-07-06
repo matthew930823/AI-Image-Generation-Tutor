@@ -307,6 +307,7 @@ public class GameController : MonoBehaviourPun
         {
             if (Hardlist.Contains(Buttontext.text))
             {
+                voiceAudioPlayer.AudioPlay(13);
                 return;
             }
             multiChoiceQuestion.ChangeOneButtonColor(Buttontext);
