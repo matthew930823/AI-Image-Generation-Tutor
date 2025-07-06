@@ -442,13 +442,14 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
             {
                 result = multiChoiceQuestion.GenerateQuestions();
                 yield return StartCoroutine(HandlePromptAndGenerateImage(result[0], result[1], result[2]));
-                yield return StartCoroutine(geminiAPI.SendPhotoRequest("題目會說明主體和他在做什麼，且需要在20個英文字裡說明完，且不能有標點符號，例子:[A young woman stands on a city street]，接下來我會給一張圖片，你要給我符合這個圖片的題目，請你依照{說明}回傳給我，說明要包在大括號內。", Convert.ToBase64String((((result[2] == "Prompt") || (result[2] == "Resolution")) ? img1 : img2).EncodeToPNG()), (result1) =>
-                {
-                    Match match = Regex.Match(result1, @"\{([^}]*)\}");
-                    result1 = match.Groups[1].Value;
-                    //Narrative.text = result;
-                    multiChoiceQuestion.QuestionName.text = result1;
-                }));
+                //yield return StartCoroutine(geminiAPI.SendPhotoRequest("題目會說明主體和他在做什麼，且需要在20個英文字裡說明完，且不能有標點符號，例子:[A young woman stands on a city street]，接下來我會給一張圖片，你要給我符合這個圖片的題目，請你依照{說明}回傳給我，說明要包在大括號內。", Convert.ToBase64String((((result[2] == "Prompt") || (result[2] == "Resolution")) ? img1 : img2).EncodeToPNG()), (result1) =>
+                //{
+                //    Match match = Regex.Match(result1, @"\{([^}]*)\}");
+                //    result1 = match.Groups[1].Value;
+                //    //Narrative.text = result;
+                //    multiChoiceQuestion.QuestionName.text = result1;
+                //}));
+                multiChoiceQuestion.QuestionName.text = result[2];
                 gameController.voiceAudioPlayer.AudioPlay(6);
                 GameStartButton.SetActive(true);
                 if (result[2] == "Checkpoint"|| result[2] == "LoRa")
@@ -478,13 +479,14 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
             result = multiChoiceQuestion.GenerateQuestions();
             yield return StartCoroutine(HandlePromptAndGenerateImage(result[0], result[1], result[2]));
             string temp = "";
-            yield return StartCoroutine(geminiAPI.SendPhotoRequest("題目會說明主體和他在做什麼，且需要在20個英文字裡說明完，且不能有標點符號，例子:[A young woman stands on a city street]，接下來我會給一張圖片，你要給我符合這個圖片的題目，請你依照{說明}回傳給我，說明要包在大括號內。", Convert.ToBase64String((((result[2] == "Prompt") || (result[2] == "Resolution")) ? img1 : img2).EncodeToPNG()), (result1) =>
-            {
-                Match match = Regex.Match(result1, @"\{([^}]*)\}");
-                result1 = match.Groups[1].Value;
-                //Narrative.text = result;
-                temp = result1;
-            }));
+            //yield return StartCoroutine(geminiAPI.SendPhotoRequest("題目會說明主體和他在做什麼，且需要在20個英文字裡說明完，且不能有標點符號，例子:[A young woman stands on a city street]，接下來我會給一張圖片，你要給我符合這個圖片的題目，請你依照{說明}回傳給我，說明要包在大括號內。", Convert.ToBase64String((((result[2] == "Prompt") || (result[2] == "Resolution")) ? img1 : img2).EncodeToPNG()), (result1) =>
+            //{
+            //    Match match = Regex.Match(result1, @"\{([^}]*)\}");
+            //    result1 = match.Groups[1].Value;
+            //    //Narrative.text = result;
+            //    temp = result1;
+            //}));
+            temp = result[2];
             SkipButton.SetActive(true);
             skipWait = false;
             MainBody.Enqueue(Prompt.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries)[0]);
