@@ -475,6 +475,37 @@ public class MultiChoiceQuestion : MonoBehaviour
         Result_AfterImage.sprite = AfterImage.sprite;
         Result_BeforeImage.sprite = BeforeImage.sprite;
         Result_QuestionName.text = QuestionName.text;
+        for (int i = 0; i < buttons.Length; i++)
+        {
+            Text btnText = buttons[i].GetComponentInChildren<Text>();
+            ColorBlock cb = buttons[i].colors;
+
+            Color correctColor = new Color(0.5f, 1f, 0.5f);  // 綠色
+            Color wrongColor = new Color(1f, 0.5f, 0.5f);     // 紅色
+
+            Color targetColor = (stableDiffusionRegionPrompt.gameController.answer == btnText.text)
+                                ? correctColor
+                                : wrongColor;
+
+            // 設定所有顏色狀態為目標顏色
+            cb.normalColor = targetColor;
+            cb.highlightedColor = targetColor;
+            cb.pressedColor = targetColor;
+            cb.selectedColor = targetColor;
+            cb.disabledColor = targetColor;
+
+            buttons[i].colors = cb;
+        }
+        Explain.text = "如果有不懂的，點擊想知道的選項，這樣我就會幫你說明為什麼這個選項是對的或錯的喔";
+    }
+    public IEnumerator ChangeButtonColorForHardMode(float waitSec)
+    {
+        yield return new WaitForSeconds(waitSec);
+        GameScreen.SetActive(false);
+        ResultScreen.SetActive(true);
+        Result_AfterImage.sprite = AfterImage.sprite;
+        Result_BeforeImage.sprite = BeforeImage.sprite;
+        Result_QuestionName.text = QuestionName.text;
         Debug.Log(string.Join(", ", stableDiffusionRegionPrompt.HardTempAnswer));
         for (int i = 0; i < buttons.Length; i++)
         {
@@ -497,7 +528,6 @@ public class MultiChoiceQuestion : MonoBehaviour
 
             buttons[i].colors = cb;
         }
-        Explain.text = "如果有不懂的，點擊想知道的選項，這樣我就會幫你說明為什麼這個選項是對的或錯的喔";
     }
     public void ResetButtonColor()
     {

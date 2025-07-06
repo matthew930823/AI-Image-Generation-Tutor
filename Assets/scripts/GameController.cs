@@ -326,7 +326,7 @@ public class GameController : MonoBehaviourPun
                 else if (correctCount == 3)
                 {
                     voiceAudioPlayer.AudioPlay(12);
-                    StartCoroutine(multiChoiceQuestion.ChangeButtonColor(5f));
+                    StartCoroutine(multiChoiceQuestion.ChangeButtonColorForHardMode(5f));
                     multiChoiceQuestion.IsResultScreen = true;
                     correctCount = 0;
                     falseCount = 0;
@@ -344,7 +344,7 @@ public class GameController : MonoBehaviourPun
                 else if (falseCount == 2)
                 {
                     voiceAudioPlayer.AudioPlay(9);
-                    StartCoroutine(multiChoiceQuestion.ChangeButtonColor(5f));
+                    StartCoroutine(multiChoiceQuestion.ChangeButtonColorForHardMode(5f));
                     multiChoiceQuestion.IsResultScreen = true;
                     correctCount = 0;
                     falseCount = 0;
