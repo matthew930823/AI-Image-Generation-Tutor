@@ -187,7 +187,7 @@ public class MultiChoiceQuestion : MonoBehaviour
             "god rays", "downtown", "cyberpunk", "oil painting", "watercolor", "japanese temple", "castle",
             "classroom", "bedroom", "magic forest", "lava ground", "red", "blue", "green", "yellow", "purple",
             "orange", "pink", "black", "white", "gray", "brown" },
-                ["Resolution"] = new string[] { "128", "384", "1024", "512", "768" }
+            ["Resolution"] = new string[] { "384", "1024", "512", "768" }
         };
 
             // 將正確答案對應到各自類別

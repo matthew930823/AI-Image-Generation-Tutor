@@ -337,11 +337,11 @@ public class GameController : MonoBehaviourPun
             {
                 characteranimator.SetTrigger("wrong");
                 falseCount++;
-                if (correctCount == 1)
+                if (falseCount == 1)
                 {
                     voiceAudioPlayer.AudioPlay(8);
                 }
-                else if (correctCount == 2)
+                else if (falseCount == 2)
                 {
                     voiceAudioPlayer.AudioPlay(9);
                     StartCoroutine(multiChoiceQuestion.ChangeButtonColor(5f));

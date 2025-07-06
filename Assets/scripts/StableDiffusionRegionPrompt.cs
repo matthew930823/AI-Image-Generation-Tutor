@@ -198,7 +198,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
         }
         string[] add = new string[] { "desert", "forest", "beach", "grassland", "lake", "blizzard", "sunset", "foggy", "thunderstorm", "god rays", "downtown", "cyberpunk", "oil painting", "watercolor", "japanese temple", "castle", "classroom", "bedroom", "magic forest", "lava ground", "red", "blue", "green", "yellow", "purple", "orange", "pink", "black", "white", "gray", "brown" };
         string Addresult = add[UnityEngine.Random.Range(0, add.Length)];
-        int[] resolution = new int[] { 128, 384, 1024, 512 , 768 };
+        int[] resolution = new int[] { 384, 1024, 512 , 768 };
         int Resolution = resolution[UnityEngine.Random.Range(0, resolution.Length)];
         // 等待 ReadFileAndSendPrompt 完成
         yield return StartCoroutine(ReadFileAndSendPrompt("HardMode"));
@@ -211,7 +211,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
         byte[] imageBytes = Convert.FromBase64String(ControlnetImageBase64);
         img1 = new Texture2D(2, 2);
         img1.LoadImage(imageBytes);
-        yield return StartCoroutine(GenerateImageForMultipleChoice(Resolution, Resolution, Prompt, checkpoint, "", ControlNetType, randControlnet, ControlnetImageBase64, seed,
+        yield return StartCoroutine(GenerateImageForMultipleChoice(Resolution, Resolution, "(" + Addresult + ":2)," + Prompt, checkpoint, "", ControlNetType, randControlnet, ControlnetImageBase64, seed,
                    texture =>
                    {
                        img2 = texture;
