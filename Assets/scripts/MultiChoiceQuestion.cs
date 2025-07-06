@@ -518,6 +518,33 @@ public class MultiChoiceQuestion : MonoBehaviour
             buttons[i].colors = cb;
         }
     }
+
+    public void ChangeOneButtonColor(Text buttonText)
+    {
+        for (int i = 0; i < buttons.Length; i++)
+        {
+            Text btnText = buttons[i].GetComponentInChildren<Text>();
+            if (btnText.text == buttonText.text)
+            {
+                ColorBlock cb = buttons[i].colors;
+                Color correctColor = new Color(0.5f, 1f, 0.5f);  // 綠色
+                Color wrongColor = new Color(1f, 0.5f, 0.5f);     // 紅色
+
+                Color targetColor = (stableDiffusionRegionPrompt.HardTempAnswer.Contains(btnText.text))
+                                    ? correctColor
+                                    : wrongColor;
+
+                // 設定所有顏色狀態為目標顏色
+                cb.normalColor = targetColor;
+                cb.highlightedColor = targetColor;
+                cb.pressedColor = targetColor;
+                cb.selectedColor = targetColor;
+                cb.disabledColor = targetColor;
+
+                buttons[i].colors = cb;
+            }
+        }
+    }
     bool PrepareQuestions = false;
     // Update is called once per frame
     void Update()

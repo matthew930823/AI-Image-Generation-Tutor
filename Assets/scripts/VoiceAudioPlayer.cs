@@ -25,7 +25,7 @@ public class VoiceAudioPlayer : MonoBehaviour
         //    audioSource.Play();
         //    Invoke("StopLoop", 20f);
         //}
-        AudioPlay(0);
+        //AudioPlay(0);
     }
     void StopLoop()
     {
@@ -34,7 +34,7 @@ public class VoiceAudioPlayer : MonoBehaviour
     
     public void AudioPlay(int index)
     {
-        audioSource.clip = audioClip[index];//1答對 2答錯 3生成詳解時 4詳解生成冷卻 5題目生好時 6可以開始遊戲了喔
+        audioSource.clip = audioClip[index];//0遊戲敘述簡單 1答對 2答錯 3生成詳解時 4詳解生成冷卻 5題目生好時 6可以開始遊戲了喔 7遊戲敘述困難 8答錯第一次時 9答錯兩次時 10答對一題 11答對兩題 12答對三題
         audioSource.loop = false;
 
         // 確保 Recorder 傳輸音頻

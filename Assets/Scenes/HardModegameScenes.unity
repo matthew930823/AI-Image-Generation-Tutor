@@ -6724,6 +6724,12 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 3b4acef998dae2b4a991f7b34e28d3de, type: 3}
   - {fileID: 8300000, guid: 4c8043e95fd2122418212f0d5c499521, type: 3}
   - {fileID: 8300000, guid: 936d46d1d20092b4aaf7938d95ea9113, type: 3}
+  - {fileID: 8300000, guid: cff51c8e2467dfc4d848646da99bc937, type: 3}
+  - {fileID: 8300000, guid: cee0d12b493653e40b4c3686f382b684, type: 3}
+  - {fileID: 8300000, guid: fc60671a5a647794991c9698477c22cc, type: 3}
+  - {fileID: 8300000, guid: 40829b6b2f26ebf4dae264891a4852f9, type: 3}
+  - {fileID: 8300000, guid: 4765f6a2825a6864a8a406610f637607, type: 3}
+  - {fileID: 8300000, guid: 78c759bfc6afcbd46bcc9abe32778eeb, type: 3}
   videoPlayer: {fileID: 0}
 --- !u!114 &311400825
 MonoBehaviour:
@@ -18783,6 +18789,7 @@ MonoBehaviour:
   voiceAudioPlayer: {fileID: 311400824}
   multiChoiceQuestion: {fileID: 1101888633}
   tTSClone: {fileID: 1101888634}
+  Hardlist: []
 --- !u!114 &1101888625
 MonoBehaviour:
   m_ObjectHideFlags: 0

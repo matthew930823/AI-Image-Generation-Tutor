@@ -117,10 +117,12 @@ public class GameController : MonoBehaviourPun
             //StartCoroutine(huggingFaceAPI.GenerateImageFromText(keywords[0], OnImageGenerated));
 
             //answer = multiChoiceQuestion.ChangeQuestion(NowQuestion++);//題庫模式
+            voiceAudioPlayer.AudioPlay(0);
             StartCoroutine(multiChoiceQuestion.stableDiffusionRegionPrompt.StartAutoImageUpdate());
         }
         else if(mode == 2)
         {
+            voiceAudioPlayer.AudioPlay(7);
             StartCoroutine(multiChoiceQuestion.stableDiffusionRegionPrompt.StartAutoImageUpdateForHardMode());
         }
         else
@@ -307,29 +309,46 @@ public class GameController : MonoBehaviourPun
             {
                 return;
             }
+            multiChoiceQuestion.ChangeOneButtonColor(Buttontext);
             if (stablediffusionregionprompt.HardTempAnswer.Contains(Buttontext.text))
             {
                 characteranimator.SetTrigger("correct");
-                voiceAudioPlayer.AudioPlay(1);
-                Hardlist.Add(Buttontext.text);
                 correctCount++;
+                if (correctCount == 1)
+                {
+                    voiceAudioPlayer.AudioPlay(10);
+                }
+                else if (correctCount == 2)
+                {
+                    voiceAudioPlayer.AudioPlay(11);
+                }
+                else if (correctCount == 3)
+                {
+                    voiceAudioPlayer.AudioPlay(12);
+                    StartCoroutine(multiChoiceQuestion.ChangeButtonColor(5f));
+                    multiChoiceQuestion.IsResultScreen = true;
+                    correctCount = 0;
+                    falseCount = 0;
+                }
+                Hardlist.Add(Buttontext.text);
             }
             else
             {
                 characteranimator.SetTrigger("wrong");
-                voiceAudioPlayer.AudioPlay(2);
-                Hardlist.Add(Buttontext.text);
                 falseCount++;
-            }
-            if (correctCount == 3 || falseCount == 2)
-            {
-                if(correctCount == 3)
-                    StartCoroutine(multiChoiceQuestion.ChangeButtonColor(4f));
-                else
-                    StartCoroutine(multiChoiceQuestion.ChangeButtonColor(6f));
-                multiChoiceQuestion.IsResultScreen = true;
-                correctCount = 0;
-                falseCount = 0;
+                if (correctCount == 1)
+                {
+                    voiceAudioPlayer.AudioPlay(8);
+                }
+                else if (correctCount == 2)
+                {
+                    voiceAudioPlayer.AudioPlay(9);
+                    StartCoroutine(multiChoiceQuestion.ChangeButtonColor(5f));
+                    multiChoiceQuestion.IsResultScreen = true;
+                    correctCount = 0;
+                    falseCount = 0;
+                }
+                Hardlist.Add(Buttontext.text);
             }
         }
     }
