@@ -449,7 +449,10 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
                 //    //Narrative.text = result;
                 //    multiChoiceQuestion.QuestionName.text = result1;
                 //}));
-                multiChoiceQuestion.QuestionName.text = result[2];
+                if(result[2] == "Checkpoint")
+                    multiChoiceQuestion.QuestionName.text = "Model";
+                else
+                    multiChoiceQuestion.QuestionName.text = result[2];
                 gameController.voiceAudioPlayer.AudioPlay(6);
                 GameStartButton.SetActive(true);
                 if (result[2] == "Checkpoint"|| result[2] == "LoRa")
@@ -498,7 +501,10 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
             SkipButton.SetActive(false);
             if (!first)
             {
-                multiChoiceQuestion.QuestionName.text = temp;
+                if (temp == "Checkpoint")
+                    multiChoiceQuestion.QuestionName.text = "Model";
+                else
+                    multiChoiceQuestion.QuestionName.text = temp;
                 multiChoiceQuestion.ResetButtonColor();
                 if (result[2] == "Checkpoint" || result[2] == "LoRa")
                 {
