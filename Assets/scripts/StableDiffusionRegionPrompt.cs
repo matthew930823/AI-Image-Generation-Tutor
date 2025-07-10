@@ -712,9 +712,9 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
         string imageData = "data:image/png;base64," + base64Image;
 
         string modelString = "";
-        string moduleString = (controlnetModule == "") ? "none" : controlnetModule;
+        string moduleString = (controlnetModule == "") ? "none" : controlnetModule.ToLower();
         string[] CheckpointType = { };
-        switch (controlnetModule)
+        switch (controlnetModule.ToLower())
         {
             case "canny":
                 modelString = "control_v11p_sd15_canny [d14c016b]";
