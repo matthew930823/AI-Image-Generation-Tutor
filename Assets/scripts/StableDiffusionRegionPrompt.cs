@@ -1245,7 +1245,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
                 AddLLM = "主角是一個人，其他由你自由發揮";
                 break;
             case "HardMode":
-                AddLLM = "主角是一個人，其他由你自由發揮";
+                AddLLM = "主角是一個人，其他由你自由發揮，但要記得包括主體後提示詞數量只能有6個";
                 break;
             default:
                 AddLLM = "題目由你來決定" + "，不能出現的主體有:" + MainBodyLLM;
@@ -1267,7 +1267,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
         {
             fileContent = fileContent.Replace(
                 "10.提示詞數量為7-12個",
-                "10.提示詞數量為6個，不能包含square image這種沒有意義的提示詞"
+                "10.提示詞數量為5個，不能包含square image這種沒有意義的提示詞"
             );
         }
         //Debug.Log(fileContent+ AddLLM);
