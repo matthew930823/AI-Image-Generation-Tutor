@@ -25569,7 +25569,7 @@ MonoBehaviour:
   m_Value: 0
   m_Options:
     m_Options:
-    - m_Text: "\u8ACB\u9078\u64C7\u6A21\u578B"
+    - m_Text: Checkpoint
       m_Image: {fileID: 0}
     - m_Text: CuteYukiMix
       m_Image: {fileID: 0}
@@ -38578,7 +38578,7 @@ MonoBehaviour:
   m_Value: 0
   m_Options:
     m_Options:
-    - m_Text: "\u8ACB\u9078\u64C7\u9810\u8655\u7406"
+    - m_Text: Controlnet
       m_Image: {fileID: 0}
     - m_Text: Canny
       m_Image: {fileID: 0}
@@ -39115,7 +39115,7 @@ MonoBehaviour:
   m_Value: 0
   m_Options:
     m_Options:
-    - m_Text: "\u8ACB\u9078\u64C7\u89E3\u6790\u5EA6"
+    - m_Text: Resolution
       m_Image: {fileID: 0}
     - m_Text: 384
       m_Image: {fileID: 0}

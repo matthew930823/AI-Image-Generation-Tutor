@@ -74,19 +74,19 @@ public class AssessmentMode : MonoBehaviour
                 KeyPrompt = info;
                 break;
             case "Resolution":
-                if(info == "請選擇解析度")
+                if(info == "Resolution")
                     Resolution = 0;
                 else
                     Resolution = int.Parse(info);
                 break;
             case "Checkpoint":
-                if (info == "請選擇模型")
+                if (info == "Model")
                     Checkpoint = "";
                 else
                     Checkpoint = info;
                 break;
             case "Controlnet":
-                if (info == "請選擇預處理")
+                if (info == "Controlnet")
                     Controlnet = "";
                 else
                     Controlnet = info;
