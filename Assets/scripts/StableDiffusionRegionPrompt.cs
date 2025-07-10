@@ -1262,7 +1262,13 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
 #else
         string fileContent = System.IO.File.ReadAllText(path);
 #endif
-
+        if(LoRa_name == "HardMode")
+        {
+            fileContent = fileContent.Replace(
+                "10.提示詞數量為7-12個",
+                "10.提示詞數量為6個，不能包含square image這種沒有意義的提示詞"
+            );
+        }
         //Debug.Log(fileContent+ AddLLM);
         // 呼叫 Gemini API 並傳入檔案內容
         yield return StartCoroutine(geminiAPI.SendRequest(fileContent+ AddLLM, (result) =>
