@@ -488,6 +488,14 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
                       .Select(m => int.Parse(m.Groups[1].Value))
                       .ToArray();
                 scoreControll.SetScore(scores);
+                if(scores[6] >= 60)
+                {
+                    gameController.voiceAudioPlayer.AudioPlay(22);
+                }
+                else
+                {
+                    gameController.voiceAudioPlayer.AudioPlay(23);
+                }
             }));
             yield return StartCoroutine(multiChoiceQuestion.ChangeButtonColor(0));
             assessmentMode.ClearValue();
