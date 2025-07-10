@@ -481,7 +481,8 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
 
             綜合分數（總結評估，滿分100）：{綜合分數}
             ";
-            yield return StartCoroutine(geminiAPI.SendRequest(LLMprompt, (result) =>
+            string[] ScoreImageBase64 = new string[] { Convert.ToBase64String((img1).EncodeToPNG()), Convert.ToBase64String((img2).EncodeToPNG()) };
+            yield return StartCoroutine(geminiAPI.SendMorePhotoRequest(LLMprompt, ScoreImageBase64, (result) =>
             {
                 MatchCollection matches = Regex.Matches(result, @"\{(\d+)");
                 int[] scores = matches.Cast<Match>()
