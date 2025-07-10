@@ -385,6 +385,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
         GameStartScreen.SetActive(true);
     }
     public AssessmentMode assessmentMode;
+    public string AssessmentLLM="";
     public IEnumerator StartAutoImageUpdateForAssessmentMode()
     {
         bool first = true;
@@ -443,6 +444,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
             ";
 
             string LLMprompt = $"{instruction}\n輸入:重點提示詞:{KeyPrompt} 主體提示詞:{MainPrompt} 細節提示詞:{string.Join(",", Prompt)}";
+            AssessmentLLM = $"這是上一題的提示字{MainPrompt},{string.Join(",", Prompt)}，不能重複出題";
             yield return StartCoroutine(geminiAPI.SendRequest(LLMprompt, (result) =>
             {
                 MatchCollection matches = Regex.Matches(result, @"\{(.*?)\}");
@@ -1245,7 +1247,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
                 AddLLM = "主角是一個人，其他由你自由發揮";
                 break;
             case "HardMode":
-                AddLLM = "主角是一個人，其他由你自由發揮，但要記得包括主體後提示詞數量只能有6個";
+                AddLLM = "主角是一個人，其他由你自由發揮，但要記得包括主體後提示詞數量只能有6個" + AssessmentLLM;
                 break;
             default:
                 AddLLM = "題目由你來決定" + "，不能出現的主體有:" + MainBodyLLM;
