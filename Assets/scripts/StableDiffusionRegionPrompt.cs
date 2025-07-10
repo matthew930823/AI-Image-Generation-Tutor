@@ -459,8 +459,8 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
                             {
                                 img1 = texture;
                             }));
-            multiChoiceQuestion.ChangeButtonColor(0);
             multiChoiceQuestion.BeforeImage.sprite = Sprite.Create(img1, new Rect(0, 0, img1.width, img1.height), new Vector2(0.5f, 0.5f));
+            yield return StartCoroutine(multiChoiceQuestion.ChangeButtonColor(0));
             assessmentMode.ClearValue();
             yield return StartCoroutine(HandlePromptAndGenerateImageForHardMode(back => { string[] tempAns = back; }));
             gameController.voiceAudioPlayer.AudioPlay(5);
@@ -732,10 +732,29 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
                 modelString = "";
                 break;
         }
-        
+        switch (Model_checkpoint)
+        {
+            case "CuteYukiMix":
+                Model_checkpoint = "anime_cute.safetensors";
+                break;
+            case "ReV Animated":
+                Model_checkpoint = "anime-real_hybrid.safetensors";
+                break;
+            case "Cetus-Mix":
+                Model_checkpoint = "anime_soft.safetensors";
+                break;
+            case "DreamShaper":
+                Model_checkpoint = "realistic_anything.safetensors";
+                break;
+            case "Counterfeit":
+                Model_checkpoint = "anime_bold.safetensors";
+                break;
+            default:
+                break;
+        }
 
 
-        
+
         yield return StartCoroutine(ChangeCheckpoint(Model_checkpoint));
         var controlnetArgs = new List<object>
         {
