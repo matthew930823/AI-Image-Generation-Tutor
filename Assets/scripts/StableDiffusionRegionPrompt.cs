@@ -422,7 +422,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
             }
             if (Checkpoint == "")
             {
-                gameController.voiceAudioPlayer.AudioPlay(18);
+                gameController.voiceAudioPlayer.AudioPlay(16);
                 goto BACK;
             }
             if (Controlnet == "")
