@@ -6,9 +6,9 @@ using UnityEngine;
 
 public class AssessmentMode : MonoBehaviour
 {
-    int Resolution = 384;
-    string Checkpoint = "CuteYukiMix";
-    string Controlnet = "Canny";
+    int Resolution = 0;
+    string Checkpoint = "";
+    string Controlnet = "";
     string MainPrompt = "";
     string KeyPrompt = "";
     string[] Prompt = new string[5];
@@ -40,9 +40,9 @@ public class AssessmentMode : MonoBehaviour
     }
     public void ClearValue()
     {
-        Resolution = 384;
-        Checkpoint = "CuteYukiMix";
-        Controlnet = "Canny";
+        Resolution = 0;
+        Checkpoint = "";
+        Controlnet = "";
         MainPrompt = "";
         KeyPrompt = "";
         Prompt = new string[5];
@@ -74,13 +74,22 @@ public class AssessmentMode : MonoBehaviour
                 KeyPrompt = info;
                 break;
             case "Resolution":
-                Resolution = int.Parse(info);
+                if(info == "請選擇解析度")
+                    Resolution = 0;
+                else
+                    Resolution = int.Parse(info);
                 break;
             case "Checkpoint":
-                Checkpoint = info;
+                if (info == "請選擇模型")
+                    Checkpoint = "";
+                else
+                    Checkpoint = info;
                 break;
             case "Controlnet":
-                Controlnet = info;
+                if (info == "請選擇預處理")
+                    Controlnet = "";
+                else
+                    Controlnet = info;
                 break;
             default:
                 Prompt[int.Parse(type)] = info;

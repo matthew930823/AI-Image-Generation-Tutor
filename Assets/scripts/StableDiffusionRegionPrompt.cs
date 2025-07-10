@@ -415,7 +415,22 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
             skipAssessmentWait = false;
             yield return new WaitUntil(() => skipAssessmentWait);
             assessmentMode.GetValue(out Resolution, out MainPrompt, out KeyPrompt, out Prompt, out Checkpoint, out Controlnet, out ImageBase64);
-            if(MainPrompt == "")
+            if (Resolution == 0)
+            {
+                gameController.voiceAudioPlayer.AudioPlay(17);
+                goto BACK;
+            }
+            if (Checkpoint == "")
+            {
+                gameController.voiceAudioPlayer.AudioPlay(18);
+                goto BACK;
+            }
+            if (Controlnet == "")
+            {
+                gameController.voiceAudioPlayer.AudioPlay(19);
+                goto BACK;
+            }
+            if (MainPrompt == "")
             {
                 gameController.voiceAudioPlayer.AudioPlay(20);
                 goto BACK;
