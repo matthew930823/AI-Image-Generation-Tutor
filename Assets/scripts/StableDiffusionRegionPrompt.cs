@@ -406,6 +406,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
                 gameController.voiceAudioPlayer.AudioPlay(6);
                 GameStartButton.SetActive(true);
                 multiChoiceQuestion.AfterImage.sprite = Sprite.Create(img2, new Rect(0, 0, img2.width, img2.height), new Vector2(0.5f, 0.5f));
+                first = false;
             }
             SkipButtonForAssessment.SetActive(true);
             BACK:
@@ -471,7 +472,6 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
             if (!first)
             {
                 gameController.Hardlist.Clear();
-                //multiChoiceQuestion.QuestionName.text = temp;
                 multiChoiceQuestion.ResetButtonColor();
                 multiChoiceQuestion.AfterImage.sprite = Sprite.Create(img2, new Rect(0, 0, img2.width, img2.height), new Vector2(0.5f, 0.5f));
             }
@@ -719,10 +719,10 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
             case "canny":
                 modelString = "control_v11p_sd15_canny [d14c016b]";
                 break;
-            case "depth_anything_v2":
+            case "depth":
                 modelString = "control_v11f1p_sd15_depth [cfd03158]";
                 break;
-            case "openpose_hand":
+            case "openpose":
                 modelString = "control_v11p_sd15_openpose [cab727d4]";
                 break;
             case "shuffle":
