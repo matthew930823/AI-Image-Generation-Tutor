@@ -34,7 +34,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
 
     public GameObject SkipButton;
     public GameObject SkipButtonForAssessment;
-
+    public ScoreControll scoreControll;
     [System.Serializable]
     public class Region
     {
@@ -464,6 +464,31 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
                                 img1 = texture;
                             }));
             multiChoiceQuestion.BeforeImage.sprite = Sprite.Create(img1, new Rect(0, 0, img1.width, img1.height), new Vector2(0.5f, 0.5f));
+            LLMprompt = @"
+            接下來我會給你兩張圖片，你需要對兩張圖片的相似度進行打分，最後的總分最高為100最低為0分，你要分別對圖片的以下幾點作出判斷打分，後面會告訴你他佔100分中的幾分，1.畫風相似度(20分)(畫風的意思是要判斷是不是同一個繪師的風格) 2.人物主體相似度(20分) 3.色調相似度(15分) 4.背景相似度(15分) 5.細節相似度(20分) 6.圖片整體相似度(10分)，你要成為一個嚴格的老師，打分應該客觀、標準、不客套，以非常嚴格的標準評分，要補充你的評分原因，最後最後輸出每一項的分數都應該用大括號{}來括起來
+
+            畫風相似度（20分）：{風格分數}
+
+            人物主體相似度（20分）：{人物分數}
+
+            色調相似度（15分）：{色調分數}
+
+            背景相似度（15分）：{背景分數}
+
+            細節相似度（20分）：{細節分數}
+
+            圖片整體相似度（10分）：{整體分數}
+
+            綜合分數（總結評估，滿分100）：{綜合分數}
+            ";
+            yield return StartCoroutine(geminiAPI.SendRequest(LLMprompt, (result) =>
+            {
+                MatchCollection matches = Regex.Matches(result, @"\{(\d+)");
+                int[] scores = matches.Cast<Match>()
+                      .Select(m => int.Parse(m.Groups[1].Value))
+                      .ToArray();
+                scoreControll.SetScore(scores);
+            }));
             yield return StartCoroutine(multiChoiceQuestion.ChangeButtonColor(0));
             assessmentMode.ClearValue();
             yield return StartCoroutine(HandlePromptAndGenerateImageForHardMode(back => { string[] tempAns = back; }));
