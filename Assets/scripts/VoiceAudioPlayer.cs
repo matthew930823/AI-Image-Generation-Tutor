@@ -35,6 +35,7 @@ public class VoiceAudioPlayer : MonoBehaviour
     public void AudioPlay(int index)
     {
         audioSource.clip = audioClip[index];//0遊戲敘述簡單 1答對 2答錯 3生成詳解時 4詳解生成冷卻 5題目生好時 6可以開始遊戲了喔 7遊戲敘述困難 8答錯第一次時 9答錯兩次時 10答對一題 11答對兩題 12答對三題 13按到重覆選項
+                                            //考核模式: 14遊戲介紹 15開始生圖 16沒選模型 17沒選解析度 18沒選參考圖 19沒選預處理 20沒選主體提示詞 21沒選重點提示詞 22分數及格時 23分數不及格時
         audioSource.loop = false; 
 
         // 確保 Recorder 傳輸音頻

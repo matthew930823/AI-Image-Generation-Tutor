@@ -26,7 +26,10 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/HardModegameScenes.unity
     guid: 725e35fb2053c9f4a8a73b181635fe80
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/multiresult.unity
     guid: ae47724f44bb5684dae8f876c28a0b63
+  - enabled: 1
+    path: Assets/Scenes/AssessmentModegameScenes.unity
+    guid: 8dcd67ac3704e574ead0749e0c6cf1c2
   m_configObjects: {}

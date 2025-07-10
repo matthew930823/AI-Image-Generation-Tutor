@@ -31,6 +31,8 @@ public class DifficultySelector : MonoBehaviourPunCallbacks
             PhotonNetwork.LoadLevel("MultiChoicegameScenes"); // 房主切換場景，其他玩家會同步
         else if(Diff == "Hard")
             PhotonNetwork.LoadLevel("HardModegameScenes");
+        else if (Diff == "Assessment")
+            PhotonNetwork.LoadLevel("AssessmentModegameScenes");
         else
             PhotonNetwork.LoadLevel("gameScenes"); // 房主切換場景，其他玩家會同步
     }

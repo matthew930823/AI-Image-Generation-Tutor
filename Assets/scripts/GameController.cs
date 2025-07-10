@@ -57,9 +57,13 @@ public class GameController : MonoBehaviourPun
         else if (diff == "Hard") { /* 設定困難模式參數 */
             GetGeminiKeywords(2);
         }
+        else if (diff == "Assessment")/* 設定考核模式參數 */
+        { 
+            GetGeminiKeywords(3);
+        }
         else
         {
-            GetGeminiKeywords(3);
+            GetGeminiKeywords(200);
         }
     }
 
@@ -92,6 +96,7 @@ public class GameController : MonoBehaviourPun
     {
         Texture2D texture = new Texture2D(2, 2);
         texture.LoadImage(imageBytes);
+
         Debug.Log("圖片加載完成");
         resultImage.sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
     }
@@ -124,6 +129,11 @@ public class GameController : MonoBehaviourPun
         {
             voiceAudioPlayer.AudioPlay(7);
             StartCoroutine(multiChoiceQuestion.stableDiffusionRegionPrompt.StartAutoImageUpdateForHardMode());
+        }
+        else if(mode == 3)
+        {
+            voiceAudioPlayer.AudioPlay(14);
+            StartCoroutine(multiChoiceQuestion.stableDiffusionRegionPrompt.StartAutoImageUpdateForAssessmentMode());
         }
         else
         {

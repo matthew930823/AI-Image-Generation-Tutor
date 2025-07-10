@@ -10927,7 +10927,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: A red mecha stands in a city ready for battle
+  m_text: Model
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: b464eda3163aa2341b5480e6294350cf, type: 2}
   m_sharedMaterial: {fileID: -4064543440630920393, guid: b464eda3163aa2341b5480e6294350cf, type: 2}
@@ -10954,8 +10954,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 45
-  m_fontSizeBase: 45
+  m_fontSize: 80
+  m_fontSizeBase: 80
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -11020,7 +11020,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -190, y: 211}
+  m_AnchoredPosition: {x: -190, y: 195}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!43 &758658823
@@ -16473,6 +16473,7 @@ MonoBehaviour:
   multiChoiceQuestion: {fileID: 1101888633}
   gameController: {fileID: 1101888624}
   SkipButton: {fileID: 427331628}
+  SkipButtonForAssessment: {fileID: 0}
   AllRegions:
   - x: 0
     y: 0
@@ -16484,9 +16485,11 @@ MonoBehaviour:
     feather: 0
   HardTempAnswer: []
   skipWait: 0
+  skipAssessmentWait: 0
   IntroScreen: {fileID: 1506400243}
   GameStartScreen: {fileID: 541176384}
   GameStartButton: {fileID: 736774771}
+  assessmentMode: {fileID: 0}
 --- !u!114 &1101888633
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -17046,7 +17049,7 @@ RectTransform:
   m_GameObject: {fileID: 1119988343}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.075, y: 1.1417, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 163727581}

@@ -33,6 +33,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
     private string tempAnswer;
 
     public GameObject SkipButton;
+    public GameObject SkipButtonForAssessment;
 
     [System.Serializable]
     public class Region
@@ -151,7 +152,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
     public string[] HardTempAnswer;
     public IEnumerator HandlePromptAndGenerateImageForHardMode(System.Action<string[]> callback)
     {
-        int seed = UnityEngine.Random.Range(0, 50);
+        Seed = UnityEngine.Random.Range(0, 50);
 
         string[] AllCheckpoint = new string[] { "anime_cute.safetensors", "anime-real_hybrid.safetensors", "anime_soft.safetensors", "realistic_anything.safetensors", "anime_bold.safetensors" };
         string checkpoint = AllCheckpoint[UnityEngine.Random.Range(0, AllCheckpoint.Length)];
@@ -211,16 +212,17 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
         byte[] imageBytes = Convert.FromBase64String(ControlnetImageBase64);
         img1 = new Texture2D(2, 2);
         img1.LoadImage(imageBytes);
-        yield return StartCoroutine(GenerateImageForMultipleChoice(Resolution, Resolution, "(" + Addresult + ":2)," + Prompt, checkpoint, "", ControlNetType, randControlnet, ControlnetImageBase64, seed,
+        yield return StartCoroutine(GenerateImageForMultipleChoice(Resolution, Resolution, "(" + Addresult + ":2)," + Prompt, checkpoint, "", ControlNetType, randControlnet, ControlnetImageBase64, Seed,
                    texture =>
                    {
                        img2 = texture;
                    }));
         callback?.Invoke(TempAnswer);
     }
+    int Seed=0;
     public IEnumerator HandlePromptAndGenerateImage(string LoRa,string checkpoint,string type)
     {
-        int seed = UnityEngine.Random.Range(0, 50);
+        Seed = UnityEngine.Random.Range(0, 50);
         // 等待 ReadFileAndSendPrompt 完成
         yield return StartCoroutine(ReadFileAndSendPrompt(LoRa));
 
@@ -228,7 +230,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
         // 然後執行 GenerateImageForMultipleChoice
         if(type!= "Controlnet")
         {
-            yield return StartCoroutine(GenerateImageForMultipleChoice(768, 768, Prompt, checkpoint, LoRa, ControlNetType, "", ControlnetImageBase64, seed,
+            yield return StartCoroutine(GenerateImageForMultipleChoice(768, 768, Prompt, checkpoint, LoRa, ControlNetType, "", ControlnetImageBase64, Seed,
                    texture =>
                    {
                        img1 = texture;
@@ -268,7 +270,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
                         break;
                 }
                 LoRa = "";
-                yield return StartCoroutine(GenerateImageForMultipleChoice(768, 768, Prompt, checkpoint, LoRa, ControlNetType, "", ControlnetImageBase64, seed,
+                yield return StartCoroutine(GenerateImageForMultipleChoice(768, 768, Prompt, checkpoint, LoRa, ControlNetType, "", ControlnetImageBase64, Seed,
                         texture =>
                         {
                             img2 = texture;
@@ -295,7 +297,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
                     default:
                         break;
                 }
-                yield return StartCoroutine(GenerateImageForMultipleChoice(768, 768, Prompt, "v1-5-pruned-emaonly.safetensors [6ce0161689]", LoRa, ControlNetType, "", ControlnetImageBase64, seed,
+                yield return StartCoroutine(GenerateImageForMultipleChoice(768, 768, Prompt, "v1-5-pruned-emaonly.safetensors [6ce0161689]", LoRa, ControlNetType, "", ControlnetImageBase64, Seed,
                         texture =>
                         {
                             img2 = texture;
@@ -306,7 +308,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
                 string Addresult = add[UnityEngine.Random.Range(0, add.Length)];
                 Debug.Log("新增提示詞為:" + Addresult);
                 tempAnswer = Addresult;
-                yield return StartCoroutine(GenerateImageForMultipleChoice(768, 768, "(" + Addresult + ":2)," + Prompt, checkpoint, LoRa, ControlNetType, "", ControlnetImageBase64, seed,
+                yield return StartCoroutine(GenerateImageForMultipleChoice(768, 768, "(" + Addresult + ":2)," + Prompt, checkpoint, LoRa, ControlNetType, "", ControlnetImageBase64, Seed,
                    texture =>
                    {
                        img2 = texture;
@@ -317,7 +319,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
                 int randResolution=resolution[UnityEngine.Random.Range(0, resolution.Length)];
                 Debug.Log("randResolution:" + randResolution);
                 tempAnswer = randResolution.ToString();
-                yield return StartCoroutine(GenerateImageForMultipleChoice(randResolution, randResolution, Prompt, checkpoint, LoRa, ControlNetType,"", ControlnetImageBase64, seed,
+                yield return StartCoroutine(GenerateImageForMultipleChoice(randResolution, randResolution, Prompt, checkpoint, LoRa, ControlNetType,"", ControlnetImageBase64, Seed,
                         texture =>
                         {
                             img2 = texture;
@@ -349,7 +351,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
                     default:
                         break;
                 }
-                yield return StartCoroutine(GenerateImageForMultipleChoice(768, 768, Prompt, checkpoint, LoRa, ControlNetType, randControlnet, ControlnetImageBase64, seed,
+                yield return StartCoroutine(GenerateImageForMultipleChoice(768, 768, Prompt, checkpoint, LoRa, ControlNetType, randControlnet, ControlnetImageBase64, Seed,
                         texture =>
                         {
                             img2 = texture;
@@ -367,6 +369,12 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
     {
         skipWait = true;
     }
+
+    public bool skipAssessmentWait = false;
+    public void OnSkipButtonPressedForAssessment()
+    {
+        skipAssessmentWait = true;
+    }
     public GameObject IntroScreen;
     public GameObject GameStartScreen;
     public GameObject GameStartButton;
@@ -375,22 +383,117 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
         IntroScreen.SetActive(false);
         GameStartScreen.SetActive(true);
     }
+    public AssessmentMode assessmentMode;
+    public IEnumerator StartAutoImageUpdateForAssessmentMode()
+    {
+        bool first = true;
+        int Resolution =0;
+        string MyPrompt= "";
+        string MainPrompt = "";
+        string KeyPrompt = "";
+        string[] Prompt = new string[5];
+        string Checkpoint="";
+        string Controlnet="";
+        string ImageBase64="";
+        string Emoji = "";
+        string Isold = "";
+        while (true)
+        {
+            Debug.Log("⏳ 開始生成圖片...");
+            if (first)
+            {
+                yield return StartCoroutine(HandlePromptAndGenerateImageForHardMode(back => { string[] tempAns = back; }));
+                gameController.voiceAudioPlayer.AudioPlay(6);
+                GameStartButton.SetActive(true);
+                multiChoiceQuestion.AfterImage.sprite = Sprite.Create(img2, new Rect(0, 0, img2.width, img2.height), new Vector2(0.5f, 0.5f));
+            }
+            SkipButtonForAssessment.SetActive(true);
+            BACK:
+            skipAssessmentWait = false;
+            yield return new WaitUntil(() => skipAssessmentWait);
+            assessmentMode.GetValue(out Resolution, out MainPrompt, out KeyPrompt, out Prompt, out Checkpoint, out Controlnet, out ImageBase64);
+            if(MainPrompt == "")
+            {
+                gameController.voiceAudioPlayer.AudioPlay(20);
+                goto BACK;
+            }
+            if (KeyPrompt == "")
+            {
+                gameController.voiceAudioPlayer.AudioPlay(21);
+                goto BACK;
+            }
+            if (ImageBase64 == ""||ImageBase64 == null)
+            {
+                gameController.voiceAudioPlayer.AudioPlay(19);
+                goto BACK;
+            }
+            gameController.voiceAudioPlayer.AudioPlay(15);
+            SkipButtonForAssessment.SetActive(false);
+            string instruction = @"
+            接下來我會給你1個重點提示字(權重為2)，1個主體提示字(權重為1.3)，和0-5個細節提示字(權重為1)，你需要將這些提示字翻成英文排列好並告訴我主體提示詞是不是老人和他的細節提示字裡包含什麼表情
+            範例輸入1:重點提示詞:粉色 主體提示詞:一名老阿公 細節提示詞:坐著、微笑、中景、黑髮、白襯衫
+            範例輸出1:提示字:{(pink:2), (1 elderly man:1.3), sitting, smiling, medium shot, black hair, white shirt} 老人:{yes} 表情:{smiling}
+            範例輸入2:重點提示詞:夜景 主體提示詞:年輕女孩 細節提示詞:跳舞、可愛、紅色連身裙、棕色短髮
+            範例輸出2:提示字:{(night view:2), (1 young girl:1.3), dancing, cute, red dress, short brown hair}老人:{no} 表情:{no}
+            範例輸入3:重點提示詞:賽博風格 主體提示詞:一個可愛的男童 細節提示詞:
+            範例輸出3:提示字:{(cyberpunk:2), (1 cute boy:1.3)}老人:{no} 表情:{no}
+            現在我要給你輸入，請根據要求和範例回答輸出
+            ";
+
+            string LLMprompt = $"{instruction}\n輸入:重點提示詞:{KeyPrompt} 主體提示詞:{MainPrompt} 細節提示詞:{string.Join(",", Prompt)}";
+            yield return StartCoroutine(geminiAPI.SendRequest(LLMprompt, (result) =>
+            {
+                MatchCollection matches = Regex.Matches(result, @"\{(.*?)\}");
+                List<string> results = new List<string>();
+
+                foreach (Match match in matches)
+                {
+                    results.Add(match.Groups[1].Value); // 只抓 {} 中的內容，不含大括號
+                }
+                MyPrompt = results[0];
+                Isold = results[1];
+                Emoji = results[2];
+            }));
+            yield return StartCoroutine(GenerateImageForAssessment(Resolution, Resolution, MyPrompt, Checkpoint, Controlnet, ImageBase64, Emoji, Isold, Seed,
+                            texture =>
+                            {
+                                img1 = texture;
+                            }));
+            multiChoiceQuestion.ChangeButtonColor(0);
+            multiChoiceQuestion.BeforeImage.sprite = Sprite.Create(img1, new Rect(0, 0, img1.width, img1.height), new Vector2(0.5f, 0.5f));
+            assessmentMode.ClearValue();
+            yield return StartCoroutine(HandlePromptAndGenerateImageForHardMode(back => { string[] tempAns = back; }));
+            gameController.voiceAudioPlayer.AudioPlay(5);
+            SkipButton.SetActive(true);
+            skipWait = false;
+            yield return new WaitUntil(() => skipWait);
+            SkipButton.SetActive(false);
+            if (!first)
+            {
+                gameController.Hardlist.Clear();
+                //multiChoiceQuestion.QuestionName.text = temp;
+                multiChoiceQuestion.ResetButtonColor();
+                multiChoiceQuestion.AfterImage.sprite = Sprite.Create(img2, new Rect(0, 0, img2.width, img2.height), new Vector2(0.5f, 0.5f));
+            }
+        }
+            
+    }
     public IEnumerator StartAutoImageUpdateForHardMode()
     {
         bool first = true;
-        string[] tempAns=new string[] { };
+        string[] tempAns =new string[] { };
         while (true)
         {
             Debug.Log("⏳ 開始生成圖片...");
             if (first)
             {
                 yield return StartCoroutine(HandlePromptAndGenerateImageForHardMode(back=> { tempAns = back; }));
-                yield return StartCoroutine(geminiAPI.SendPhotoRequest("題目會說明主體和他在做什麼，且需要在20個英文字裡說明完，且不能有標點符號，例子:[A young woman stands on a city street]，接下來我會給一張圖片，你要給我符合這個圖片的題目，請你依照{說明}回傳給我，說明要包在大括號內。", Convert.ToBase64String((img1).EncodeToPNG()), (result) =>
-                {
-                    Match match = Regex.Match(result, @"\{([^}]*)\}");
-                    result = match.Groups[1].Value;
-                    multiChoiceQuestion.QuestionName.text = result;
-                }));
+                //yield return StartCoroutine(geminiAPI.SendPhotoRequest("題目會說明主體和他在做什麼，且需要在20個英文字裡說明完，且不能有標點符號，例子:[A young woman stands on a city street]，接下來我會給一張圖片，你要給我符合這個圖片的題目，請你依照{說明}回傳給我，說明要包在大括號內。", Convert.ToBase64String((img1).EncodeToPNG()), (result) =>
+                //{
+                //    Match match = Regex.Match(result, @"\{([^}]*)\}");
+                //    result = match.Groups[1].Value;
+                //    multiChoiceQuestion.QuestionName.text = result;
+                //}));
                 gameController.voiceAudioPlayer.AudioPlay(6);
                 GameStartButton.SetActive(true);
                 Debug.Log("選中的答案有:"+ string.Join(", ", tempAns));
@@ -406,15 +509,15 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
                 }
                 first = false;
                 Debug.Log("已經生成完第一組圖 ，開始生成第二組圖");
-            };
+            }
             yield return StartCoroutine(HandlePromptAndGenerateImageForHardMode(back => { tempAns = back; }));
-            string temp = "";
-            yield return StartCoroutine(geminiAPI.SendPhotoRequest("題目會說明主體和他在做什麼，且需要在20個英文字裡說明完，且不能有標點符號，例子:[A young woman stands on a city street]，接下來我會給一張圖片，你要給我符合這個圖片的題目，請你依照{說明}回傳給我，說明要包在大括號內。", Convert.ToBase64String((img1).EncodeToPNG()), (result) =>
-            {
-                Match match = Regex.Match(result, @"\{([^}]*)\}");
-                result = match.Groups[1].Value;
-                temp = result;
-            }));
+            //string temp = "";
+            //yield return StartCoroutine(geminiAPI.SendPhotoRequest("題目會說明主體和他在做什麼，且需要在20個英文字裡說明完，且不能有標點符號，例子:[A young woman stands on a city street]，接下來我會給一張圖片，你要給我符合這個圖片的題目，請你依照{說明}回傳給我，說明要包在大括號內。", Convert.ToBase64String((img1).EncodeToPNG()), (result) =>
+            //{
+            //    Match match = Regex.Match(result, @"\{([^}]*)\}");
+            //    result = match.Groups[1].Value;
+            //    temp = result;
+            //}));
             SkipButton.SetActive(true);
             skipWait = false;
             yield return new WaitUntil(() => skipWait);
@@ -422,7 +525,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
             if (!first)
             {
                 gameController.Hardlist.Clear();
-                multiChoiceQuestion.QuestionName.text = temp;
+                //multiChoiceQuestion.QuestionName.text = temp;
                 multiChoiceQuestion.ResetButtonColor();
                 HardTempAnswer = tempAns;
                 multiChoiceQuestion.ChangeOptionsForHardMode(tempAns);
@@ -599,6 +702,129 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
             false,  // Fast Encoder Color Fix
             true    // Fast Decoder
         };
+    }
+    public IEnumerator GenerateImageForAssessment(int Width, int Height, string prompt, string Model_checkpoint, string controlnetModule, string base64Image,string Emoji,string Isold, int seed, System.Action<Texture2D> callback)
+    {
+        string url = "http://127.0.0.1:7860/sdapi/v1/txt2img";
+
+        string LoraPrompt = "";
+        //Canny/Depth/Openpose/Shuffle
+        string imageData = "data:image/png;base64," + base64Image;
+
+        string modelString = "";
+        string moduleString = (controlnetModule == "") ? "none" : controlnetModule;
+        string[] CheckpointType = { };
+        switch (controlnetModule)
+        {
+            case "canny":
+                modelString = "control_v11p_sd15_canny [d14c016b]";
+                break;
+            case "depth_anything_v2":
+                modelString = "control_v11f1p_sd15_depth [cfd03158]";
+                break;
+            case "openpose_hand":
+                modelString = "control_v11p_sd15_openpose [cab727d4]";
+                break;
+            case "shuffle":
+                modelString = "control_v11e_sd15_shuffle [526bfdae]";
+                break;
+            default:
+                modelString = "";
+                break;
+        }
+        
+
+
+        
+        yield return StartCoroutine(ChangeCheckpoint(Model_checkpoint));
+        var controlnetArgs = new List<object>
+        {
+            new Dictionary<string, object>
+            {
+                { "enabled", (modelString == "")?false:true },
+                { "model", modelString },
+                { "module", moduleString },
+                { "weight", 1.0f },
+                { "guidance_start", 0.0f },
+                { "guidance_end", 1.0f },
+                { "control_mode", "Balanced" },
+                { "pixel_perfect", true },
+                { "resize_mode", "Resize and Fill" },
+                { "image", new Dictionary<string, object>
+                    {
+                        { "image", imageData },
+                        //{ "mask", null }
+                    }
+                }
+            }
+        };
+        var adetailerArgs = new List<object>
+        {
+            true,   // enabled
+            false,  // disable second pass
+            new Dictionary<string, object>
+            {
+                { "ad_model", "face_yolov8n_v2.pt" },
+                { "ad_prompt", "detail face," + ((Emoji == "no") ? "":Emoji)+((Isold == "yes") ? ",wrinkle":"")}
+            }
+        };
+        Debug.Log("ADetaile:" + infoArray[5]);
+        var requestData = new Txt2ImgRequest
+        {
+            steps = 20,
+            width = Width,
+            height = Height,
+            sampler_name = Sampler_name,
+            scheduler = Scheduler,
+            enable_hr = false,
+            restore_faces = false,
+            tiling = false,
+            seed = seed,
+            prompt = prompt + LoraPrompt + ", BREAK, (masterpiece:1.2),  best quality, highres, highly detailed, perfect lighting , <lora:add_detail:0.5> " + ((Isold == "yes") ? ",(AS-Elderly:1.5)" : ""),
+            negative_prompt =  "easynegative, (badhandv4:1.2), NSFW, (worst quality:2), (low quality:2), (normal quality:2), lowres, normal quality, ((monochrome)), ((grayscale)), skin spots, acnes, skin blemishes, age spot, (ugly:1.331), (duplicate:1.331), watermark jpeg artifacts signature watermark username blurry, Stable_Yogis_SD1.5_Negatives-neg",
+            override_settings = new Dictionary<string, object>
+            {
+                { "sd_model_checkpoint", Model_checkpoint },
+                { "CLIP_stop_at_last_layers", 2 }
+            },
+            alwayson_scripts = new AlwaysonScripts
+            {
+                ControlNet = new ControlNetWrapper { args = controlnetArgs },
+                ADetailer = new ADetailerWrapper { args = adetailerArgs }
+            }
+
+        };
+
+
+        string jsonData = JsonConvert.SerializeObject(requestData);
+        Debug.Log(jsonData);
+        byte[] postData = Encoding.UTF8.GetBytes(jsonData);
+
+        UnityWebRequest request = new UnityWebRequest(url, "POST");
+        request.uploadHandler = new UploadHandlerRaw(postData);
+        request.downloadHandler = new DownloadHandlerBuffer();
+        request.SetRequestHeader("Content-Type", "application/json");
+
+        yield return request.SendWebRequest();
+
+        if (request.result != UnityWebRequest.Result.Success)
+        {
+            Debug.LogError("Request failed: " + request.error);
+            Debug.LogError(request.downloadHandler.text); // 看錯誤訊息詳細原因
+        }
+        else
+        {
+            Txt2ImgResponse response = JsonConvert.DeserializeObject<Txt2ImgResponse>(request.downloadHandler.text);
+            if (response.images != null)
+            {
+                byte[] imageBytes = System.Convert.FromBase64String(response.images[0]);
+                Texture2D texture = new Texture2D(2, 2);
+                texture.LoadImage(imageBytes);
+                Debug.Log("✅ 圖片成功產生（Region Prompt Control）");
+
+                callback?.Invoke(texture);
+            }
+        }
     }
     public IEnumerator GenerateImageForMultipleChoice(int Width,int Height,string prompt,string Model_checkpoint,string Lora_Name, string controlNetType,string controlnetModule, string base64Image,int seed, System.Action<Texture2D> callback)
     {
