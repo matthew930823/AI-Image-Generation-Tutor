@@ -212,6 +212,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
         byte[] imageBytes = Convert.FromBase64String(ControlnetImageBase64);
         img1 = new Texture2D(2, 2);
         img1.LoadImage(imageBytes);
+        Debug.Log("還敢偷看答案:"+ Resolution+ "(" + Addresult + ":2)," + Prompt+ checkpoint+ ""+ ControlNetType+ randControlnet);
         yield return StartCoroutine(GenerateImageForMultipleChoice(Resolution, Resolution, "(" + Addresult + ":2)," + Prompt, checkpoint, "", ControlNetType, randControlnet, ControlnetImageBase64, Seed,
                    texture =>
                    {

@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class AssessmentMode : MonoBehaviour
@@ -15,6 +16,8 @@ public class AssessmentMode : MonoBehaviour
     public StableDiffusionRegionPrompt stableDiffusionRegionPrompt;
     public SelectImage selectImage;
     public Sprite noSelect;
+    public TMP_InputField[] inputFields;
+    public TMP_Dropdown[] dropdowns;
     // Start is called before the first frame update
     void Start()
     {
@@ -37,13 +40,28 @@ public class AssessmentMode : MonoBehaviour
     }
     public void ClearValue()
     {
-        //Resolution = 384;
-        //Checkpoint = "CuteYukiMix";
-        //Controlnet = "Canny";
+        Resolution = 384;
+        Checkpoint = "CuteYukiMix";
+        Controlnet = "Canny";
         MainPrompt = "";
         KeyPrompt = "";
         Prompt = new string[5];
         selectImage.selectedImageDisplay.sprite = noSelect;
+        // 清空所有輸入欄位
+        foreach (TMP_InputField input in inputFields)
+        {
+            input.text = "";
+        }
+
+        // 將所有下拉選單設為第一個選項（索引 0）
+        foreach (TMP_Dropdown dropdown in dropdowns)
+        {
+            if (dropdown.options.Count > 0)
+            {
+                dropdown.value = 0;
+                dropdown.RefreshShownValue(); // 更新顯示
+            }
+        }
     }
     public void SetValue(string info,string type)
     {
