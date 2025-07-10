@@ -22498,7 +22498,7 @@ MonoBehaviour:
   gameController: {fileID: 1101888624}
   SkipButton: {fileID: 427331628}
   SkipButtonForAssessment: {fileID: 1410058531}
-  scoreControll: {fileID: 0}
+  scoreControll: {fileID: 2123780831}
   AllRegions:
   - x: 0
     y: 0
