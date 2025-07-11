@@ -1571,6 +1571,12 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
             "Lineart LoRa在做的事是讓模型生成的圖片變成偏向黑白的漫畫風格且線條感會明顯，現在我會給你一張沒透過Lineart LoRa微調的圖片，請解釋如何判斷出這張沒經過Lineart LoRa的微調，解釋的長度限制在50個字以內，解釋用[因此可以判斷這並不是經過Lineart LoRa微調後的結果]來做結尾"
         },
 
+        ["Snoopy"] = new string[]
+        {
+            "Snoopy LoRa在做的事是讓模型生成的圖片變成史努比畫風(黑白感，且手繪風格)，現在我會給你兩張圖片，分別是沒用Snoopy LoRa微調和有用Snoopy LoRa微調後的結果，請解釋如何判斷出這張經過Snoopy LoRa的微調，解釋的時候用原圖和經過微調後的圖片來進行代稱(不允許用其他代稱，例第一張圖片、第二章圖片這種說法不被允許)，解釋的長度限制在50個字以內，解釋用[因此可以判斷這是經過Snoopy LoRa微調後的結果]來做結尾",
+            "Snoopy LoRa在做的事是讓模型生成的圖片變成史努比畫風(黑白感，且手繪風格)，現在我會給你一張沒透過Snoopy LoRa微調的圖片，請解釋如何判斷出這張沒經過Snoopy LoRa的微調，解釋的長度限制在50個字以內，解釋用[因此可以判斷這並不是經過Snoopy LoRa微調後的結果]來做結尾"
+        },
+
         // ---------------------ControlNet---------------------
         ["depth"] = new string[]
         {
