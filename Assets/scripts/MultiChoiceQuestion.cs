@@ -421,7 +421,7 @@ public class MultiChoiceQuestion : MonoBehaviour
     public string[] GenerateQuestions()
     {
         string type = "Resolution";
-        int[] weights = { 150,20, 30, 5, 30 };// { "LoRa", "Checkpoint", "Prompt", "Resolution","Controlnet" }
+        int[] weights = { 1500,20, 30, 5, 30 };// { "LoRa", "Checkpoint", "Prompt", "Resolution","Controlnet" }
 
         int totalWeight = weights.Sum();
         int rand = Random.Range(0, totalWeight);

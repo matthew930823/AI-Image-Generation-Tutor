@@ -226,7 +226,10 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
         Seed = UnityEngine.Random.Range(0, 50);
         // 等待 ReadFileAndSendPrompt 完成
         yield return StartCoroutine(ReadFileAndSendPrompt(LoRa));
-
+        if(LoRa == "Snoopy")
+        {
+            ReadFileAndSendSnoopyPrompt();
+        }
         yield return StartCoroutine(ReadFileAndSendImformation());
         // 然後執行 GenerateImageForMultipleChoice
         if(type!= "Controlnet")
@@ -266,6 +269,9 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
                         break;
                     case "食物照片":
                         tempAnswer = "Foodphoto";
+                        break;
+                    case "Snoopy":
+                        tempAnswer = "Snoopy";
                         break;
                     default:
                         break;
@@ -1003,7 +1009,6 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
                 LoraPrompt = ",<lora:Snoopy:1>";
                 Model_checkpoint = "anyloraCheckpoint_bakedvaeBlessedFp16.safetensors [ef49fbb25f]";
                 modelString = "";
-                ReadFileAndSendSnoopyPrompt();
                 break;  
             default:
                 break;
