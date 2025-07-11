@@ -421,7 +421,7 @@ public class MultiChoiceQuestion : MonoBehaviour
     public string[] GenerateQuestions()
     {
         string type = "Resolution";
-        int[] weights = { 15,20, 30, 5, 30 };// { "LoRa", "Checkpoint", "Prompt", "Resolution","Controlnet" }
+        int[] weights = { 150,20, 30, 5, 30 };// { "LoRa", "Checkpoint", "Prompt", "Resolution","Controlnet" }
 
         int totalWeight = weights.Sum();
         int rand = Random.Range(0, totalWeight);
@@ -441,8 +441,9 @@ public class MultiChoiceQuestion : MonoBehaviour
         switch (type)
         {
             case "LoRa":
-                string[] LoRaType = new string[] { "漢服", "漫畫", "貓", "水墨", "盒玩", "吉普利", "眼睛", "食物照片" };
-                string LoRa = LoRaType[UnityEngine.Random.Range(0, LoRaType.Length)];
+                string[] LoRaType = new string[] { "漢服", "漫畫", "貓", "水墨", "盒玩", "吉普利", "眼睛", "食物照片","Snoopy" };
+                //string LoRa = LoRaType[UnityEngine.Random.Range(0, LoRaType.Length)];
+                string LoRa = LoRaType[8];
                 return new string[] { LoRa, randomCheckpoint, type };
                 //StartCoroutine(stableDiffusionRegionPrompt.HandlePromptAndGenerateImage(LoRa, randomCheckpoint,type));
                 //break;

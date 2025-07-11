@@ -276,6 +276,7 @@ public class GameController : MonoBehaviourPun
                     StartCoroutine(SendPhotoRequestCoroutine(resultText + "，直接回答我解釋就可以了", twoImages));
                 }
             }
+            multiChoiceQuestion.Explain.text += "by gemini";
         }
 
         else if (multiChoiceQuestion.IsResultScreen && ResultCool)

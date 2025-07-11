@@ -999,6 +999,12 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
                 modelString = "control_v11f1p_sd15_depth [cfd03158]";
                 imageData = HanfuimageData;
                 break;
+            case "Snoopy":
+                LoraPrompt = ",<lora:Snoopy:1>";
+                Model_checkpoint = "anyloraCheckpoint_bakedvaeBlessedFp16.safetensors [ef49fbb25f]";
+                modelString = "";
+                ReadFileAndSendSnoopyPrompt();
+                break;  
             default:
                 break;
         }
@@ -1251,7 +1257,24 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
 
         return score;
     }
-
+    void ReadFileAndSendSnoopyPrompt()
+    {
+        int rand = UnityEngine.Random.Range(1, 31);
+        string path = System.IO.Path.Combine(Application.streamingAssetsPath, "snoopy提示字/Snoopy"+1+".txt");
+#if UNITY_ANDROID && !UNITY_EDITOR
+        UnityWebRequest www = UnityWebRequest.Get(path);
+        yield return www.SendWebRequest();
+        if (www.result != UnityWebRequest.Result.Success)
+        {
+            Debug.LogError("讀檔失敗: " + www.error);
+            yield break;
+        }
+        string fileContent = www.downloadHandler.text;
+#else
+        string fileContent = System.IO.File.ReadAllText(path);
+#endif
+        Prompt = fileContent;
+    }
     IEnumerator ReadFileAndSendPrompt(string LoRa_name)
     {
         string path;
