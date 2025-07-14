@@ -515,7 +515,7 @@ public class MultiChoiceQuestion : MonoBehaviour
             Text btnText = buttons[i].GetComponentInChildren<Text>();
             ColorBlock cb = buttons[i].colors;
 
-            Color correctColor = new Color(0.5f, 1f, 0.5f);  // ºñ¦â
+            Color correctColor = new Color(0.3f, 0.8f, 0.3f);  // ºñ¦â
             Color wrongColor = new Color(1f, 0.5f, 0.5f);     // ¬õ¦â
 
             Color targetColor = (stableDiffusionRegionPrompt.HardTempAnswer.Contains(btnText.text))
@@ -560,7 +560,7 @@ public class MultiChoiceQuestion : MonoBehaviour
             if (btnText.text == buttonText.text)
             {
                 ColorBlock cb = buttons[i].colors;
-                Color correctColor = new Color(0.5f, 1f, 0.5f);  // ºñ¦â
+                Color correctColor = new Color(0.3f, 0.8f, 0.3f);  // ºñ¦â
                 Color wrongColor = new Color(1f, 0.5f, 0.5f);     // ¬õ¦â
                 Color BlackColor = new Color(0.7f, 0.7f, 0.7f);
                 //Color targetColor = (stableDiffusionRegionPrompt.HardTempAnswer.Contains(btnText.text))
