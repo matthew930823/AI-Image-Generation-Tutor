@@ -55,6 +55,8 @@ public class MultiChoiceQuestion : MonoBehaviour
     public bool IsResultScreen = false;
     public GameObject GameScreen;
     public GameObject ResultScreen;
+
+    public Image[] Classification;
     // Start is called before the first frame update
     void Start()
     {
@@ -560,11 +562,11 @@ public class MultiChoiceQuestion : MonoBehaviour
                 ColorBlock cb = buttons[i].colors;
                 Color correctColor = new Color(0.5f, 1f, 0.5f);  // 綠色
                 Color wrongColor = new Color(1f, 0.5f, 0.5f);     // 紅色
-
-                Color targetColor = (stableDiffusionRegionPrompt.HardTempAnswer.Contains(btnText.text))
-                                    ? correctColor
-                                    : wrongColor;
-
+                Color BlackColor = new Color(0.5f, 0.5f, 0.5f);
+                //Color targetColor = (stableDiffusionRegionPrompt.HardTempAnswer.Contains(btnText.text))
+                //                    ? correctColor
+                //                    : wrongColor;
+                Color targetColor = BlackColor;
                 // 設定所有顏色狀態為目標顏色
                 cb.normalColor = targetColor;
                 cb.highlightedColor = targetColor;
@@ -574,6 +576,51 @@ public class MultiChoiceQuestion : MonoBehaviour
 
                 buttons[i].colors = cb;
             }
+        }
+    }
+    public void ChangeEveryButtonColor()
+    {
+        Dictionary<string, string[]> AllOptions = new Dictionary<string, string[]>
+        {
+            ["ControlNet"] = new string[] { "Canny", "Depth", "Openpose", "Shuffle" },
+            ["Checkpoint"] = new string[] { "Cetus-Mix", "Counterfeit", "CuteYukiMix", "DreamShaper", "ReV Animated" },
+            ["Prompt"] = new string[]{"desert", "forest", "beach", "grassland", "lake", "blizzard", "sunset", "foggy", "thunderstorm",
+            "god rays", "downtown", "cyberpunk", "oil painting", "watercolor", "japanese temple", "castle",
+            "classroom", "bedroom", "magic forest", "lava ground", "red", "blue", "green", "yellow", "purple",
+            "orange", "pink", "black", "white", "gray", "brown" },
+            ["Resolution"] = new string[] { "384", "1024", "512", "768" }
+        };
+        Dictionary<string, Color> SetColor = new Dictionary<string, Color>
+        {
+            ["ControlNet"] = Classification[0].color,
+            ["Checkpoint"] = Classification[1].color,
+            ["Prompt"] = Classification[2].color,
+            ["Resolution"] = Classification[3].color
+        };
+        string foundKey = null;
+        for (int i = 0; i < buttons.Length; i++)
+        {
+            Text btnText = buttons[i].GetComponentInChildren<Text>();
+            ColorBlock cb = buttons[i].colors;
+
+            foreach (var pair in AllOptions)
+            {
+                if (pair.Value.Contains(btnText.text))
+                {
+                    foundKey = pair.Key;
+                    break;
+                }
+            }
+            Color targetColor = SetColor[foundKey];
+
+            // 設定所有顏色狀態為目標顏色
+            cb.normalColor = targetColor;
+            cb.highlightedColor = targetColor;
+            cb.pressedColor = targetColor;
+            cb.selectedColor = targetColor;
+            cb.disabledColor = targetColor;
+
+            buttons[i].colors = cb;
         }
     }
     bool PrepareQuestions = false;

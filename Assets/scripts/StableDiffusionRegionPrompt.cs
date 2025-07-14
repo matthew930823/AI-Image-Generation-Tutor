@@ -557,6 +557,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
                 Debug.Log("選中的答案有:"+ string.Join(", ", tempAns));
                 HardTempAnswer = tempAns;
                 multiChoiceQuestion.ChangeOptionsForHardMode(tempAns);
+                multiChoiceQuestion.ChangeEveryButtonColor();
                 multiChoiceQuestion.BeforeImage.sprite = Sprite.Create(img1, new Rect(0, 0, img1.width, img1.height), new Vector2(0.5f, 0.5f));
                 multiChoiceQuestion.AfterImage.sprite = Sprite.Create(img2, new Rect(0, 0, img2.width, img2.height), new Vector2(0.5f, 0.5f));
                 //gameController.answer = tempAnswer;
@@ -587,6 +588,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
                 multiChoiceQuestion.ResetButtonColor();
                 HardTempAnswer = tempAns;
                 multiChoiceQuestion.ChangeOptionsForHardMode(tempAns);
+                multiChoiceQuestion.ChangeEveryButtonColor();
                 multiChoiceQuestion.BeforeImage.sprite = Sprite.Create(img1, new Rect(0, 0, img1.width, img1.height), new Vector2(0.5f, 0.5f));
                 multiChoiceQuestion.AfterImage.sprite = Sprite.Create(img2, new Rect(0, 0, img2.width, img2.height), new Vector2(0.5f, 0.5f));  
             }
@@ -1265,7 +1267,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
     void ReadFileAndSendSnoopyPrompt()
     {
         int rand = UnityEngine.Random.Range(1, 31);
-        string path = System.IO.Path.Combine(Application.streamingAssetsPath, "snoopy提示字/Snoopy"+1+".txt");
+        string path = System.IO.Path.Combine(Application.streamingAssetsPath, "snoopy提示字/Snoopy"+ rand + ".txt");
 #if UNITY_ANDROID && !UNITY_EDITOR
         UnityWebRequest www = UnityWebRequest.Get(path);
         yield return www.SendWebRequest();
