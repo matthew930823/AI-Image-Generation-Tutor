@@ -562,7 +562,7 @@ public class MultiChoiceQuestion : MonoBehaviour
                 ColorBlock cb = buttons[i].colors;
                 Color correctColor = new Color(0.5f, 1f, 0.5f);  // ºñ¦â
                 Color wrongColor = new Color(1f, 0.5f, 0.5f);     // ¬õ¦â
-                Color BlackColor = new Color(0.5f, 0.5f, 0.5f);
+                Color BlackColor = new Color(0.7f, 0.7f, 0.7f);
                 //Color targetColor = (stableDiffusionRegionPrompt.HardTempAnswer.Contains(btnText.text))
                 //                    ? correctColor
                 //                    : wrongColor;
