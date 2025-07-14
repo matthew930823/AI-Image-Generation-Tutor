@@ -16,6 +16,7 @@ public class MultiChoiceQuestion : MonoBehaviour
     public Text Explain;
     public Image[] HintImage = new Image[4];
     public StableDiffusionRegionPrompt stableDiffusionRegionPrompt;
+    public GameObject ClassificationZone;
     private string[] AllAnswer = { "DreamShaper",
                                 "Cetus-Mix",
                                 "ReV Animated",
@@ -504,6 +505,8 @@ public class MultiChoiceQuestion : MonoBehaviour
     public IEnumerator ChangeButtonColorForHardMode(float waitSec)
     {
         yield return new WaitForSeconds(waitSec);
+        if (ClassificationZone != null)
+            ClassificationZone.SetActive(false);
         GameScreen.SetActive(false);
         ResultScreen.SetActive(true);
         Result_AfterImage.sprite = AfterImage.sprite;
@@ -536,6 +539,8 @@ public class MultiChoiceQuestion : MonoBehaviour
     {
         PrepareQuestions = false;
         IsResultScreen = false;
+        if (ClassificationZone != null)
+            ClassificationZone.SetActive(true);
         GameScreen.SetActive(true);
         ResultScreen.SetActive(false);
         for (int i = 0; i < buttons.Length; i++)

@@ -18885,6 +18885,7 @@ MonoBehaviour:
   - {fileID: 415376719}
   - {fileID: 1898129411}
   stableDiffusionRegionPrompt: {fileID: 1101888632}
+  ClassificationZone: {fileID: 1106176302}
   IsResultScreen: 0
   GameScreen: {fileID: 544581154}
   ResultScreen: {fileID: 1387340013}
