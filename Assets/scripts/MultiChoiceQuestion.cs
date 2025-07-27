@@ -420,7 +420,26 @@ public class MultiChoiceQuestion : MonoBehaviour
                 break;
         }
     }
-    
+    public void ChangeAgentButton(string[] Option,int number,bool Isrand = false)
+    {
+        if (Isrand)
+        {
+            for (int i = 0; i < Option.Length; i++)
+            {
+                int rand = Random.Range(i, Option.Length);
+                string temp = Option[i];
+                Option[i] = Option[rand];
+                Option[rand] = temp;
+            }
+        }
+        
+
+        for (int i = 0; i < number; i++)
+        {
+            Text btnText = buttons[i].GetComponentInChildren<Text>();
+            btnText.text = Option[i];
+        }
+    }
     public string[] GenerateQuestions()
     {
         string type = "Resolution";
