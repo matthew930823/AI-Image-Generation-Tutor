@@ -290,7 +290,7 @@ public class AIAgentMode : MonoBehaviour
         {
             MainText.text = AgentFlow[Step][0];
             InfoText.text = AgentFlow[Step][1];
-            multi.ChangeAgentButton(new string[] { "男生", "女生", "隨機", "自己決定"}, 4);
+            multi.ChangeAgentButton(new string[] { "男生", "女生", "隨機"}, 3);
 
             multi.buttons[3].gameObject.SetActive(false);
             for (int i = 0; i < 2; i++)
@@ -300,13 +300,17 @@ public class AIAgentMode : MonoBehaviour
                     sprite => sprite.name.Contains(Select[3] + multi.buttons[i].GetComponentInChildren<Text>().text)
                 );
             }
-            for (int i = 2; i < 4; i++)
+            for (int i = 2; i < 3; i++)
             {
                 multi.HintImage[i].sprite = System.Array.Find(
                     Hint,
                     sprite => sprite.name.Contains(multi.buttons[i].GetComponentInChildren<Text>().text)
                 );
             }
+            multi.HintImage[3].sprite = System.Array.Find(
+                   Hint,
+                   sprite => sprite.name.Contains("自己決定")
+               );
             Next = false;
             SkipButton.SetActive(false);
         }
