@@ -74,7 +74,7 @@ public class AIAgentMode : MonoBehaviour
         Sprite[] Hint = Resources.LoadAll<Sprite>("Agent¼Ò¦¡¹Ï¤ù");
 
         string Controlnet_modelString = "control_v11p_sd15_openpose [cab727d4]";
-        string Controlnet_moduleString = (Select[7] == "") ? "none" : "openpose_hand";
+        string Controlnet_moduleString = "none";
 
         string Controlnet_Image = Convert.ToBase64String(System.Array.Find(
                    Hint,
