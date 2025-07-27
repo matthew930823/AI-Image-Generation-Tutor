@@ -905,6 +905,103 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
             }
         }
     }
+    public IEnumerator GenerateImageForAgent(int Width, int Height, string prompt,string Neg_prompt, string Model_checkpoint, string modelString , string moduleString, string base64Image ,string Add_Detail, System.Action<Texture2D> callback)
+    {
+        string url = "http://127.0.0.1:7860/sdapi/v1/txt2img";
+        string imageData = "data:image/png;base64," + base64Image;
+
+        int seed = UnityEngine.Random.Range(0, 500);
+
+        yield return StartCoroutine(ChangeCheckpoint(Model_checkpoint));
+        var controlnetArgs = new List<object>
+        {
+            new Dictionary<string, object>
+            {
+                { "enabled", (modelString == "")?false:true },
+                { "model", modelString },
+                { "module", moduleString },
+                { "weight", 1.0f },
+                { "guidance_start", 0.0f },
+                { "guidance_end", 1.0f },
+                { "control_mode", "Balanced" },
+                { "pixel_perfect", true },
+                { "resize_mode", "Resize and Fill" },
+                { "image", new Dictionary<string, object>
+                    {
+                        { "image", imageData },
+                        //{ "mask", null }
+                    }
+                }
+            }
+        };
+        var adetailerArgs = new List<object>
+        {
+            true,   // enabled
+            false,  // disable second pass
+            new Dictionary<string, object>
+            {
+                { "ad_model", "face_yolov8n_v2.pt" },
+                { "ad_prompt", Add_Detail}
+            }
+        };
+        Debug.Log("ADetaile:" + infoArray[5]);
+        var requestData = new Txt2ImgRequest
+        {
+            steps = 20,
+            width = Width,
+            height = Height,
+            sampler_name = Sampler_name,
+            scheduler = Scheduler,
+            enable_hr = false,
+            restore_faces = false,
+            tiling = false,
+            seed = seed,
+            prompt = prompt,
+            negative_prompt = Neg_prompt,
+            override_settings = new Dictionary<string, object>
+            {
+                { "sd_model_checkpoint", Model_checkpoint },
+                { "CLIP_stop_at_last_layers", 2 }
+            },
+            alwayson_scripts = new AlwaysonScripts
+            {
+                ControlNet = new ControlNetWrapper { args = controlnetArgs },
+                ADetailer = new ADetailerWrapper { args = adetailerArgs }
+            }
+
+        };
+
+
+        string jsonData = JsonConvert.SerializeObject(requestData);
+        Debug.Log(jsonData);
+        byte[] postData = Encoding.UTF8.GetBytes(jsonData);
+
+        UnityWebRequest request = new UnityWebRequest(url, "POST");
+        request.uploadHandler = new UploadHandlerRaw(postData);
+        request.downloadHandler = new DownloadHandlerBuffer();
+        request.SetRequestHeader("Content-Type", "application/json");
+
+        yield return request.SendWebRequest();
+
+        if (request.result != UnityWebRequest.Result.Success)
+        {
+            Debug.LogError("Request failed: " + request.error);
+            Debug.LogError(request.downloadHandler.text); // 看錯誤訊息詳細原因
+        }
+        else
+        {
+            Txt2ImgResponse response = JsonConvert.DeserializeObject<Txt2ImgResponse>(request.downloadHandler.text);
+            if (response.images != null)
+            {
+                byte[] imageBytes = System.Convert.FromBase64String(response.images[0]);
+                Texture2D texture = new Texture2D(2, 2);
+                texture.LoadImage(imageBytes);
+                Debug.Log("✅ 圖片成功產生（Region Prompt Control）");
+
+                callback?.Invoke(texture);
+            }
+        }
+    }
     public IEnumerator GenerateImageForMultipleChoice(int Width,int Height,string prompt,string Model_checkpoint,string Lora_Name, string controlNetType,string controlnetModule, string base64Image,int seed, System.Action<Texture2D> callback)
     {
         string url = "http://127.0.0.1:7860/sdapi/v1/txt2img";

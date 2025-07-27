@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,6 +32,12 @@ public class AIAgentMode : MonoBehaviour
     public MultiChoiceQuestion multi;
 
     public GameObject SkipButton;
+
+    public Image Result_Image;
+
+    public GameObject GameScene;
+    public GameObject ResultScene;
+    public GameObject Option;
     // Start is called before the first frame update
     void Start()
     {
@@ -47,7 +54,7 @@ public class AIAgentMode : MonoBehaviour
         AgentNext();
     }
 
-    void ConversionInfo()//Lora 漢服 食物 checkpoint 主體 年齡 姿勢 參考圖 表情 色調 背景 解析度 細節
+    IEnumerator ConversionInfo()//Lora 漢服 食物 checkpoint 主體 年齡 姿勢 參考圖 表情 色調 背景 解析度 細節
     {
         //Key_Prompt + Main_Prompt + Other_Prompt + LoRa_Prompt + Default_Prompt
         string Key_Prompt = "";
@@ -64,10 +71,30 @@ public class AIAgentMode : MonoBehaviour
 
         int Resolution = int.Parse(Select[11]);
 
+        Sprite[] Hint = Resources.LoadAll<Sprite>("Agent模式圖片");
+
+        string Controlnet_modelString = "control_v11p_sd15_openpose [cab727d4]";
+        string Controlnet_moduleString = (Select[7] == "") ? "none" : "openpose_hand";
+
+        string Controlnet_Image = Convert.ToBase64String(System.Array.Find(
+                   Hint,
+                   sprite => sprite.name.Contains(Select[7])
+               ).texture.EncodeToPNG());
+        Dictionary<string, string> dynastyMap = new Dictionary<string, string>()
+        {
+            { "明朝", "ming style" },
+            { "宋朝", "song style" },
+            { "唐朝", "tang style" },
+            { "晉朝", "jin style" },
+            { "漢朝", "han style" }
+        };
         switch (Select[0]) 
         {
             case "女性漢服":
+                Controlnet_modelString = "control_v11f1p_sd15_depth [cfd03158]";
+                Controlnet_moduleString = "depth_anything_v2";
                 LoRa_Prompt = ",<lora:hanfu40-beta-3:0.6>";
+                Other_Prompt += "hanfu," + dynastyMap[Select[1]];
                 break;
             case "黑白漫畫":
                 LoRa_Prompt = ",lineart, ((monochrome)),<lora:animeoutlineV4_16:1.3>";
@@ -78,26 +105,32 @@ public class AIAgentMode : MonoBehaviour
                 LoRa_Prompt = ",<lora:cat_20230627113759:0.7>";
                 break;
             case "中國水墨畫":
+                Main_Prompt = "potrait of ";
+                Other_Prompt += "shuimobysim, shukezouma";
                 LoRa_Prompt = ",<lora:3Guofeng3_v34:0.85> <lora:shuV2:0.9>";
                 break;
             case "盒玩人偶":
-                int rand = Random.Range(0, 2);
+                int rand = UnityEngine.Random.Range(0, 2);
                 Select[4] = (rand == 0) ? "男生" : "女生";
                 LoRa_Prompt = ",<lora:blindbox_v1_mix:1>";
                 Select[3] = "柔和動畫";
+                Other_Prompt += "full body, chibi";
                 break;
             case "吉卜力":
                 LoRa_Prompt = ",<lora:ghibli_style_offset:1>";
                 Select[3] = "柔和動畫";
+                Other_Prompt += "ghibli style";
                 break;
             case "漂亮眼睛":
                 LoRa_Prompt = ",<lora:Loraeyes_V1:0.8>";
                 Main_Prompt = "1 eye";
+                Other_Prompt += "loraeyes";
                 break;
             case "食物照片":
                 Main_Prompt = Select[2];
                 Select[3] = "現實風格";
                 LoRa_Prompt = ",<lora:foodphoto:0.6>";
+                Other_Prompt += "foodphoto";
                 break;
             default:
                 LoRa_Prompt = "";
@@ -129,34 +162,36 @@ public class AIAgentMode : MonoBehaviour
                 Add_Detail = "detail face";
                 if (Select[5] == "小孩")
                 {
-                    Main_Prompt = "1 little boy";
+                    Main_Prompt += "1 little boy";
+                    Add_Detail = "cute face,little boy";
                 }
                 else if (Select[5] == "老人")
                 {
-                    Main_Prompt = "1 elderly man";
+                    Main_Prompt += "1 elderly man";
                     Default_Prompt += ",(AS-Elderly:1.5)";
                     Add_Detail += ",wrinkle";
                 }
                 else
                 {
-                    Main_Prompt = "1 man";
+                    Main_Prompt += "1 man";
                 }
                 break;
             case "女生":
                 Add_Detail = "detail face";
                 if (Select[5] == "小孩")
                 {
-                    Main_Prompt = "1 little girl";
+                    Main_Prompt += "1 little girl";
+                    Add_Detail = "cute face,little girl";
                 }
                 else if (Select[5] == "老人")
                 {
-                    Main_Prompt = "1 elderly woman";
+                    Main_Prompt += "1 elderly woman";
                     Default_Prompt += ",(AS-Elderly:1.5)";
                     Add_Detail += ",wrinkle";
                 }
                 else
                 {
-                    Main_Prompt = "1 woman";
+                    Main_Prompt += "1 woman";
                 }
                 break;
             default:
@@ -189,12 +224,23 @@ public class AIAgentMode : MonoBehaviour
             Key_Prompt += "(" + Select[9] + ":2)";
         if (Select[10] != "")
             Key_Prompt += ",(" + Select[10] + ":2)";
-
-        Debug.Log(  "Prompt:"+ Key_Prompt + ",(" + Main_Prompt + ((Select[5] != "") ? ":1.7)" : ":1.3)") + Other_Prompt + LoRa_Prompt + Default_Prompt +"\n"+
+        string Prompt = Key_Prompt + ",(" + Main_Prompt + ((Select[5] != "") ? ":1.7)" : ":1.3)") + Other_Prompt + LoRa_Prompt + Default_Prompt;
+        Debug.Log(  "Prompt:"+ Prompt + "\n"+
                     "Neg_Prompt:" + Neg_Prompt + "\n" +
                     "Checkpoint:" + Checkpoint + "\n" +
                     "Resolution:" + Resolution + "\n" +
-                    "Add_Detail:" + Add_Detail );
+                    "Add_Detail:" + Add_Detail + "\n" +
+                    "Controlnet:" + Controlnet_moduleString);
+        Texture2D img1 = null;
+        yield return StartCoroutine(multi.stableDiffusionRegionPrompt.GenerateImageForAgent(Resolution, Resolution, Prompt, Neg_Prompt, Checkpoint, Controlnet_modelString, Controlnet_moduleString, Controlnet_Image, Add_Detail,
+            texture =>
+            {
+                img1 = texture;
+            }));
+        Result_Image.sprite = Sprite.Create(img1, new Rect(0, 0, img1.width, img1.height), new Vector2(0.5f, 0.5f));
+        Option.SetActive(false);
+        GameScene.SetActive(false);
+        ResultScene.SetActive(true);
     }
 
     IEnumerator StartAgentMode()
@@ -319,6 +365,7 @@ public class AIAgentMode : MonoBehaviour
             Step += 1;
         }
         yield return new WaitUntil(() => Next);
+        multi.buttons[3].gameObject.SetActive(true);
         if (Step == 5 && (!new[] { "女性漢服", "可愛貓咪", "盒玩人偶", "漂亮眼睛", "食物照片" }.Contains(Select[0])))
         {
             MainText.text = AgentFlow[Step][0];
@@ -327,7 +374,7 @@ public class AIAgentMode : MonoBehaviour
             string[] Comparison = new string[] { "男孩", "女孩", "男生" , "女生", "阿公", "阿嬤" };
             if (Select[4] == "隨機")
             {
-                int rand = Random.Range(0, 2);
+                int rand = UnityEngine.Random.Range(0, 2);
                 Select[4] = (rand == 0) ? "男生" : "女生";
             }
             for (int i = 0; i < 3; i++)
@@ -361,15 +408,19 @@ public class AIAgentMode : MonoBehaviour
             InfoText.text = AgentFlow[Step][1]; 
             multi.ChangeAgentButton(new string[] { "跳躍", "跑步", "坐著", "站立" }, 3, true);
             multi.buttons[3].gameObject.SetActive(false);
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < 3; i++)
             {
                 multi.HintImage[i].sprite = System.Array.Find(
                     Hint,
                     sprite => sprite.name.Contains(multi.buttons[i].GetComponentInChildren<Text>().text)
                 );
             }
+            multi.HintImage[3].sprite = System.Array.Find(
+                   Hint,
+                   sprite => sprite.name.Contains("自己決定")
+               );
             Next = false;
-            SkipButton.SetActive(true);
+            SkipButton.SetActive(false);
         }
         else
         {
@@ -389,6 +440,10 @@ public class AIAgentMode : MonoBehaviour
                     sprite => sprite.name.Contains(multi.buttons[i].GetComponentInChildren<Text>().text)
                 );
             }
+            multi.HintImage[3].sprite = System.Array.Find(
+                   Hint,
+                   sprite => sprite.name.Contains("自己決定")
+               );
             Next = false;
             SkipButton.SetActive(true);
         }
@@ -515,7 +570,7 @@ public class AIAgentMode : MonoBehaviour
             Step += 1;
         }
         yield return new WaitUntil(() => Next);
-        ConversionInfo();
+        StartCoroutine(ConversionInfo());
     }
 
     
