@@ -94,7 +94,7 @@ public class AIAgentMode : MonoBehaviour
                 Controlnet_modelString = "control_v11f1p_sd15_depth [cfd03158]";
                 Controlnet_moduleString = "depth_anything_v2";
                 LoRa_Prompt = ",<lora:hanfu40-beta-3:0.6>";
-                Other_Prompt += "hanfu," + dynastyMap[Select[1]];
+                Other_Prompt += ",hanfu," + dynastyMap[Select[1]];
                 break;
             case "黑白漫畫":
                 LoRa_Prompt = ",lineart, ((monochrome)),<lora:animeoutlineV4_16:1.3>";
@@ -106,7 +106,7 @@ public class AIAgentMode : MonoBehaviour
                 break;
             case "中國水墨畫":
                 Main_Prompt = "potrait of ";
-                Other_Prompt += "shuimobysim, shukezouma";
+                Other_Prompt += ",shuimobysim, shukezouma";
                 LoRa_Prompt = ",<lora:3Guofeng3_v34:0.85> <lora:shuV2:0.9>";
                 break;
             case "盒玩人偶":
@@ -114,23 +114,23 @@ public class AIAgentMode : MonoBehaviour
                 Select[4] = (rand == 0) ? "男生" : "女生";
                 LoRa_Prompt = ",<lora:blindbox_v1_mix:1>";
                 Select[3] = "柔和動畫";
-                Other_Prompt += "full body, chibi";
+                Other_Prompt += ",full body, chibi";
                 break;
             case "吉卜力":
                 LoRa_Prompt = ",<lora:ghibli_style_offset:1>";
                 Select[3] = "柔和動畫";
-                Other_Prompt += "ghibli style";
+                Other_Prompt += ",ghibli style";
                 break;
             case "漂亮眼睛":
                 LoRa_Prompt = ",<lora:Loraeyes_V1:0.8>";
                 Main_Prompt = "1 eye";
-                Other_Prompt += "loraeyes";
+                Other_Prompt += ",loraeyes";
                 break;
             case "食物照片":
                 Main_Prompt = Select[2];
                 Select[3] = "現實風格";
                 LoRa_Prompt = ",<lora:foodphoto:0.6>";
-                Other_Prompt += "foodphoto";
+                Other_Prompt += ",foodphoto";
                 break;
             default:
                 LoRa_Prompt = "";

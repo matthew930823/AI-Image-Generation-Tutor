@@ -944,7 +944,6 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
                 { "ad_prompt", Add_Detail}
             }
         };
-        Debug.Log("ADetaile:" + infoArray[5]);
         var requestData = new Txt2ImgRequest
         {
             steps = 20,
