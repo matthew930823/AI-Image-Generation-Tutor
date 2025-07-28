@@ -278,15 +278,19 @@ public class AIAgentMode : MonoBehaviour
                     "Add_Detail:" + Add_Detail + "\n" +
                     "Controlnet:" + Controlnet_moduleString);
         Texture2D img1 = null;
+        Option.SetActive(false);
+        GameScene.SetActive(false);
+        ResultScene.SetActive(true);
+        Result_Image.sprite = System.Array.Find(
+                    Hint,
+                    sprite => sprite.name.Contains("生成圖片")
+                );
         yield return StartCoroutine(multi.stableDiffusionRegionPrompt.GenerateImageForAgent(Resolution, Resolution, Prompt, Neg_Prompt, Checkpoint, Controlnet_modelString, Controlnet_moduleString, Controlnet_Image, Add_Detail,
             texture =>
             {
                 img1 = texture;
             }));
         Result_Image.sprite = Sprite.Create(img1, new Rect(0, 0, img1.width, img1.height), new Vector2(0.5f, 0.5f));
-        Option.SetActive(false);
-        GameScene.SetActive(false);
-        ResultScene.SetActive(true);
     }
 
     IEnumerator StartAgentMode()
@@ -334,7 +338,7 @@ public class AIAgentMode : MonoBehaviour
             InfoText.text = AgentFlow[Step][1];
             Select[4] = "女生";
             Select[5] = "成年人";
-            Select[6] = "nohand";
+            Select[7] = "nohand";
             multi.ChangeAgentButton(new string[] { "明朝", "宋朝", "唐朝", "晉朝", "漢朝" }, 4, true);
             for (int i = 0; i < 4; i++)
             {
