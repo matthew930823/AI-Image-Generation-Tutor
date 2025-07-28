@@ -28,7 +28,7 @@ public class AIAgentMode : MonoBehaviour
     public TMP_Text MainText;
     public TMP_Text InfoText;
     private bool Next = false;
-    public int Step = 0;
+    private int Step = -1;
     public MultiChoiceQuestion multi;
 
     public GameObject SkipButton;
@@ -101,7 +101,8 @@ public class AIAgentMode : MonoBehaviour
 
         string Add_Detail = "";
 
-        int Resolution = int.Parse(Select[11]);
+        int Resolution = int.TryParse(Select[11], out var r) ? r : 512;
+
         Resolution = (Resolution > 1280) ? 1280 : Resolution;
         Sprite[] Hint = Resources.LoadAll<Sprite>("Agent模式圖片");
 
@@ -290,7 +291,10 @@ public class AIAgentMode : MonoBehaviour
 
     IEnumerator StartAgentMode()
     {
+        Step = -1;
         multi.stableDiffusionRegionPrompt.gameController.voiceAudioPlayer.AudioPlay(0);
+        Next = false;
+        yield return new WaitUntil(() => Next);
         Sprite[] Hint = Resources.LoadAll<Sprite>("Agent模式圖片");
         OtherDetailButton.SetActive(false);
         for (int i = 0; i < 4; i++)
