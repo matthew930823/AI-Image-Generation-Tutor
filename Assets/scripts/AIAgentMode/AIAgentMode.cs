@@ -150,7 +150,6 @@ public class AIAgentMode : MonoBehaviour
                 int rand = UnityEngine.Random.Range(0, 2);
                 Select[4] = (rand == 0) ? "男生" : "女生";
                 LoRa_Prompt = ",<lora:blindbox_v1_mix:1>";
-                Select[3] = "柔和動畫";
                 Other_Prompt += ",full body, chibi";
                 Controlnet_modelString = "";
                 Checkpoint = "anime-real_hybrid.safetensors";
