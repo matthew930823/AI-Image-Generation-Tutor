@@ -65,8 +65,12 @@ public class AIAgentMode : MonoBehaviour
             if (Step == 6)
             {
                 Next = true;
+                Step = 8;
+            }
+            else if(Step == 4)
+            {
+                Next = true;
                 Step = 9;
-                Debug.Log("AgentNext called, Step = " + Step);
             }
             else
                 AgentNext();
@@ -98,7 +102,7 @@ public class AIAgentMode : MonoBehaviour
         string Add_Detail = "";
 
         int Resolution = int.Parse(Select[11]);
-
+        Resolution = (Resolution > 1280) ? 1280 : Resolution;
         Sprite[] Hint = Resources.LoadAll<Sprite>("Agent¼Ò¦¡¹Ï¤ù");
 
         string Controlnet_modelString = "control_v11p_sd15_openpose [cab727d4]";
@@ -232,6 +236,8 @@ public class AIAgentMode : MonoBehaviour
                 }
                 break;
             default:
+                if (Select[4] != "")
+                    Main_Prompt += "," + Select[4];
                 break;
         }
         switch (Select[6])
@@ -249,6 +255,8 @@ public class AIAgentMode : MonoBehaviour
                 Other_Prompt += ",standing";
                 break;
             default:
+                if(Select[6]!="")
+                    Other_Prompt += "," + Select[6];
                 break;
         }
 
