@@ -936,7 +936,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
         };
         var adetailerArgs = new List<object>
         {
-            true,   // enabled
+            (Add_Detail!="")?true:false,   // enabled
             false,  // disable second pass
             new Dictionary<string, object>
             {

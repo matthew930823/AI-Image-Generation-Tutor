@@ -105,13 +105,14 @@ public class AIAgentMode : MonoBehaviour
         Resolution = (Resolution > 1280) ? 1280 : Resolution;
         Sprite[] Hint = Resources.LoadAll<Sprite>("Agent模式圖片");
 
-        string Controlnet_modelString = "control_v11p_sd15_openpose [cab727d4]";
+        string Controlnet_modelString = (Select[7]!="")?"control_v11p_sd15_openpose [cab727d4]":"";
         string Controlnet_moduleString = "none";
 
         string Controlnet_Image = Convert.ToBase64String(System.Array.Find(
                    Hint,
                    sprite => sprite.name.Contains(Select[7])
                ).texture.EncodeToPNG());
+        
         Dictionary<string, string> dynastyMap = new Dictionary<string, string>()
         {
             { "明朝", "ming style" },
@@ -237,7 +238,7 @@ public class AIAgentMode : MonoBehaviour
                 break;
             default:
                 if (Select[4] != "")
-                    Main_Prompt += "," + Select[4];
+                    Main_Prompt += Select[4];
                 break;
         }
         switch (Select[6])
