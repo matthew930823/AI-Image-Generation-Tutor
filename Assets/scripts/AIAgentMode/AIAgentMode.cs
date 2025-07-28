@@ -363,7 +363,7 @@ public class AIAgentMode : MonoBehaviour
             MainText.text = AgentFlow[Step][0];
             InfoText.text = AgentFlow[Step][1];
             
-            Select[4] = "н╣кл";
+            Select[4] = "";
 
             multi.ChangeAgentButton(new string[] { "hot pot", "shumai", "hamburger", "pizza", "spaghetti", "fried chicken", "ice cream", "pancakes", "apple" }, 4, true);
             for (int i = 0; i < 4; i++)
