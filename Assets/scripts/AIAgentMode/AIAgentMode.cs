@@ -28,7 +28,7 @@ public class AIAgentMode : MonoBehaviour
     public TMP_Text MainText;
     public TMP_Text InfoText;
     private bool Next = false;
-    private int Step = 0;
+    public int Step = 0;
     public MultiChoiceQuestion multi;
 
     public GameObject SkipButton;
@@ -38,6 +38,9 @@ public class AIAgentMode : MonoBehaviour
     public GameObject GameScene;
     public GameObject ResultScene;
     public GameObject Option;
+
+    public GameObject InputButton;
+    public GameObject OtherDetailButton;
     // Start is called before the first frame update
     void Start()
     {
@@ -53,7 +56,32 @@ public class AIAgentMode : MonoBehaviour
         Select[Step] = buttontext.text;
         AgentNext();
     }
+    public void OnAgentInputButton(InputField inputField)
+    {
+        if (inputField.text != "")
+        {
+            Select[Step] = inputField.text;
+            inputField.text = "";
+            if (Step == 6)
+            {
+                Next = true;
+                Step = 9;
+                Debug.Log("AgentNext called, Step = " + Step);
+            }
+            else
+                AgentNext();
+        }
+        
+    }
 
+    public void OnAddOtherButton(InputField inputField)
+    {
+        if (inputField.text != "")
+        {
+            Select[Step] += ", " + inputField.text;
+            inputField.text = "";
+        }
+    }
     IEnumerator ConversionInfo()//Lora 漢服 食物 checkpoint 主體 年齡 姿勢 參考圖 表情 色調 背景 解析度 細節
     {
         //Key_Prompt + Main_Prompt + Other_Prompt + LoRa_Prompt + Default_Prompt
@@ -92,21 +120,25 @@ public class AIAgentMode : MonoBehaviour
         {
             case "女性漢服":
                 Controlnet_modelString = "control_v11f1p_sd15_depth [cfd03158]";
-                Controlnet_moduleString = "depth_anything_v2";
+                Controlnet_moduleString = "none";
                 LoRa_Prompt = ",<lora:hanfu40-beta-3:0.6>";
                 Other_Prompt += ",hanfu," + dynastyMap[Select[1]];
                 break;
             case "黑白漫畫":
                 LoRa_Prompt = ",lineart, ((monochrome)),<lora:animeoutlineV4_16:1.3>";
                 Neg_Prompt = "easynegative, (badhandv4:1.2), NSFW, watermark jpeg artifacts signature watermark username blurry";
+                Checkpoint = "anime_bold.safetensors";
                 break;
             case "可愛貓咪":
-                Main_Prompt = "1 cute cat";
+                Main_Prompt = "1 cute cat"; 
+                Controlnet_modelString = "";
+                Checkpoint = "anime-real_hybrid.safetensors";
                 LoRa_Prompt = ",<lora:cat_20230627113759:0.7>";
                 break;
             case "中國水墨畫":
                 Main_Prompt = "potrait of ";
                 Other_Prompt += ",shuimobysim, shukezouma";
+                Checkpoint = "anime_cute.safetensors";
                 LoRa_Prompt = ",<lora:3Guofeng3_v34:0.85> <lora:shuV2:0.9>";
                 break;
             case "盒玩人偶":
@@ -115,6 +147,8 @@ public class AIAgentMode : MonoBehaviour
                 LoRa_Prompt = ",<lora:blindbox_v1_mix:1>";
                 Select[3] = "柔和動畫";
                 Other_Prompt += ",full body, chibi";
+                Controlnet_modelString = "";
+                Checkpoint = "anime-real_hybrid.safetensors";
                 break;
             case "吉卜力":
                 LoRa_Prompt = ",<lora:ghibli_style_offset:1>";
@@ -125,6 +159,9 @@ public class AIAgentMode : MonoBehaviour
                 LoRa_Prompt = ",<lora:Loraeyes_V1:0.8>";
                 Main_Prompt = "1 eye";
                 Other_Prompt += ",loraeyes";
+                Controlnet_modelString = "";
+                Checkpoint = "anime_cute.safetensors";
+                Resolution = 512;
                 break;
             case "食物照片":
                 Main_Prompt = Select[2];
@@ -224,7 +261,7 @@ public class AIAgentMode : MonoBehaviour
             Key_Prompt += "(" + Select[9] + ":2)";
         if (Select[10] != "")
             Key_Prompt += ",(" + Select[10] + ":2)";
-        string Prompt = Key_Prompt + ",(" + Main_Prompt + ((Select[5] != "") ? ":1.7)" : ":1.3)") + Other_Prompt + LoRa_Prompt + Default_Prompt;
+        string Prompt = Key_Prompt + ",(" + Main_Prompt + ((Select[5] != "") ? ":1.7)" : ":1.3)") + Other_Prompt+ Select[12] + LoRa_Prompt + Default_Prompt;
         Debug.Log(  "Prompt:"+ Prompt + "\n"+
                     "Neg_Prompt:" + Neg_Prompt + "\n" +
                     "Checkpoint:" + Checkpoint + "\n" +
@@ -246,6 +283,14 @@ public class AIAgentMode : MonoBehaviour
     IEnumerator StartAgentMode()
     {
         Sprite[] Hint = Resources.LoadAll<Sprite>("Agent模式圖片");
+        OtherDetailButton.SetActive(false);
+        for (int i = 0; i < 4; i++)
+        {
+            multi.buttons[i].gameObject.SetActive(true);
+            multi.HintImage[i].gameObject.SetActive(true);
+        }
+        InputButton.SetActive(false);
+        OtherDetailButton.SetActive(false);
         if (Step == 0)
         {
             MainText.text = AgentFlow[Step][0];
@@ -260,8 +305,10 @@ public class AIAgentMode : MonoBehaviour
             }
             Next = false;
             SkipButton.SetActive(true);
+            InputButton.SetActive(false);
+            multi.buttons[3].gameObject.SetActive(true);
         }
-        else
+        else if(Step == 0)
         {
             Step += 1;
         }
@@ -283,8 +330,10 @@ public class AIAgentMode : MonoBehaviour
             }
             Next = false;
             SkipButton.SetActive(false);
+            InputButton.SetActive(false);
+            multi.buttons[3].gameObject.SetActive(true);
         }
-        else
+        else if(Step == 1)
         {
             Step += 1;
         }
@@ -306,13 +355,15 @@ public class AIAgentMode : MonoBehaviour
             }
             Next = false;
             SkipButton.SetActive(false);
+            InputButton.SetActive(false);
+            multi.buttons[3].gameObject.SetActive(true);
         }
-        else
+        else if (Step == 2)
         {
             Step += 1;
         }
         yield return new WaitUntil(() => Next);
-        if (Step == 3 && (!new[] {"盒玩人偶", "吉卜力", "食物照片" }.Contains(Select[0])))
+        if (Step == 3 && (!new[] {"盒玩人偶", "吉卜力", "食物照片" , "黑白漫畫", "可愛貓咪", "中國水墨畫", "盒玩人偶", "漂亮眼睛" }.Contains(Select[0])))
         {
             MainText.text = AgentFlow[Step][0];
             InfoText.text = AgentFlow[Step][1];
@@ -326,8 +377,10 @@ public class AIAgentMode : MonoBehaviour
             }
             Next = false;
             SkipButton.SetActive(false);
+            InputButton.SetActive(false);
+            multi.buttons[3].gameObject.SetActive(true);
         }
-        else
+        else if (Step == 3)
         {
             Step += 1;
         }
@@ -338,7 +391,6 @@ public class AIAgentMode : MonoBehaviour
             InfoText.text = AgentFlow[Step][1];
             multi.ChangeAgentButton(new string[] { "男生", "女生", "隨機"}, 3);
 
-            multi.buttons[3].gameObject.SetActive(false);
             for (int i = 0; i < 2; i++)
             {
                 multi.HintImage[i].sprite = System.Array.Find(
@@ -359,8 +411,10 @@ public class AIAgentMode : MonoBehaviour
                );
             Next = false;
             SkipButton.SetActive(false);
+            InputButton.SetActive(true);
+            multi.buttons[3].gameObject.SetActive(false);
         }
-        else
+        else if (Step == 4)
         {
             Step += 1;
         }
@@ -396,8 +450,11 @@ public class AIAgentMode : MonoBehaviour
             }
             Next = false;
             SkipButton.SetActive(false);
+
+            InputButton.SetActive(false);
+            multi.buttons[3].gameObject.SetActive(true);
         }
-        else
+        else if (Step == 5)
         {
             Step += 1;
         }
@@ -407,7 +464,7 @@ public class AIAgentMode : MonoBehaviour
             MainText.text = AgentFlow[Step][0];
             InfoText.text = AgentFlow[Step][1]; 
             multi.ChangeAgentButton(new string[] { "跳躍", "跑步", "坐著", "站立" }, 3, true);
-            multi.buttons[3].gameObject.SetActive(false);
+            
             for (int i = 0; i < 3; i++)
             {
                 multi.HintImage[i].sprite = System.Array.Find(
@@ -421,8 +478,11 @@ public class AIAgentMode : MonoBehaviour
                );
             Next = false;
             SkipButton.SetActive(false);
+
+            InputButton.SetActive(true);
+            multi.buttons[3].gameObject.SetActive(false);
         }
-        else
+        else if (Step == 6)
         {
             Step += 1;
         }
@@ -432,7 +492,7 @@ public class AIAgentMode : MonoBehaviour
             MainText.text = AgentFlow[Step][0];
             InfoText.text = AgentFlow[Step][1];
             multi.ChangeAgentButton(new string[] { Select[6]+"1", Select[6] + "2", Select[6] + "3" }, 3);
-            multi.buttons[3].gameObject.SetActive(false);
+
             for (int i = 0; i < 3; i++)
             {
                 multi.HintImage[i].sprite = System.Array.Find(
@@ -446,8 +506,10 @@ public class AIAgentMode : MonoBehaviour
                );
             Next = false;
             SkipButton.SetActive(true);
+            InputButton.SetActive(false);
+            multi.buttons[3].gameObject.SetActive(false);
         }
-        else
+        else if (Step == 7)
         {
             Step += 1;
         }
@@ -457,7 +519,7 @@ public class AIAgentMode : MonoBehaviour
             MainText.text = AgentFlow[Step][0];
             InfoText.text = AgentFlow[Step][1];
             multi.ChangeAgentButton(new string[] { "laughing", "smiling", "relaxed", "crying", "scared", "angry" }, 3, true);
-            multi.buttons[3].gameObject.SetActive(false);
+            
             for (int i = 0; i < 3; i++)
             {
                 multi.HintImage[i].sprite = System.Array.Find(
@@ -471,18 +533,20 @@ public class AIAgentMode : MonoBehaviour
                );
             Next = false;
             SkipButton.SetActive(true);
+            InputButton.SetActive(true);
+            multi.buttons[3].gameObject.SetActive(false);
         }
-        else
+        else if (Step == 8)
         {
             Step += 1;
         }
         yield return new WaitUntil(() => Next);
-        if (Step == 9 && (!new[] { "黑白漫畫"}.Contains(Select[0])))
+        if (Step == 9 && (!new[] { "黑白漫畫", "中國水墨畫" }.Contains(Select[0])))
         {
             MainText.text = AgentFlow[Step][0];
             InfoText.text = AgentFlow[Step][1];
             multi.ChangeAgentButton(new string[] { "red", "blue", "green", "yellow", "purple","orange", "pink", "black", "white", "gray", "brown" }, 3, true);
-            multi.buttons[3].gameObject.SetActive(false);
+            
             for (int i = 0; i < 3; i++)
             {
                 multi.HintImage[i].sprite = System.Array.Find(
@@ -496,18 +560,20 @@ public class AIAgentMode : MonoBehaviour
                );
             Next = false;
             SkipButton.SetActive(true);
+            InputButton.SetActive(true);
+            multi.buttons[3].gameObject.SetActive(false);
         }
-        else
+        else if (Step == 9)
         {
             Step += 1;
         }
         yield return new WaitUntil(() => Next);
-        if (Step == 10)
+        if (Step == 10 && (!new[] { "女性漢服", "中國水墨畫" ,"漂亮眼睛", "盒玩人偶", "食物照片" }.Contains(Select[0])))
         {
             MainText.text = AgentFlow[Step][0];
             InfoText.text = AgentFlow[Step][1];
-            multi.ChangeAgentButton(new string[] {"desert", "forest", "beach", "grassland", "lake", "blizzard", "sunset", "foggy", "thunderstorm","god rays", "downtown", "cyberpunk", "oil painting", "watercolor", "japanese temple", "castle","classroom", "bedroom", "magic forest", "lava ground"}, 3, true);
-            multi.buttons[3].gameObject.SetActive(false);
+            multi.ChangeAgentButton(new string[] {"desert", "forest", "beach", "grassland", "lake", "blizzard", "sunset", "foggy", "thunderstorm","god rays", "downtown", "oil painting", "japanese temple", "castle","classroom", "bedroom", "magic forest"}, 3, true);
+            
             for (int i = 0; i < 3; i++)
             {
                 multi.HintImage[i].sprite = System.Array.Find(
@@ -521,18 +587,20 @@ public class AIAgentMode : MonoBehaviour
                );
             Next = false;
             SkipButton.SetActive(true);
+            InputButton.SetActive(true);
+            multi.buttons[3].gameObject.SetActive(false);
         }
-        else
+        else if (Step == 10)
         {
             Step += 1;
         }
         yield return new WaitUntil(() => Next);
-        if (Step == 11)
+        if (Step == 11 && (!new[] { "漂亮眼睛" }.Contains(Select[0])))
         {
             MainText.text = AgentFlow[Step][0];
             InfoText.text = AgentFlow[Step][1];
             multi.ChangeAgentButton(new string[] { "384", "1024", "512", "768" }, 3, true);
-            multi.buttons[3].gameObject.SetActive(false);
+            
             for (int i = 0; i < 3; i++)
             {
                 multi.HintImage[i].sprite = System.Array.Find(
@@ -546,8 +614,10 @@ public class AIAgentMode : MonoBehaviour
                );
             Next = false;
             SkipButton.SetActive(false);
+            InputButton.SetActive(true);
+            multi.buttons[3].gameObject.SetActive(false);
         }
-        else
+        else if (Step == 11)
         {
             Step += 1;
         }
@@ -564,8 +634,10 @@ public class AIAgentMode : MonoBehaviour
             }
             Next = false;
             SkipButton.SetActive(true);
+            InputButton.SetActive(false);
+            OtherDetailButton.SetActive(true);
         }
-        else
+        else if (Step == 12)
         {
             Step += 1;
         }
