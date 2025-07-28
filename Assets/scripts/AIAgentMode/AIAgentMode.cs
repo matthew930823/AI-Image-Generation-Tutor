@@ -290,6 +290,7 @@ public class AIAgentMode : MonoBehaviour
 
     IEnumerator StartAgentMode()
     {
+        multi.stableDiffusionRegionPrompt.gameController.voiceAudioPlayer.AudioPlay(0);
         Sprite[] Hint = Resources.LoadAll<Sprite>("Agent模式圖片");
         OtherDetailButton.SetActive(false);
         for (int i = 0; i < 4; i++)
@@ -301,6 +302,7 @@ public class AIAgentMode : MonoBehaviour
         OtherDetailButton.SetActive(false);
         if (Step == 0)
         {
+            multi.stableDiffusionRegionPrompt.gameController.voiceAudioPlayer.AudioPlay(1);
             MainText.text = AgentFlow[Step][0];
             InfoText.text = AgentFlow[Step][1];
             multi.ChangeAgentButton(new string[] { "女性漢服", "黑白漫畫", "可愛貓咪", "中國水墨畫", "盒玩人偶", "吉卜力", "漂亮眼睛", "食物照片" },4 , true);
@@ -323,6 +325,7 @@ public class AIAgentMode : MonoBehaviour
         yield return new WaitUntil(() => Next);
         if (Step == 1 && (new[] {"女性漢服"}.Contains(Select[0])))
         {
+            multi.stableDiffusionRegionPrompt.gameController.voiceAudioPlayer.AudioPlay(13);
             MainText.text = AgentFlow[Step][0];
             InfoText.text = AgentFlow[Step][1];
             Select[4] = "女生";
@@ -348,6 +351,7 @@ public class AIAgentMode : MonoBehaviour
         yield return new WaitUntil(() => Next);
         if (Step == 2 && (new[] { "食物照片" }.Contains(Select[0])))
         {
+            multi.stableDiffusionRegionPrompt.gameController.voiceAudioPlayer.AudioPlay(14);
             MainText.text = AgentFlow[Step][0];
             InfoText.text = AgentFlow[Step][1];
             
@@ -373,6 +377,7 @@ public class AIAgentMode : MonoBehaviour
         yield return new WaitUntil(() => Next);
         if (Step == 3 && (!new[] {"盒玩人偶", "吉卜力", "食物照片" , "黑白漫畫", "可愛貓咪", "中國水墨畫", "盒玩人偶", "漂亮眼睛" }.Contains(Select[0])))
         {
+            multi.stableDiffusionRegionPrompt.gameController.voiceAudioPlayer.AudioPlay(2);
             MainText.text = AgentFlow[Step][0];
             InfoText.text = AgentFlow[Step][1];
             multi.ChangeAgentButton(new string[] { "可愛動畫", "擬真動畫", "柔和動畫", "現實風格", "插畫動畫" }, 4, true);
@@ -395,6 +400,7 @@ public class AIAgentMode : MonoBehaviour
         yield return new WaitUntil(() => Next);
         if (Step == 4 && (!new[] { "女性漢服", "可愛貓咪", "盒玩人偶", "漂亮眼睛", "食物照片" }.Contains(Select[0])))
         {
+            multi.stableDiffusionRegionPrompt.gameController.voiceAudioPlayer.AudioPlay(3);
             MainText.text = AgentFlow[Step][0];
             InfoText.text = AgentFlow[Step][1];
             multi.ChangeAgentButton(new string[] { "男生", "女生", "隨機"}, 3);
@@ -430,6 +436,7 @@ public class AIAgentMode : MonoBehaviour
         multi.buttons[3].gameObject.SetActive(true);
         if (Step == 5 && (!new[] { "女性漢服", "可愛貓咪", "盒玩人偶", "漂亮眼睛", "食物照片" }.Contains(Select[0])))
         {
+            multi.stableDiffusionRegionPrompt.gameController.voiceAudioPlayer.AudioPlay(4);
             MainText.text = AgentFlow[Step][0];
             InfoText.text = AgentFlow[Step][1];
             multi.ChangeAgentButton(new string[] { "小孩", "成年人", "老人", "隨機" }, 4);
@@ -469,6 +476,7 @@ public class AIAgentMode : MonoBehaviour
         yield return new WaitUntil(() => Next);
         if (Step == 6 && (!new[] { "女性漢服", "可愛貓咪", "漂亮眼睛", "食物照片" }.Contains(Select[0])))
         {
+            multi.stableDiffusionRegionPrompt.gameController.voiceAudioPlayer.AudioPlay(5);
             MainText.text = AgentFlow[Step][0];
             InfoText.text = AgentFlow[Step][1]; 
             multi.ChangeAgentButton(new string[] { "跳躍", "跑步", "坐著", "站立" }, 3, true);
@@ -497,6 +505,7 @@ public class AIAgentMode : MonoBehaviour
         yield return new WaitUntil(() => Next);
         if (Step == 7 && (!new[] { "女性漢服", "可愛貓咪", "盒玩人偶", "漂亮眼睛", "食物照片" }.Contains(Select[0])))
         {
+            multi.stableDiffusionRegionPrompt.gameController.voiceAudioPlayer.AudioPlay(6);
             MainText.text = AgentFlow[Step][0];
             InfoText.text = AgentFlow[Step][1];
             multi.ChangeAgentButton(new string[] { Select[6]+"1", Select[6] + "2", Select[6] + "3" }, 3);
@@ -523,7 +532,8 @@ public class AIAgentMode : MonoBehaviour
         }
         yield return new WaitUntil(() => Next);
         if (Step == 8 && (!new[] { "可愛貓咪", "漂亮眼睛", "食物照片" }.Contains(Select[0])))
-        {   
+        {
+            multi.stableDiffusionRegionPrompt.gameController.voiceAudioPlayer.AudioPlay(7);
             MainText.text = AgentFlow[Step][0];
             InfoText.text = AgentFlow[Step][1];
             multi.ChangeAgentButton(new string[] { "laughing", "smiling", "relaxed", "crying", "scared", "angry" }, 3, true);
@@ -551,6 +561,7 @@ public class AIAgentMode : MonoBehaviour
         yield return new WaitUntil(() => Next);
         if (Step == 9 && (!new[] { "黑白漫畫", "中國水墨畫" }.Contains(Select[0])))
         {
+            multi.stableDiffusionRegionPrompt.gameController.voiceAudioPlayer.AudioPlay(8);
             MainText.text = AgentFlow[Step][0];
             InfoText.text = AgentFlow[Step][1];
             multi.ChangeAgentButton(new string[] { "red", "blue", "green", "yellow", "purple","orange", "pink", "black", "white", "gray", "brown" }, 3, true);
@@ -578,6 +589,7 @@ public class AIAgentMode : MonoBehaviour
         yield return new WaitUntil(() => Next);
         if (Step == 10 && (!new[] { "女性漢服", "中國水墨畫" ,"漂亮眼睛", "盒玩人偶", "食物照片" }.Contains(Select[0])))
         {
+            multi.stableDiffusionRegionPrompt.gameController.voiceAudioPlayer.AudioPlay(9);
             MainText.text = AgentFlow[Step][0];
             InfoText.text = AgentFlow[Step][1];
             multi.ChangeAgentButton(new string[] {"desert", "forest", "beach", "grassland", "lake", "blizzard", "sunset", "foggy", "thunderstorm","god rays", "downtown", "oil painting", "japanese temple", "castle","classroom", "bedroom", "magic forest"}, 3, true);
@@ -605,6 +617,7 @@ public class AIAgentMode : MonoBehaviour
         yield return new WaitUntil(() => Next);
         if (Step == 11 && (!new[] { "漂亮眼睛" }.Contains(Select[0])))
         {
+            multi.stableDiffusionRegionPrompt.gameController.voiceAudioPlayer.AudioPlay(10);
             MainText.text = AgentFlow[Step][0];
             InfoText.text = AgentFlow[Step][1];
             multi.ChangeAgentButton(new string[] { "384", "1024", "512", "768" }, 3, true);
@@ -632,6 +645,7 @@ public class AIAgentMode : MonoBehaviour
         yield return new WaitUntil(() => Next);
         if (Step == 12)
         {
+            multi.stableDiffusionRegionPrompt.gameController.voiceAudioPlayer.AudioPlay(11);
             MainText.text = AgentFlow[Step][0];
             InfoText.text = AgentFlow[Step][1];
            
@@ -650,6 +664,7 @@ public class AIAgentMode : MonoBehaviour
             Step += 1;
         }
         yield return new WaitUntil(() => Next);
+        multi.stableDiffusionRegionPrompt.gameController.voiceAudioPlayer.AudioPlay(12);
         StartCoroutine(ConversionInfo());
     }
 
