@@ -134,6 +134,18 @@ public class AIAgentMode : MonoBehaviour
             { "realistic_anything.safetensors", "DreamShaper" },
             { "anime_bold.safetensors", "Counterfeit" }
         };
+        Dictionary<string, string> LoraMap = new Dictionary<string, string>()
+        {
+            { "女性漢服", "Hanfu" },
+            { "黑白漫畫", "Manga" },
+            { "可愛貓咪", "Cutecat" },
+            { "中國水墨畫", "Inkpainting" },
+            { "盒玩人偶", "Doll" },
+            { "吉卜力", "Ghibli" },
+            { "漂亮眼睛", "Eye" },
+            { "食物照片", "Foodphoto" },
+            { "", "None" }
+        };
         switch (Select[0]) 
         {
             case "女性漢服":
@@ -288,12 +300,12 @@ public class AIAgentMode : MonoBehaviour
                     "Resolution:" + Resolution + "\n" +
                     "Add_Detail:" + Add_Detail + "\n" +
                     "Controlnet:" + Controlnet_moduleString);
-        Result[0].text = (LoRa_Prompt != "")? LoRa_Prompt : "none";
+        Result[0].text = LoraMap[Select[0]];
         Result[1].text = Main_Prompt;
         Result[2].text = CheckpointMap[Checkpoint];
-        Result[3].text = (Select[9] != "") ? Select[9] : "none";
-        Result[4].text = (Select[10] != "") ? Select[10] : "none";
-        Result[5].text = (Select[6] != "") ? Select[6] : "none";
+        Result[3].text = (Select[9] != "") ? Select[9] : "None";
+        Result[4].text = (Select[10] != "") ? Select[10] : "None";
+        Result[5].text = (Select[6] != "") ? Select[6] : "None";
         Texture2D img1 = null;
         Option.SetActive(false);
         GameScene.SetActive(false);
@@ -316,6 +328,7 @@ public class AIAgentMode : MonoBehaviour
         multi.stableDiffusionRegionPrompt.gameController.voiceAudioPlayer.AudioPlay(0);
         Next = false;
         AllHint.SetActive(true);
+        SkipButton.GetComponentInChildren<TMPro.TextMeshProUGUI>().text = "Skip";
         yield return new WaitUntil(() => Next);
         Sprite[] Hint = Resources.LoadAll<Sprite>("Agent模式圖片");
         OtherDetailButton.SetActive(false);
@@ -682,7 +695,7 @@ public class AIAgentMode : MonoBehaviour
             }
             AllHint.SetActive(false);
             Next = false;
-            SkipButton.SetActive(true);
+            SkipButton.SetActive(true); SkipButton.GetComponentInChildren<TMPro.TextMeshProUGUI>().text = "Generate";
             InputButton.SetActive(false);
             OtherDetailButton.SetActive(true);
         }
