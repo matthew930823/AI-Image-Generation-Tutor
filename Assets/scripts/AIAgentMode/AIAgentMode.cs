@@ -268,19 +268,28 @@ public class AIAgentMode : MonoBehaviour
         {
             case "跳躍":
                 Other_Prompt += ",jumping";
+                Result[5].text = "jumping";
                 break;
             case "跑步":
                 Other_Prompt += ",running";
+                Result[5].text = "running";
                 break;
             case "坐著":
                 Other_Prompt += ",sitting";
+                Result[5].text = "sitting";
                 break;
             case "站立":
                 Other_Prompt += ",standing";
+                Result[5].text = "standing";
                 break;
             default:
-                if(Select[6]!="")
+                if (Select[6] != "")
+                {
                     Other_Prompt += "," + Select[6];
+                    Result[5].text = Select[6];
+                }
+                else
+                    Result[5].text = "None";
                 break;
         }
 
@@ -305,7 +314,6 @@ public class AIAgentMode : MonoBehaviour
         Result[2].text = CheckpointMap[Checkpoint];
         Result[3].text = (Select[9] != "") ? Select[9] : "None";
         Result[4].text = (Select[10] != "") ? Select[10] : "None";
-        Result[5].text = (Select[6] != "") ? Select[6] : "None";
         Texture2D img1 = null;
         Option.SetActive(false);
         GameScene.SetActive(false);
