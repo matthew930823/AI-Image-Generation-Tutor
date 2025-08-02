@@ -555,23 +555,19 @@ public class AIAgentMode : MonoBehaviour
             multi.stableDiffusionRegionPrompt.gameController.voiceAudioPlayer.AudioPlay(6);
             MainText.text = AgentFlow[Step][0];
             InfoText.text = AgentFlow[Step][1];
-            multi.ChangeAgentButton(new string[] { Select[6]+"1", Select[6] + "2", Select[6] + "3" }, 3);
+            multi.ChangeAgentButton(new string[] { Select[6]+"1", Select[6] + "2", Select[6] + "3", Select[6] + "4" }, 4);
 
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < 4; i++)
             {
                 multi.HintImage[i].sprite = System.Array.Find(
                     Hint,
                     sprite => sprite.name.Contains(multi.buttons[i].GetComponentInChildren<Text>().text)
                 );
             }
-            multi.HintImage[3].sprite = System.Array.Find(
-                   Hint,
-                   sprite => sprite.name.Contains("自己決定")
-               );
             Next = false;
             SkipButton.SetActive(true);
             InputButton.SetActive(false);
-            multi.buttons[3].gameObject.SetActive(false);
+            multi.buttons[3].gameObject.SetActive(true);
         }
         else if (Step == 7)
         {
