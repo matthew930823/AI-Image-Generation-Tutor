@@ -38,9 +38,13 @@ public class AIAgentMode : MonoBehaviour
     public GameObject GameScene;
     public GameObject ResultScene;
     public GameObject Option;
+    public GameObject AllHint;
+
 
     public GameObject InputButton;
     public GameObject OtherDetailButton;
+
+    public TMP_Text[] Result;
     // Start is called before the first frame update
     void Start()
     {
@@ -122,6 +126,14 @@ public class AIAgentMode : MonoBehaviour
             { "晉朝", "jin style" },
             { "漢朝", "han style" }
         };
+        Dictionary<string, string> CheckpointMap = new Dictionary<string, string>()
+        {
+            { "anime_cute.safetensors", "CuteYukiMix" },
+            { "anime-real_hybrid.safetensors", "ReV Animated" },
+            { "anime_soft.safetensors", "Cetus-Mix" },
+            { "realistic_anything.safetensors", "DreamShaper" },
+            { "anime_bold.safetensors", "Counterfeit" }
+        };
         switch (Select[0]) 
         {
             case "女性漢服":
@@ -148,8 +160,7 @@ public class AIAgentMode : MonoBehaviour
                 LoRa_Prompt = ",<lora:3Guofeng3_v34:0.85> <lora:shuV2:0.9>";
                 break;
             case "盒玩人偶":
-                int rand = UnityEngine.Random.Range(0, 2);
-                Select[4] = (rand == 0) ? "男生" : "女生";
+                Select[4] = "1 woman";
                 LoRa_Prompt = ",<lora:blindbox_v1_mix:1>";
                 Other_Prompt += ",full body, chibi";
                 Controlnet_modelString = "";
@@ -277,6 +288,12 @@ public class AIAgentMode : MonoBehaviour
                     "Resolution:" + Resolution + "\n" +
                     "Add_Detail:" + Add_Detail + "\n" +
                     "Controlnet:" + Controlnet_moduleString);
+        Result[0].text = (LoRa_Prompt != "")? LoRa_Prompt : "none";
+        Result[1].text = Main_Prompt;
+        Result[2].text = CheckpointMap[Checkpoint];
+        Result[3].text = (Select[9] != "") ? Select[9] : "none";
+        Result[4].text = (Select[10] != "") ? Select[10] : "none";
+        Result[5].text = (Select[6] != "") ? Select[6] : "none";
         Texture2D img1 = null;
         Option.SetActive(false);
         GameScene.SetActive(false);
@@ -298,6 +315,7 @@ public class AIAgentMode : MonoBehaviour
         Step = -1;
         multi.stableDiffusionRegionPrompt.gameController.voiceAudioPlayer.AudioPlay(0);
         Next = false;
+        AllHint.SetActive(true);
         yield return new WaitUntil(() => Next);
         Sprite[] Hint = Resources.LoadAll<Sprite>("Agent模式圖片");
         OtherDetailButton.SetActive(false);
@@ -660,8 +678,9 @@ public class AIAgentMode : MonoBehaviour
             for (int i = 0; i < 4; i++)
             {
                 multi.buttons[i].gameObject.SetActive(false);
-                multi.HintImage[i].gameObject.SetActive(false);
+                //multi.HintImage[i].gameObject.SetActive(false);
             }
+            AllHint.SetActive(false);
             Next = false;
             SkipButton.SetActive(true);
             InputButton.SetActive(false);
