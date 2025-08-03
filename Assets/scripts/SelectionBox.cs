@@ -356,6 +356,7 @@ b:{string.Join(", ", result.Select(x => $"[{x}]"))}
             }
             if(results[0]== "¦^µª¥¿½T")
             {
+                results[1] = results[1].Replace("[", "").Replace("]", "");
                 if (B.Contains(results[1]))
                 {
                     stableDiffusionRegionPrompt.gameController.voiceAudioPlayer.AudioPlay(3);
