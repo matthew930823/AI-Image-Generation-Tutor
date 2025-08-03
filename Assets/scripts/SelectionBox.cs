@@ -220,7 +220,9 @@ public class SelectionBox : MonoBehaviour
             float Yt2 = Mathf.Min(y + h, stableDiffusionRegionPrompt.AllRegions[i].y + stableDiffusionRegionPrompt.AllRegions[i].h);
             float Y = Mathf.Max(0, Yt2 - Yt1);
             float area = X * Y;
-
+            Debug.Log("w2 * h2 = "+stableDiffusionRegionPrompt.AllRegions[i].w * stableDiffusionRegionPrompt.AllRegions[i].h);
+            Debug.Log("w1 * h1 = " + w*h);
+            Debug.Log("area = " + area);
             if((area >= stableDiffusionRegionPrompt.AllRegions[i].w * stableDiffusionRegionPrompt.AllRegions[i].h * 0.7) &&(area >= w * h * 0.6))
             {
                 string[] result = stableDiffusionRegionPrompt.AllRegions[i].prompt.Split(',');

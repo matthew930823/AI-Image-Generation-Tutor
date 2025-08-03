@@ -857,7 +857,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3575075602064912060, guid: 10f238f5d25f6bc41a5ab7247a3c5e21, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 468
+      value: 537
       objectReference: {fileID: 0}
     - target: {fileID: 3575075602064912060, guid: 10f238f5d25f6bc41a5ab7247a3c5e21, type: 3}
       propertyPath: m_LocalPosition.y
@@ -865,7 +865,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3575075602064912060, guid: 10f238f5d25f6bc41a5ab7247a3c5e21, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -163
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3575075602064912060, guid: 10f238f5d25f6bc41a5ab7247a3c5e21, type: 3}
       propertyPath: m_LocalRotation.w
@@ -12377,7 +12377,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 21300000, guid: 008daae378a3aaf4da55b4b1e433db3c, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
