@@ -1271,9 +1271,10 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
                 yield return StartCoroutine(ReadScoreFileAndSend(response.images[0], 0));
                 yield return StartCoroutine(ReadScoreFileAndSend(response.images[1], 1));
                 yield return StartCoroutine(ReadScoreFileAndSend(response.images[2], 2));
+                yield return StartCoroutine(ReadScoreFileAndSend(response.images[3], 3));
                 int maxIndex = 0;
                 int maxValue = allScores[0];
-                for (int i = 1; i < 3; i++)
+                for (int i = 1; i < 4; i++)
                 {
                     if (allScores[i] > maxValue)
                     {
@@ -1354,7 +1355,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
                     // 嘗試轉換成 int 並加總
                     if (int.TryParse(trimmed, out int number))
                     {
-                        score += number;
+                        score = number;
                     }
                 }
             }
