@@ -209,7 +209,7 @@ public class SelectionBox : MonoBehaviour
         float w = Mathf.Round((Mathf.Abs(topLeftPercent.x- topRightPercent.x) * 0.01f) * 100f) / 100f;
         float h = Mathf.Round((Mathf.Abs(topLeftPercent.y-bottomLeftPercent.y) * 0.01f) * 100f) / 100f;
 
-        Debug.Log("x:" + x + "\ny:" + y + "\nw:" + w + "\nh:" + h);
+        //Debug.Log("x:" + x + "\ny:" + y + "\nw:" + w + "\nh:" + h);
         //Debug.Log(stableDiffusionRegionPrompt.AllRegions.Count);
         for(int i=0;i< stableDiffusionRegionPrompt.AllRegions.Count; i++)
         {
@@ -220,9 +220,9 @@ public class SelectionBox : MonoBehaviour
             float Yt2 = Mathf.Min(y + h, stableDiffusionRegionPrompt.AllRegions[i].y + stableDiffusionRegionPrompt.AllRegions[i].h);
             float Y = Mathf.Max(0, Yt2 - Yt1);
             float area = X * Y;
-            Debug.Log("w2 * h2 = "+stableDiffusionRegionPrompt.AllRegions[i].w * stableDiffusionRegionPrompt.AllRegions[i].h);
-            Debug.Log("w1 * h1 = " + w*h);
-            Debug.Log("area = " + area);
+            //Debug.Log("w2 * h2 = "+stableDiffusionRegionPrompt.AllRegions[i].w * stableDiffusionRegionPrompt.AllRegions[i].h);
+            //Debug.Log("w1 * h1 = " + w*h);
+            //Debug.Log("area = " + area);
             if((area >= stableDiffusionRegionPrompt.AllRegions[i].w * stableDiffusionRegionPrompt.AllRegions[i].h * 0.7) &&(area >= w * h * 0.6))
             {
                 string[] result = stableDiffusionRegionPrompt.AllRegions[i].prompt.Split(',');
