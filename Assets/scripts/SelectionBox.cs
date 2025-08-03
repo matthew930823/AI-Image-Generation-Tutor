@@ -2,6 +2,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
 using Unity.VisualScripting;
+using System.Linq;
+using System.Text.RegularExpressions;
 
 public class SelectionBox : MonoBehaviour
 {
@@ -17,7 +19,8 @@ public class SelectionBox : MonoBehaviour
     private bool isDragging = false;
 
     public StableDiffusionRegionPrompt stableDiffusionRegionPrompt;
-
+    List<string> result;
+    List<string> B = new List<string>();
     // 選取框的四個角的座標
     public Vector2 TopLeft { get; private set; }
     public Vector2 TopRight { get; private set; }
@@ -248,9 +251,11 @@ public class SelectionBox : MonoBehaviour
         float w = Mathf.Round((Mathf.Abs(topLeftPercent.x - topRightPercent.x) * 0.01f) * 100f) / 100f;
         float h = Mathf.Round((Mathf.Abs(topLeftPercent.y - bottomLeftPercent.y) * 0.01f) * 100f) / 100f;
 
-        List<string> result = new List<string>();
+        result = new List<string>();
 
-        for (int i = 0; i < stableDiffusionRegionPrompt.AllRegions.Count; i++)
+        result.AddRange(stableDiffusionRegionPrompt.AllRegions[0].prompt.Split(','));
+
+        for (int i = 1; i < stableDiffusionRegionPrompt.AllRegions.Count; i++)
         {
             float Xt1 = Mathf.Max(x, stableDiffusionRegionPrompt.AllRegions[i].x);
             float Xt2 = Mathf.Min(x + w, stableDiffusionRegionPrompt.AllRegions[i].x + stableDiffusionRegionPrompt.AllRegions[i].w);
@@ -326,5 +331,32 @@ public class SelectionBox : MonoBehaviour
         float height = Mathf.Abs(startPosition.y - endPosition.y);
 
         return new Rect(minX, minY, width, height);
+    }
+
+    public void CheckAnswerForSelect(Text Inputtext)
+    {
+        string LLMPrompt= $@"
+接下來我會給你三串文字，分別為1.a 2.b 3.c，其中b和c會由多個中括號([])包住的字組成，如果a的字和b之中的某個字意思相近，你需要回傳「答案已輸入過」，如果a的字和c之中的某個字意思相近，你需要回傳「回答正確」並把c中意思相近的字也回傳出來，如果a沒有和b跟c之中的任何字意思相近，你需要回傳「回答錯誤」，判斷標準不用太嚴格，就算是不同的語言只要意思相近就行，需要說明原因
+
+a:{Inputtext.text}
+
+b:{string.Join(", ", B.Select(x => $"[{x}]"))}
+
+c:{string.Join(", ", result.Select(x => $"[{x}]"))}
+
+輸出為: 結果:{{答案已輸入過/回答正確/回答錯誤}} 意思相近的字:{{(若結果不是回答正確則留白)}} 請將結果和意思相近的字務必都放進{{}}裡面
+";
+        Debug.Log(LLMPrompt);
+        StartCoroutine(stableDiffusionRegionPrompt.geminiAPI.SendRequest(LLMPrompt,(r)=> {
+            MatchCollection matches = Regex.Matches(r, @"\{(.*?)\}");
+            List<string> results = new List<string>();
+
+            foreach (Match match in matches)
+            {
+                results.Add(match.Groups[1].Value); // 只抓 {} 中的內容，不含大括號
+            }
+            if(results[0]== "回答正確")
+                B.Add(results[1]);
+        }));
     }
 }
