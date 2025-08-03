@@ -1224,8 +1224,8 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
             restore_faces = false,
             tiling = false,
             batch_size = 4,
-            prompt = "masterpiece,  best quality, ultra high reslotion, highly detailed",
-            negative_prompt = "(worst quality:2), (low quality:2), (normal quality:2), lowers, ((monochrome)), ((grayscale)), watermark",
+            prompt = "BREAK, (masterpiece:1.2),  best quality, highres, highly detailed, perfect lighting,< lora:add_detail: 0.5 > ",
+            negative_prompt = "easynegative, (badhandv4:1.2), NSFW, (worst quality:2), (low quality:2), (normal quality:2), lowres, normal quality, ((monochrome)), ((grayscale)), skin spots, acnes, skin blemishes, age spot, (ugly:1.331), (duplicate:1.331), watermark jpeg artifacts signature watermark username blurry, Stable_Yogis_SD1.5_Negatives-neg",
             override_settings = new Dictionary<string, object>
             {
                 { "sd_model_checkpoint", Model_checkpoint },
