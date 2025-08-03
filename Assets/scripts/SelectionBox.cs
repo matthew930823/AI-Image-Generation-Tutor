@@ -1,13 +1,14 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 
 public class SelectionBox : MonoBehaviour
 {
     [Header("UI Elements")]
     public RectTransform selectionBoxUI;
     public Canvas canvas;
-    public RectTransform targetImage; // 要檢測的 Image RectTransform
+    public RectTransform targetImage; // 目標的 Image RectTransform
 
     private Camera uiCamera;
 
@@ -17,7 +18,7 @@ public class SelectionBox : MonoBehaviour
 
     public StableDiffusionRegionPrompt stableDiffusionRegionPrompt;
 
-    // 選取框的四個角落座標
+    // 選取框的四個角的座標
     public Vector2 TopLeft { get; private set; }
     public Vector2 TopRight { get; private set; }
     public Vector2 BottomLeft { get; private set; }
@@ -58,17 +59,45 @@ public class SelectionBox : MonoBehaviour
 
     void HandleInput()
     {
-        // 開始拖拽
+        // 開始拖曳
         if (Input.GetMouseButtonDown(0))
         {
-            StartSelection();
+            // 檢查是否點擊在 targetImage 內
+            if (IsPointInTargetImage(Input.mousePosition))
+            {
+                StartSelection();
+            }
         }
 
-        // 結束拖拽
+        // 結束拖曳
         if (Input.GetMouseButtonUp(0) && isDragging)
         {
             EndSelection();
         }
+    }
+
+    // 檢查點擊位置是否在 targetImage 內
+    bool IsPointInTargetImage(Vector2 screenPoint)
+    {
+        if (targetImage == null) return false;
+
+        // 將螢幕座標轉換為 targetImage 的本地座標
+        Vector2 localPoint;
+        bool isInside = RectTransformUtility.ScreenPointToLocalPointInRectangle(
+            targetImage,
+            screenPoint,
+            uiCamera,
+            out localPoint
+        );
+
+        // 檢查點是否在 RectTransform 的範圍內
+        if (isInside)
+        {
+            Rect rect = targetImage.rect;
+            return rect.Contains(localPoint);
+        }
+
+        return false;
     }
 
     void StartSelection()
@@ -99,6 +128,9 @@ public class SelectionBox : MonoBehaviour
     void UpdateSelectionBox()
     {
         endPosition = Input.mousePosition;
+
+        // 限制拖曳範圍在 targetImage 內
+        endPosition = ClampToTargetImage(endPosition);
 
         if (selectionBoxUI != null)
         {
@@ -131,8 +163,28 @@ public class SelectionBox : MonoBehaviour
             selectionBoxUI.sizeDelta = boxSize;
         }
 
-        // 更新四個角落的座標
+        // 更新四個角的座標
         UpdateCornerPositions();
+    }
+
+    // 限制座標在 targetImage 範圍內
+    Vector2 ClampToTargetImage(Vector2 screenPoint)
+    {
+        if (targetImage == null) return screenPoint;
+
+        // 獲取 targetImage 的世界座標邊界
+        Vector3[] imageCorners = new Vector3[4];
+        targetImage.GetWorldCorners(imageCorners);
+
+        // 轉換為螢幕座標
+        Vector2 imageBottomLeft = RectTransformUtility.WorldToScreenPoint(uiCamera, imageCorners[0]);
+        Vector2 imageTopRight = RectTransformUtility.WorldToScreenPoint(uiCamera, imageCorners[2]);
+
+        // 限制在 Image 範圍內
+        float clampedX = Mathf.Clamp(screenPoint.x, imageBottomLeft.x, imageTopRight.x);
+        float clampedY = Mathf.Clamp(screenPoint.y, imageBottomLeft.y, imageTopRight.y);
+
+        return new Vector2(clampedX, clampedY);
     }
 
     void UpdateCornerPositions()
@@ -156,21 +208,14 @@ public class SelectionBox : MonoBehaviour
         if (selectionBoxUI != null)
             //selectionBoxUI.gameObject.SetActive(false);
 
-        //// 輸出內容座標訊息
-        //Debug.Log($"選取框內容座標:");
-        //Debug.Log($"左上角: {TopLeft}");
-        //Debug.Log($"右上角: {TopRight}");
-        //Debug.Log($"左下角: {BottomLeft}");
-        //Debug.Log($"右下角: {BottomRight}");
-
-        // 計算並輸出在 Image 上的百分比位置
-        if (targetImage != null)
-        {
-            CalculateImagePercentagePositions();
-        }
+            // 計算並輸出在 Image 上的百分比位置
+            if (targetImage != null)
+            {
+                CalculateImagePercentagePositions();
+            }
     }
 
-    // 計算選取框四個角落在 Image 上的百分比位置
+    // 計算選取框四個角在 Image 上的百分比位置
     void CalculateImagePercentagePositions()
     {
         if (targetImage == null) return;
@@ -179,11 +224,11 @@ public class SelectionBox : MonoBehaviour
         Vector3[] imageCorners = new Vector3[4];
         targetImage.GetWorldCorners(imageCorners);
 
-        // 轉換為屏幕座標
+        // 轉換為螢幕座標
         Vector2 imageBottomLeft = RectTransformUtility.WorldToScreenPoint(uiCamera, imageCorners[0]);
         Vector2 imageTopRight = RectTransformUtility.WorldToScreenPoint(uiCamera, imageCorners[2]);
 
-        // 計算 Image 的屏幕座標範圍
+        // 計算 Image 的螢幕座標範圍
         float imageLeft = imageBottomLeft.x;
         float imageRight = imageTopRight.x;
         float imageBottom = imageBottomLeft.y;
@@ -192,44 +237,35 @@ public class SelectionBox : MonoBehaviour
         float imageWidth = imageRight - imageLeft;
         float imageHeight = imageTop - imageBottom;
 
-        // 計算各角落的百分比位置
+        // 計算各角的百分比位置
         Vector2 topLeftPercent = CalculatePercentagePosition(TopLeft, imageLeft, imageBottom, imageWidth, imageHeight);
         Vector2 topRightPercent = CalculatePercentagePosition(TopRight, imageLeft, imageBottom, imageWidth, imageHeight);
         Vector2 bottomLeftPercent = CalculatePercentagePosition(BottomLeft, imageLeft, imageBottom, imageWidth, imageHeight);
         Vector2 bottomRightPercent = CalculatePercentagePosition(BottomRight, imageLeft, imageBottom, imageWidth, imageHeight);
 
-        //Debug.Log("=== 選取框在 Image 上的百分比位置 ===");
-        //Debug.Log($"左上角: X={topLeftPercent.x:F2}%, Y={topLeftPercent.y:F2}%");
-        //Debug.Log($"右上角: X={topRightPercent.x:F2}%, Y={topRightPercent.y:F2}%");
-        //Debug.Log($"左下角: X={bottomLeftPercent.x:F2}%, Y={bottomLeftPercent.y:F2}%");
-        //Debug.Log($"右下角: X={bottomRightPercent.x:F2}%, Y={bottomRightPercent.y:F2}%");
-
         float x = Mathf.Round((Mathf.Min(topLeftPercent.x, bottomLeftPercent.x) * 0.01f) * 100f) / 100f;
         float y = Mathf.Round((Mathf.Min(100 - topLeftPercent.y, 100 - bottomLeftPercent.y) * 0.01f) * 100f) / 100f;
-        float w = Mathf.Round((Mathf.Abs(topLeftPercent.x- topRightPercent.x) * 0.01f) * 100f) / 100f;
-        float h = Mathf.Round((Mathf.Abs(topLeftPercent.y-bottomLeftPercent.y) * 0.01f) * 100f) / 100f;
+        float w = Mathf.Round((Mathf.Abs(topLeftPercent.x - topRightPercent.x) * 0.01f) * 100f) / 100f;
+        float h = Mathf.Round((Mathf.Abs(topLeftPercent.y - bottomLeftPercent.y) * 0.01f) * 100f) / 100f;
 
-        //Debug.Log("x:" + x + "\ny:" + y + "\nw:" + w + "\nh:" + h);
-        //Debug.Log(stableDiffusionRegionPrompt.AllRegions.Count);
-        for(int i=0;i< stableDiffusionRegionPrompt.AllRegions.Count; i++)
+        string[] result = new string[] { };
+
+        for (int i = 0; i < stableDiffusionRegionPrompt.AllRegions.Count; i++)
         {
             float Xt1 = Mathf.Max(x, stableDiffusionRegionPrompt.AllRegions[i].x);
-            float Xt2 = Mathf.Min(x+w, stableDiffusionRegionPrompt.AllRegions[i].x+ stableDiffusionRegionPrompt.AllRegions[i].w);
-            float X = Mathf.Max(0, Xt2-Xt1);
+            float Xt2 = Mathf.Min(x + w, stableDiffusionRegionPrompt.AllRegions[i].x + stableDiffusionRegionPrompt.AllRegions[i].w);
+            float X = Mathf.Max(0, Xt2 - Xt1);
             float Yt1 = Mathf.Max(y, stableDiffusionRegionPrompt.AllRegions[i].y);
             float Yt2 = Mathf.Min(y + h, stableDiffusionRegionPrompt.AllRegions[i].y + stableDiffusionRegionPrompt.AllRegions[i].h);
             float Y = Mathf.Max(0, Yt2 - Yt1);
             float area = X * Y;
-            //Debug.Log("w2 * h2 = "+stableDiffusionRegionPrompt.AllRegions[i].w * stableDiffusionRegionPrompt.AllRegions[i].h);
-            //Debug.Log("w1 * h1 = " + w*h);
-            //Debug.Log("area = " + area);
-            if((area >= stableDiffusionRegionPrompt.AllRegions[i].w * stableDiffusionRegionPrompt.AllRegions[i].h * 0.7) &&(area >= w * h * 0.6))
-            {
-                string[] result = stableDiffusionRegionPrompt.AllRegions[i].prompt.Split(',');
-                Debug.Log(string.Join(", ", result));
 
+            if ((area >= stableDiffusionRegionPrompt.AllRegions[i].w * stableDiffusionRegionPrompt.AllRegions[i].h * 0.7) && (area >= w * h * 0.6))
+            {
+                result.AddRange(stableDiffusionRegionPrompt.AllRegions[i].prompt.Split(','));
             }
         }
+        Debug.Log("c : "+string.Join(", ", result));
     }
 
     // 計算單個點在 Image 上的百分比位置
@@ -255,7 +291,7 @@ public class SelectionBox : MonoBehaviour
         Vector3[] imageCorners = new Vector3[4];
         image.GetWorldCorners(imageCorners);
 
-        // 轉換為屏幕座標
+        // 轉換為螢幕座標
         Vector2 imageBottomLeft = RectTransformUtility.WorldToScreenPoint(uiCamera, imageCorners[0]);
         Vector2 imageTopRight = RectTransformUtility.WorldToScreenPoint(uiCamera, imageCorners[2]);
 
@@ -273,7 +309,7 @@ public class SelectionBox : MonoBehaviour
         return result;
     }
 
-    // 公開方法：檢查是否正在拖拽
+    // 公開方法：檢查是否正在拖曳
     public bool IsDragging()
     {
         return isDragging;
