@@ -1214,14 +1214,15 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
 
         var requestData = new Txt2ImgRequest
         {
-            steps = 1,
-            width = 512,
+            steps = 20,
+            width = 1024,
             height = 512,
             sampler_name = Sampler_name,
             scheduler = Scheduler,
             enable_hr = false,
             restore_faces = false,
             tiling = false,
+            batch_size = 4,
             prompt = "masterpiece,  best quality, ultra high reslotion, highly detailed",
             negative_prompt = "(worst quality:2), (low quality:2), (normal quality:2), lowers, ((monochrome)), ((grayscale)), watermark",
             override_settings = new Dictionary<string, object>

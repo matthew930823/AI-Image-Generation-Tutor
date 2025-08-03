@@ -23337,7 +23337,6 @@ GameObject:
   - component: {fileID: 1101888626}
   - component: {fileID: 1101888625}
   - component: {fileID: 1101888624}
-  - component: {fileID: 1101888623}
   - component: {fileID: 1101888629}
   - component: {fileID: 1101888630}
   - component: {fileID: 1101888631}
@@ -23349,20 +23348,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1101888623
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1101888622}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 78ede6b6be2a62a45bf4bb773126f309, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  generateText: {fileID: 2013278158}
-  errorText: {fileID: 509552027}
 --- !u!114 &1101888624
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -23375,8 +23360,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a8af40f8a91fb594a80ee87bd656b2c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  huggingFaceAPI: {fileID: 1101888623}
-  descriptionInput: {fileID: 1370594543}
   resultImage: {fileID: 1079662819}
   roomNumber: {fileID: 335281059}
   geminiAPI: {fileID: 1101888630}
@@ -23385,12 +23368,15 @@ MonoBehaviour:
   - {fileID: 952664254}
   - {fileID: 1732264614}
   - {fileID: 860738032}
-  uiImage: {fileID: 193181947}
+  answer: 
   trueAns: {fileID: 21300000, guid: 7b68aea92f6c2314cb2027995e61ac82, type: 3}
   falseAns: {fileID: 21300000, guid: 0101018dce9c8d5479fcd3fbaad7473a, type: 3}
   characteranimator: {fileID: 15557114}
   stablediffusionregionprompt: {fileID: 1101888632}
   voiceAudioPlayer: {fileID: 311400824}
+  multiChoiceQuestion: {fileID: 0}
+  tTSClone: {fileID: 0}
+  Hardlist: []
 --- !u!114 &1101888625
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -23547,7 +23533,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   imageUI: {fileID: 1079662819}
+  imageUI2: {fileID: 0}
+  Narrative: {fileID: 0}
+  img1: {fileID: 0}
+  img2: {fileID: 0}
   geminiAPI: {fileID: 1101888630}
+  multiChoiceQuestion: {fileID: 0}
+  gameController: {fileID: 0}
+  SkipButton: {fileID: 0}
+  SkipButtonForAssessment: {fileID: 0}
+  scoreControll: {fileID: 0}
   AllRegions:
   - x: 0
     y: 0
@@ -23557,6 +23552,14 @@ MonoBehaviour:
     negative_prompt: 
     blendMode: 
     feather: 0
+  HardTempAnswer: []
+  skipWait: 0
+  skipAssessmentWait: 0
+  IntroScreen: {fileID: 0}
+  GameStartScreen: {fileID: 0}
+  GameStartButton: {fileID: 0}
+  assessmentMode: {fileID: 0}
+  AssessmentLLM: 
 --- !u!43 &1102136970
 Mesh:
   m_ObjectHideFlags: 0
