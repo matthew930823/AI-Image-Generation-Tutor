@@ -1210,7 +1210,8 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
     public IEnumerator GenerateImageWithRegions(System.Action<Texture2D> callback)
     {
         string url = "http://127.0.0.1:7860/sdapi/v1/txt2img";
-
+        string Model_checkpoint = "realistic_anything.safetensors";
+        yield return StartCoroutine(ChangeCheckpoint(Model_checkpoint));
 
         var requestData = new Txt2ImgRequest
         {
@@ -1227,7 +1228,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
             negative_prompt = "(worst quality:2), (low quality:2), (normal quality:2), lowers, ((monochrome)), ((grayscale)), watermark",
             override_settings = new Dictionary<string, object>
             {
-                { "sd_model_checkpoint", "counterfeitV30_v30.safetensors" },
+                { "sd_model_checkpoint", Model_checkpoint },
                 { "CLIP_stop_at_last_layers", 2 }
             },
             alwayson_scripts = new AlwaysonScripts

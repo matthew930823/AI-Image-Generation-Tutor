@@ -442,7 +442,7 @@ public class GameController : MonoBehaviourPun
             for (int i = 0; i < keywords.Count / 7; i++)
             {
                 stablediffusionregionprompt.InputRegion(keywords[i * 7], float.Parse(keywords[i * 7 + 1]), float.Parse(keywords[i * 7 + 2]), float.Parse(keywords[i * 7 + 3]), float.Parse(keywords[i * 7 + 4]), keywords[i * 7 + 5], keywords[i * 7 + 6]);
-                //Debug.Log(i);
+                                                        //string BlendMode, float X, float Y, float W, float H,string Prompt,string Neg_Prompt
             }
         }));
     }
