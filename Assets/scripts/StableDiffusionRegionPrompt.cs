@@ -697,7 +697,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
             true,                            // overwrite image size
             true,                            // keep input size
             1024,                            // image width
-            1024,                            // image height
+            512,                            // image height
             96,                              // latent tile width
             96,                              // latent tile height
             48,                              // latent tile overlap

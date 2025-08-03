@@ -226,10 +226,8 @@ public class SelectionBox : MonoBehaviour
             if((area >= stableDiffusionRegionPrompt.AllRegions[i].w * stableDiffusionRegionPrompt.AllRegions[i].h * 0.7) &&(area >= w * h * 0.6))
             {
                 string[] result = stableDiffusionRegionPrompt.AllRegions[i].prompt.Split(',');
-                foreach (string r in result)
-                {
-                    Debug.Log(r);
-                }
+                Debug.Log(string.Join(", ", result));
+
             }
         }
     }
