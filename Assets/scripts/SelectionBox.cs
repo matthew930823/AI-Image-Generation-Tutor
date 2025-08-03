@@ -334,12 +334,12 @@ public class SelectionBox : MonoBehaviour
         return new Rect(minX, minY, width, height);
     }
 
-    public void CheckAnswerForSelect(Text Inputtext)
+    public void CheckAnswerForSelect(InputField inputField)
     {
         string LLMPrompt= $@"
 接下來我會給你三串文字，分別為1.a 2.b，其中b會由多個中括號([])包住的詞組成，否則如果a的詞和b之中的某個詞意思相近，如果a的詞和b之中的某個詞意思相近，你需要回傳「回答正確」並把b中意思相近的詞也回傳出來，如果a沒有和b的任何詞意思相近，你需要回傳「回答錯誤」，判斷標準不用太嚴格，就算是不同的語言只要意思相近就行，需要說明原因
 
-a:{Inputtext.text}
+a:{inputField.text}
 
 b:{string.Join(", ", result.Select(x => $"[{x}]"))}
 
@@ -371,6 +371,7 @@ b:{string.Join(", ", result.Select(x => $"[{x}]"))}
             {
                 stableDiffusionRegionPrompt.gameController.voiceAudioPlayer.AudioPlay(4);
             }
+            inputField.text = "";
         }));
     }
 }

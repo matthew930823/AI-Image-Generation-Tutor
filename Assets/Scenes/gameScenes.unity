@@ -10567,8 +10567,8 @@ MonoBehaviour:
         m_MethodName: CheckAnswerForSelect
         m_Mode: 2
         m_Arguments:
-          m_ObjectArgument: {fileID: 1430373104}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.UI.Text, UnityEngine.UI
+          m_ObjectArgument: {fileID: 945215337}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.UI.InputField, UnityEngine.UI
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
