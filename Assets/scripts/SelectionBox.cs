@@ -248,7 +248,7 @@ public class SelectionBox : MonoBehaviour
         float w = Mathf.Round((Mathf.Abs(topLeftPercent.x - topRightPercent.x) * 0.01f) * 100f) / 100f;
         float h = Mathf.Round((Mathf.Abs(topLeftPercent.y - bottomLeftPercent.y) * 0.01f) * 100f) / 100f;
 
-        string[] result = new string[] { };
+        List<string> result = new List<string>();
 
         for (int i = 0; i < stableDiffusionRegionPrompt.AllRegions.Count; i++)
         {
