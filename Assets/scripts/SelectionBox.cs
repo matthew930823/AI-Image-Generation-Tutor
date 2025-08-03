@@ -29,6 +29,7 @@ public class SelectionBox : MonoBehaviour
 
     void Start()
     {
+        stableDiffusionRegionPrompt.gameController.voiceAudioPlayer.AudioPlay(0);
         // 確保選取框開始時是隱藏的
         if (selectionBoxUI != null)
             selectionBoxUI.gameObject.SetActive(false);
@@ -336,15 +337,13 @@ public class SelectionBox : MonoBehaviour
     public void CheckAnswerForSelect(Text Inputtext)
     {
         string LLMPrompt= $@"
-接下來我會給你三串文字，分別為1.a 2.b 3.c，其中b和c會由多個中括號([])包住的字組成，如果a的字和b之中的某個字意思相近，你需要回傳「答案已輸入過」，如果a的字和c之中的某個字意思相近，你需要回傳「回答正確」並把c中意思相近的字也回傳出來，如果a沒有和b跟c之中的任何字意思相近，你需要回傳「回答錯誤」，判斷標準不用太嚴格，就算是不同的語言只要意思相近就行，需要說明原因
+接下來我會給你三串文字，分別為1.a 2.b，其中b會由多個中括號([])包住的詞組成，否則如果a的詞和b之中的某個詞意思相近，如果a的詞和b之中的某個詞意思相近，你需要回傳「回答正確」並把b中意思相近的詞也回傳出來，如果a沒有和b的任何詞意思相近，你需要回傳「回答錯誤」，判斷標準不用太嚴格，就算是不同的語言只要意思相近就行，需要說明原因
 
 a:{Inputtext.text}
 
-b:{string.Join(", ", B.Select(x => $"[{x}]"))}
+b:{string.Join(", ", result.Select(x => $"[{x}]"))}
 
-c:{string.Join(", ", result.Select(x => $"[{x}]"))}
-
-輸出為: 結果:{{答案已輸入過/回答正確/回答錯誤}} 意思相近的字:{{(若結果不是回答正確則留白)}} 請將結果和意思相近的字務必都放進{{}}裡面
+輸出為: 結果:{{回答正確/回答錯誤}} 意思相近的字:{{(若結果不是回答正確則留白)}} 請將結果和意思相近的字務必都放進{{}}裡面
 ";
         Debug.Log(LLMPrompt);
         StartCoroutine(stableDiffusionRegionPrompt.geminiAPI.SendRequest(LLMPrompt,(r)=> {
@@ -356,7 +355,21 @@ c:{string.Join(", ", result.Select(x => $"[{x}]"))}
                 results.Add(match.Groups[1].Value); // 只抓 {} 中的內容，不含大括號
             }
             if(results[0]== "回答正確")
-                B.Add(results[1]);
+            {
+                if (B.Contains(results[1]))
+                {
+                    stableDiffusionRegionPrompt.gameController.voiceAudioPlayer.AudioPlay(3);
+                }
+                else
+                {
+                    B.Add(results[1]);
+                    stableDiffusionRegionPrompt.gameController.voiceAudioPlayer.AudioPlay(2);
+                }
+            }
+            else
+            {
+                stableDiffusionRegionPrompt.gameController.voiceAudioPlayer.AudioPlay(4);
+            }
         }));
     }
 }
