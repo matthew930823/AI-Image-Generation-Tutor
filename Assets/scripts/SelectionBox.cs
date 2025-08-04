@@ -22,6 +22,7 @@ public class SelectionBox : MonoBehaviour
 
     public bool check = false;
     public TMP_Text SeeAns;
+    public int NowSee = 0;
 
     public StableDiffusionRegionPrompt stableDiffusionRegionPrompt;
     List<string> result;
@@ -359,6 +360,7 @@ public class SelectionBox : MonoBehaviour
         if(check == true)
         {
             SeeAns.text = result[0];
+            NowSee = 0;
             stableDiffusionRegionPrompt.gameController.voiceAudioPlayer.AudioPlay(11);
         }
     }
@@ -434,7 +436,7 @@ a:{inputField.text}
 
 b:{string.Join(", ", result.Select(x => $"[{x}]"))}
 
-輸出為: 結果:{{回答正確/回答錯誤}} 意思最相近的一個詞:{{(若結果不是回答正確則留白)}} 請將結果和意思相近的字務必都放進{{}}裡面
+輸出為: 結果:{{回答正確/回答錯誤}} 意思最相近的一個詞:{{(若結果不是回答正確則留白)}} 一定要將結果放在{{}}裡面 一定要將意思相近的字放進{{}}裡面
 ";
             Debug.Log(LLMPrompt);
             StartCoroutine(stableDiffusionRegionPrompt.geminiAPI.SendRequest(LLMPrompt, (r) => {
@@ -474,5 +476,15 @@ b:{string.Join(", ", result.Select(x => $"[{x}]"))}
         {
             stableDiffusionRegionPrompt.gameController.voiceAudioPlayer.AudioPlay(6);
         }
+    }
+
+    public void NextSeeAns()
+    {
+        NowSee += 1;
+        if (NowSee >= result.Count)
+        {
+            NowSee = 0;
+        }
+        SeeAns.text = result[NowSee];
     }
 }
