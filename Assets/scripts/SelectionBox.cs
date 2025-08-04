@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using System.Linq;
 using System.Text.RegularExpressions;
+using TMPro;
 
 public class SelectionBox : MonoBehaviour
 {
@@ -18,6 +19,9 @@ public class SelectionBox : MonoBehaviour
     private Vector2 startPosition;
     private Vector2 endPosition;
     private bool isDragging = false;
+
+    public bool check = false;
+    public TMP_Text SeeAns;
 
     public StableDiffusionRegionPrompt stableDiffusionRegionPrompt;
     List<string> result;
@@ -84,23 +88,28 @@ public class SelectionBox : MonoBehaviour
     };
     void Start()
     {
-        Sprite[] Hint = Resources.LoadAll<Sprite>("multi題庫");
-        stableDiffusionRegionPrompt.gameController.voiceAudioPlayer.AudioPlay(0);
-
-        //從題庫選題
-        int rand = UnityEngine.Random.Range(0, 5);
-        List<string> keywords = stableDiffusionRegionPrompt.gameController.ExtractContentsSeparatedByDash(AllQ[rand]);
-        Image.sprite = System.Array.Find(
-                    Hint,
-                    sprite => sprite.name.Contains("multi" + rand)
-                );
-        stableDiffusionRegionPrompt.gameController.usedMainPrompt += ", " + keywords[1];
-        Debug.Log("這次題目的主題:" + keywords[1]);
-        for (int i = 0; i < keywords.Count / 7; i++)
+        if (Image != null && check == false)
         {
-            stableDiffusionRegionPrompt.InputRegion(keywords[i * 7 + 2], float.Parse(keywords[i * 7 + 1 + 2]), float.Parse(keywords[i * 7 + 2 + 2]), float.Parse(keywords[i * 7 + 3 + 2]), float.Parse(keywords[i * 7 + 4 + 2]), keywords[i * 7 + 5 + 2], keywords[i * 7 + 6 + 2]);
-            //string BlendMode, float X, float Y, float W, float H,string Prompt,string Neg_Prompt
+            Sprite[] Hint = Resources.LoadAll<Sprite>("multi題庫");
+            stableDiffusionRegionPrompt.gameController.voiceAudioPlayer.AudioPlay(0);
+
+            //從題庫選題
+            int rand = UnityEngine.Random.Range(0, 5);
+            List<string> keywords = stableDiffusionRegionPrompt.gameController.ExtractContentsSeparatedByDash(AllQ[rand]);
+            Image.sprite = System.Array.Find(
+                        Hint,
+                        sprite => sprite.name.Contains("multi" + rand)
+                    );
+            stableDiffusionRegionPrompt.gameController.usedMainPrompt += ", " + keywords[1];
+            Debug.Log("這次題目的主題:" + keywords[1]);
+            for (int i = 0; i < keywords.Count / 7; i++)
+            {
+                stableDiffusionRegionPrompt.InputRegion(keywords[i * 7 + 2], float.Parse(keywords[i * 7 + 1 + 2]), float.Parse(keywords[i * 7 + 2 + 2]), float.Parse(keywords[i * 7 + 3 + 2]), float.Parse(keywords[i * 7 + 4 + 2]), keywords[i * 7 + 5 + 2], keywords[i * 7 + 6 + 2]);
+                //string BlendMode, float X, float Y, float W, float H,string Prompt,string Neg_Prompt
+            }
         }
+        
+        
 
 
         // 確保選取框開始時是隱藏的
@@ -345,6 +354,10 @@ public class SelectionBox : MonoBehaviour
             }
         }
         Debug.Log("c : "+string.Join(", ", result));
+        if(check == true)
+        {
+            SeeAns.text = result[0];
+        }
     }
 
     // 計算單個點在 Image 上的百分比位置
