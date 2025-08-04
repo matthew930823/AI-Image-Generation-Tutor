@@ -11,6 +11,7 @@ public class SelectionBox : MonoBehaviour
     public RectTransform selectionBoxUI;
     public Canvas canvas;
     public RectTransform targetImage; // 目標的 Image RectTransform
+    public Image Image;
 
     private Camera uiCamera;
 
@@ -27,9 +28,81 @@ public class SelectionBox : MonoBehaviour
     public Vector2 BottomLeft { get; private set; }
     public Vector2 BottomRight { get; private set; }
 
+
+    string[] AllQ = new string[]
+    {
+        @"
+            {主題=Tranquil lakeside ecology}
+            {Background=0=0=1=1=serene lake, calm water, dense forest, clear sky=0}
+            {Foreground=0.15=0.55=0.3=0.4=1 deer, graceful, brown fur, drinking water, alert expression=0}
+            {Environment=0.1=0.5=0.4=0.45=lush green grass, smooth pebbles, reflections in water=0}
+            {Foreground=0.6=0.45=0.35=0.5=1 brown bear, large, shaggy fur, standing on hind legs, sniffing the air=0}
+            {Environment=0.55=0.4=0.45=0.6=tall pine trees, fallen leaves, rocky outcrop=0}
+            {Foreground=0.4=0.6=0.3=0.4=1 white swan, elegant, long neck, gliding smoothly, on the water=0}
+            {Environment=0.35=0.55=0.4=0.5=lily pads, ripples in water, sunlit surface=0} 
+        ",
+        @"
+            {主題=A forest full of life}
+            {Background=0=0=1=1=A vast, serene forest clearing, dappled sunlight filtering through dense canopy, ancient trees with moss-covered bark, a gentle stream winding through vibrant green undergrowth=0}
+            {Foreground=0.2=0.4=0.5=0.3=1 majestic stag, large antlers, calm demeanor, standing alert, in a clearing=0}
+            {Enviroment=0.15=0.35=0.6=0.4=A patch of lush ferns and wild flowers, dew drops clinging to petals, soft moss covering the forest floor=0}
+            {Foreground=0.6=0.5=0.3=0.3=1 curious fox, reddish-brown fur, pointed ears, sniffing the air, near a fallen log=0}
+            {Enviroment=0.55=0.45=0.4=0.4=A weathered fallen log covered in mushrooms and lichens, scattered autumn leaves on the ground=0}
+            {Foreground=0.8=0.6=0.3=0.2=1 small rabbit, soft grey fur, twitching nose, nibbling on grass, partially hidden behind a bush=0}
+            {Enviroment=0.75=0.55=0.4=0.3=A cluster of low-lying bushes with dark green leaves and a patch of soft grass=0} 
+        ",
+        @"
+            {主題=Tropical jungle ecology}
+            {Background=0=0=1=1=a lush, dense jungle, vibrant green foliage, ancient trees, dappled sunlight, hanging vines, misty atmosphere=0}
+            {Foreground=0.2=0.4=0.5=0.4=1 jaguar, powerful build, spotted fur, alert expression, stalking through undergrowth=0}
+            {Enviroment=0.15=0.35=0.6=0.5=dense jungle floor, thick moss, tangled roots, fallen leaves, ferns=0}
+            {Foreground=0.6=0.5=0.4=0.4=1 toucan, colorful plumage, large beak, perched on a branch=0}
+            {Enviroment=0.55=0.45=0.5=0.5=thick jungle branches, large leaves, mossy bark, vines=0}
+            {Foreground=0.8=0.6=0.3=0.4=1 colorful butterfly, delicate wings, intricate patterns, fluttering near flowers=0}
+            {Enviroment=0.75=0.55=0.4=0.5=exotic flowers, bright petals, various shapes, dew drops=0} 
+        ",
+        @"
+            {主題=Undersea coral reef ecology}
+            {Background=0=0=1=1=a vibrant underwater coral reef, clear turquoise water, shafts of sunlight filtering down, colorful anemones, sandy seabed=0}
+            {Foreground=0.35=0.5=0.45=0.3=1green sea turtle, large, ancient, patterned shell, gracefully swimming, flippers extended=0}
+            {Enviroment=0.25=0.4=0.6=0.5=swaying kelp forests, delicate sea plants, rocky outcrops, dappled light patterns=0}
+            {Foreground=0.7=0.6=0.35=0.4=1clownfish, small, bright orange and white stripes, nestled among anemone tentacles=0}
+            {Enviroment=0.65=0.55=0.45=0.4=sea anemones, colorful, flowing tentacles, providing shelter=0}
+            {Foreground=0.1=0.7=0.25=0.4=1seahorse, small, coiled tail, camouflaged against coral=0}
+            {Enviroment=0.05=0.7=0.35=0.4=a cluster of vibrant purple coral, textured surface, small crevices=0}
+        ",
+        @"
+            {主題=Snow Mountain Ecology}
+            {Background=0=0=1=1=a serene mountain landscape, snow-capped peaks, clear blue sky, pine forests, a winding river=0}
+            {Foreground=0.45=0.15=0.4=0.3=1 eagle, majestic, soaring, sharp eyes, feathered wings=0}
+            {Enviroment=0.35=0.1=0.5=0.35=rocky cliff face, scattered pine trees, weathered stone=0}
+            {Foreground=0.2=0.5=0.3=0.2=1 deer, graceful, standing, alert, brown fur=0}
+            {Enviroment=0.1=0.5=0.4=0.3=lush green meadow, wildflowers, tall grass=0}
+            {Foreground=0.7=0.45=0.25=0.2=1 wolf, powerful, resting, looking to the side, grey fur=0}
+            {Enviroment=0.65=0.45=0.4=0.3=dense forest undergrowth, fallen leaves, mossy ground=0}
+        ",
+    };
     void Start()
     {
+        Sprite[] Hint = Resources.LoadAll<Sprite>("multi題庫");
         stableDiffusionRegionPrompt.gameController.voiceAudioPlayer.AudioPlay(0);
+
+        //從題庫選題
+        int rand = UnityEngine.Random.Range(0, 5);
+        List<string> keywords = stableDiffusionRegionPrompt.gameController.ExtractContentsSeparatedByDash(AllQ[rand]);
+        Image.sprite = System.Array.Find(
+                    Hint,
+                    sprite => sprite.name.Contains("multi" + rand)
+                );
+        stableDiffusionRegionPrompt.gameController.usedMainPrompt += ", " + keywords[1];
+        Debug.Log("這次題目的主題:" + keywords[1]);
+        for (int i = 0; i < keywords.Count / 7; i++)
+        {
+            stableDiffusionRegionPrompt.InputRegion(keywords[i * 7 + 2], float.Parse(keywords[i * 7 + 1 + 2]), float.Parse(keywords[i * 7 + 2 + 2]), float.Parse(keywords[i * 7 + 3 + 2]), float.Parse(keywords[i * 7 + 4 + 2]), keywords[i * 7 + 5 + 2], keywords[i * 7 + 6 + 2]);
+            //string BlendMode, float X, float Y, float W, float H,string Prompt,string Neg_Prompt
+        }
+
+
         // 確保選取框開始時是隱藏的
         if (selectionBoxUI != null)
             selectionBoxUI.gameObject.SetActive(false);

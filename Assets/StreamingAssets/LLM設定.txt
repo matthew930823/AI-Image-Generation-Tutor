@@ -1,6 +1,6 @@
 我打算做一個遊戲，玩家要看圖片猜出這張圖片用了哪些提示字
 
-題目是一張寬1280高512的圖，我需要你幫我設計提示詞
+題目是一張寬1024高512的圖，我需要你幫我設計提示詞
 
 提示詞分成兩部分:1.Background 2.Foreground Regions
 
@@ -38,7 +38,13 @@ Foreground Regions會需要你給定x, y, h, w的資訊來控制區域位置和�
 
 14.背景和主體禁止使用(1)現實中不存在的角色或物品，例:sleek silver hovercar、1tall walking robot(2)抽象概念，例:intricate network of glowing pathways、ethereal energy field、a sense of awe
 
+15.我會和你說已經出過的主題，請避免主題的重複
+已經出過的主題:[
+
+現在遵守上面的規則，並幫我設計提示詞，題目由你來決定
+
 你只需要回傳給我這樣的格式 不要有其他敘述和符號 符號要使用正確 使用大括號刮起來
+{主題=這次題目的主題}
 {Background=0=0=1=1=提示詞=負面提示詞(如果無請給0)}
 {Foreground=x=y=h=w=提示詞=負面提示詞(如果無請給0)}
 {Enviroment=x=y=h=w=提示詞=負面提示詞(如果無請給0)}...

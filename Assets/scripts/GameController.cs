@@ -67,35 +67,28 @@ public class GameController : MonoBehaviourPun
         }
     }
 
+    byte[] imageForMultiNext;
+
     private void OnImageGenerated(Texture2D generatedTexture)
     {
         if (generatedTexture != null)
         {
             byte[] imageBytes = generatedTexture.EncodeToJPG();
-            //StartCoroutine(huggingFaceAPI.UpscaleImage(imageBytes, (result) =>
-            //{
-            //    imageBytes = result;
-            //}));
-            photonView.RPC("SyncImage", RpcTarget.All, imageBytes);
-            // 開始延遲傳送圖片
-            //StartCoroutine(DelayedSyncImage(imageBytes, 30f)); // 300 秒延遲
+            imageForMultiNext = imageBytes;
+
+            //photonView.RPC("SyncImage", RpcTarget.All, imageBytes);
         }
         else
         {
             Debug.LogError("圖片生成失敗！");
         }
     }
-    //private IEnumerator DelayedSyncImage(byte[] imageBytes, float delaySeconds)
-    //{
-    //    yield return new WaitForSecondsRealtime(delaySeconds);
-    //    ApplyDifficultySettings(NowDifficulty);
-    //    photonView.RPC("SyncImage", RpcTarget.All, imageBytes);
-    //}
-    [PunRPC]
-    void SyncImage(byte[] imageBytes)
+
+    //[PunRPC]
+    public void SyncImageForMulti(/*byte[] imageBytes*/)
     {
         Texture2D texture = new Texture2D(2, 2);
-        texture.LoadImage(imageBytes);
+        texture.LoadImage(imageForMultiNext);
 
         Debug.Log("圖片加載完成");
         resultImage.sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
@@ -137,7 +130,7 @@ public class GameController : MonoBehaviourPun
         }
         else
         {
-            StartCoroutine(ChainCoroutines());
+            //StartCoroutine(ChainCoroutines());
         }
 
         // 等待 API 回應
@@ -374,6 +367,8 @@ public class GameController : MonoBehaviourPun
     }
     private string Uncheckedprompt;
     private string checkedprompt;
+
+    public string usedMainPrompt="";
     IEnumerator ReadSettingFileAndSend()
     {
         string path = System.IO.Path.Combine(Application.streamingAssetsPath, "LLM設定.txt");
@@ -389,7 +384,9 @@ public class GameController : MonoBehaviourPun
         string fileContent = www.downloadHandler.text;
     #else
             string fileContent = System.IO.File.ReadAllText(path);
-    #endif
+#endif
+
+        fileContent = Regex.Replace(fileContent, @"[\[]", usedMainPrompt);
 
         // 呼叫 Gemini API 並傳入檔案內容
         yield return StartCoroutine(geminiAPI.SendRequest(fileContent, (result) =>
@@ -439,14 +436,17 @@ public class GameController : MonoBehaviourPun
             ////    Debug.Log(content);
             ////}
             ////Debug.Log(keywords.Count);
-            for (int i = 0; i < keywords.Count / 7; i++)
+            ///
+            usedMainPrompt += ", " + keywords[1];
+            Debug.Log("這次題目的主題:" + keywords[1]);
+            for (int i = 0; i < keywords.Count / 7; i++)    
             {
-                stablediffusionregionprompt.InputRegion(keywords[i * 7], float.Parse(keywords[i * 7 + 1]), float.Parse(keywords[i * 7 + 2]), float.Parse(keywords[i * 7 + 3]), float.Parse(keywords[i * 7 + 4]), keywords[i * 7 + 5], keywords[i * 7 + 6]);
+                stablediffusionregionprompt.InputRegion(keywords[i * 7 + 2], float.Parse(keywords[i * 7 + 1 + 2]), float.Parse(keywords[i * 7 + 2 + 2]), float.Parse(keywords[i * 7 + 3 + 2]), float.Parse(keywords[i * 7 + 4 + 2]), keywords[i * 7 + 5 + 2], keywords[i * 7 + 6 + 2]);
                                                         //string BlendMode, float X, float Y, float W, float H,string Prompt,string Neg_Prompt
             }
         }));
     }
-    List<string> ExtractContentsSeparatedByDash(string text)
+    public List<string> ExtractContentsSeparatedByDash(string text)
     {
         List<string> allItems = new List<string>();
         MatchCollection matchCollection = Regex.Matches(text, @"\{(.*?)\}");
@@ -454,7 +454,7 @@ public class GameController : MonoBehaviourPun
         foreach (Match match in matchCollection)
         {
             string insideBraces = match.Groups[1].Value;
-            // 用 '-' 分割
+            // 用 '=' 分割
             string[] parts = insideBraces.Split('=');
 
             foreach (var part in parts)
@@ -480,7 +480,7 @@ public class GameController : MonoBehaviourPun
 
         return results;
     }
-    private IEnumerator ChainCoroutines()
+    public IEnumerator ChainCoroutines()
     {
         yield return StartCoroutine(ReadSettingFileAndSend());
         yield return StartCoroutine(ReadCheckFileAndSend());
