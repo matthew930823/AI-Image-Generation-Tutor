@@ -131,6 +131,7 @@ public class GameController : MonoBehaviourPun
         else
         {
             //StartCoroutine(ChainCoroutines());
+            voiceAudioPlayer.AudioPlay(0);
         }
 
         // 等待 API 回應

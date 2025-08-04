@@ -25,7 +25,9 @@ public class SelectionBox : MonoBehaviour
 
     public StableDiffusionRegionPrompt stableDiffusionRegionPrompt;
     List<string> result;
-    List<string> B = new List<string>();
+    public List<string> B = new List<string>();
+
+    private bool first = true;
     // 選取框的四個角的座標
     public Vector2 TopLeft { get; private set; }
     public Vector2 TopRight { get; private set; }
@@ -91,7 +93,6 @@ public class SelectionBox : MonoBehaviour
         if (Image != null && check == false)
         {
             Sprite[] Hint = Resources.LoadAll<Sprite>("multi題庫");
-            stableDiffusionRegionPrompt.gameController.voiceAudioPlayer.AudioPlay(0);
 
             //從題庫選題
             int rand = UnityEngine.Random.Range(0, 5);
@@ -298,6 +299,7 @@ public class SelectionBox : MonoBehaviour
             if (targetImage != null)
             {
                 CalculateImagePercentagePositions();
+                first = false;
             }
     }
 
@@ -357,6 +359,7 @@ public class SelectionBox : MonoBehaviour
         if(check == true)
         {
             SeeAns.text = result[0];
+            stableDiffusionRegionPrompt.gameController.voiceAudioPlayer.AudioPlay(11);
         }
     }
 
@@ -422,7 +425,9 @@ public class SelectionBox : MonoBehaviour
 
     public void CheckAnswerForSelect(InputField inputField)
     {
-        string LLMPrompt= $@"
+        if(inputField.text != "" && !first)
+        {
+            string LLMPrompt = $@"
 接下來我會給你三串文字，分別為1.a 2.b，其中b會由多個中括號([])包住的詞組成，否則如果a的詞和b之中的某個詞意思相近，如果a的詞和b之中的某個詞意思相近，你需要回傳「回答正確」並把b中意思最相近的一個詞也回傳出來，如果a沒有和b的任何詞意思相近，你需要回傳「回答錯誤」，判斷標準不用太嚴格，只要主體一樣就算對，就算是不同的語言只要意思相近就行，需要說明原因
 
 a:{inputField.text}
@@ -431,34 +436,43 @@ b:{string.Join(", ", result.Select(x => $"[{x}]"))}
 
 輸出為: 結果:{{回答正確/回答錯誤}} 意思最相近的一個詞:{{(若結果不是回答正確則留白)}} 請將結果和意思相近的字務必都放進{{}}裡面
 ";
-        Debug.Log(LLMPrompt);
-        StartCoroutine(stableDiffusionRegionPrompt.geminiAPI.SendRequest(LLMPrompt,(r)=> {
-            MatchCollection matches = Regex.Matches(r, @"\{(.*?)\}");
-            List<string> results = new List<string>();
+            Debug.Log(LLMPrompt);
+            StartCoroutine(stableDiffusionRegionPrompt.geminiAPI.SendRequest(LLMPrompt, (r) => {
+                MatchCollection matches = Regex.Matches(r, @"\{(.*?)\}");
+                List<string> results = new List<string>();
 
-            foreach (Match match in matches)
-            {
-                results.Add(match.Groups[1].Value); // 只抓 {} 中的內容，不含大括號
-            }
-            if(results[0]== "回答正確")
-            {
-                results[1] = Regex.Replace(results[1], @"[\[\]\{\}\(\)]", "");
-                results[1] = Regex.Replace(results[1], @"\d", "").Trim();
-                if (B.Contains(results[1]))
+                foreach (Match match in matches)
                 {
-                    stableDiffusionRegionPrompt.gameController.voiceAudioPlayer.AudioPlay(3);
+                    results.Add(match.Groups[1].Value); // 只抓 {} 中的內容，不含大括號
+                }
+                if (results[0] == "回答正確")
+                {
+                    results[1] = Regex.Replace(results[1], @"[\[\]\{\}\(\)]", "");
+                    results[1] = Regex.Replace(results[1], @"\d", "").Trim();
+                    if (B.Contains(results[1]))
+                    {
+                        stableDiffusionRegionPrompt.gameController.voiceAudioPlayer.AudioPlay(3);
+                    }
+                    else
+                    {
+                        B.Add(results[1]);
+                        stableDiffusionRegionPrompt.gameController.voiceAudioPlayer.AudioPlay(2);
+                    }
                 }
                 else
                 {
-                    B.Add(results[1]);
-                    stableDiffusionRegionPrompt.gameController.voiceAudioPlayer.AudioPlay(2);
+                    stableDiffusionRegionPrompt.gameController.voiceAudioPlayer.AudioPlay(4);
                 }
-            }
-            else
-            {
-                stableDiffusionRegionPrompt.gameController.voiceAudioPlayer.AudioPlay(4);
-            }
-            inputField.text = "";
-        }));
+                inputField.text = "";
+            }));
+        }
+        else if(first)
+        {
+            stableDiffusionRegionPrompt.gameController.voiceAudioPlayer.AudioPlay(5);
+        }
+        else
+        {
+            stableDiffusionRegionPrompt.gameController.voiceAudioPlayer.AudioPlay(6);
+        }
     }
 }

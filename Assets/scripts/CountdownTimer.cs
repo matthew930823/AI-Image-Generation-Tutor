@@ -13,9 +13,10 @@ public class CountdownTimer : MonoBehaviour
     public GameObject ResultScreen;
     public Image GameImage;
     public Image ResultImage;
-
+    public TMP_Text Score;
 
     public GameController gameController;
+    public SelectionBox selectionBox;
 
     void Update()
     {
@@ -54,6 +55,7 @@ public class CountdownTimer : MonoBehaviour
     {
         Debug.Log("時間到！");
         // 你可以在這裡觸發遊戲結束、顯示畫面等動作
+        Score.text = "Score : " + selectionBox.B.Count;
         ResultImage.sprite = GameImage.sprite;
         gameController.voiceAudioPlayer.AudioPlay(10);
         ResultScreen.SetActive(true);
