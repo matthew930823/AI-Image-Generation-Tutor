@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -35,7 +36,14 @@ public class AIAgentMode : MonoBehaviour
 
     public Image Result_Image;
 
+    bool IsAgent = false;
+    public Text content;
+    public Text suggestion;
+    int AgentCount = 5;
+
+
     public GameObject GameScene;
+    public GameObject AgentScene;
     public GameObject ResultScene;
     public GameObject Option;
     public GameObject AllHint;
@@ -82,6 +90,13 @@ public class AIAgentMode : MonoBehaviour
         
     }
 
+    public void GoAgentMode()
+    {
+        IsAgent = true;
+
+        AgentScene.SetActive(true);
+        AgentNext();
+    }
     public void OnAddOtherButton(InputField inputField)
     {
         if (inputField.text != "")
@@ -134,6 +149,7 @@ public class AIAgentMode : MonoBehaviour
             { "realistic_anything.safetensors", "DreamShaper" },
             { "anime_bold.safetensors", "Counterfeit" }
         };
+ 
         Dictionary<string, string> LoraMap = new Dictionary<string, string>()
         {
             { "女性漢服", "Hanfu" },
@@ -157,18 +173,18 @@ public class AIAgentMode : MonoBehaviour
             case "黑白漫畫":
                 LoRa_Prompt = ",lineart, ((monochrome)),<lora:animeoutlineV4_16:1.3>";
                 Neg_Prompt = "easynegative, (badhandv4:1.2), NSFW, watermark jpeg artifacts signature watermark username blurry";
-                Checkpoint = "anime_bold.safetensors";
+                Select[3] = "插畫動畫";
                 break;
             case "可愛貓咪":
                 Main_Prompt = "1 cute cat"; 
                 Controlnet_modelString = "";
-                Checkpoint = "anime-real_hybrid.safetensors";
+                Select[3] = "擬真動畫";
                 LoRa_Prompt = ",<lora:cat_20230627113759:0.7>";
                 break;
             case "中國水墨畫":
                 Main_Prompt = "potrait of ";
                 Other_Prompt += ",shuimobysim, shukezouma";
-                Checkpoint = "anime_cute.safetensors";
+                Select[3] = "可愛動畫";
                 LoRa_Prompt = ",<lora:3Guofeng3_v34:0.85> <lora:shuV2:0.9>";
                 break;
             case "盒玩人偶":
@@ -176,7 +192,7 @@ public class AIAgentMode : MonoBehaviour
                 LoRa_Prompt = ",<lora:blindbox_v1_mix:1>";
                 Other_Prompt += ",full body, chibi";
                 Controlnet_modelString = "";
-                Checkpoint = "anime-real_hybrid.safetensors";
+                Select[3] = "擬真動畫";
                 break;
             case "吉卜力":
                 LoRa_Prompt = ",<lora:ghibli_style_offset:1>";
@@ -188,7 +204,7 @@ public class AIAgentMode : MonoBehaviour
                 Main_Prompt = "1 eye";
                 Other_Prompt += ",loraeyes";
                 Controlnet_modelString = "";
-                Checkpoint = "anime_cute.safetensors";
+                Select[3] = "可愛動畫";
                 Resolution = 512;
                 break;
             case "食物照片":
@@ -317,6 +333,7 @@ public class AIAgentMode : MonoBehaviour
         Texture2D img1 = null;
         Option.SetActive(false);
         GameScene.SetActive(false);
+        AgentScene.SetActive(false);
         ResultScene.SetActive(true);
         Result_Image.sprite = System.Array.Find(
                     Hint,
@@ -338,379 +355,454 @@ public class AIAgentMode : MonoBehaviour
         AllHint.SetActive(true);
         SkipButton.GetComponentInChildren<TMPro.TextMeshProUGUI>().text = "Skip";
         yield return new WaitUntil(() => Next);
-        Sprite[] Hint = Resources.LoadAll<Sprite>("Agent模式圖片");
-        OtherDetailButton.SetActive(false);
-        for (int i = 0; i < 4; i++)
+        if (IsAgent)
         {
-            multi.buttons[i].gameObject.SetActive(true);
-            multi.HintImage[i].gameObject.SetActive(true);
+
         }
-        InputButton.SetActive(false);
-        OtherDetailButton.SetActive(false);
-        if (Step == 0)
+        else
         {
-            multi.stableDiffusionRegionPrompt.gameController.voiceAudioPlayer.AudioPlay(1);
-            MainText.text = AgentFlow[Step][0];
-            InfoText.text = AgentFlow[Step][1];
-            multi.ChangeAgentButton(new string[] { "女性漢服", "黑白漫畫", "可愛貓咪", "中國水墨畫", "盒玩人偶", "吉卜力", "漂亮眼睛", "食物照片" },4 , true);
-            for(int i = 0; i < 4; i++)
-            {
-                multi.HintImage[i].sprite = System.Array.Find(
-                    Hint,
-                    sprite => sprite.name.Contains(multi.buttons[i].GetComponentInChildren<Text>().text)
-                );
-            }
-            Next = false;
-            SkipButton.SetActive(true);
-            InputButton.SetActive(false);
-            multi.buttons[3].gameObject.SetActive(true);
-        }
-        else if(Step == 0)
-        {
-            Step += 1;
-        }
-        yield return new WaitUntil(() => Next);
-        if (Step == 1 && (new[] {"女性漢服"}.Contains(Select[0])))
-        {
-            multi.stableDiffusionRegionPrompt.gameController.voiceAudioPlayer.AudioPlay(13);
-            MainText.text = AgentFlow[Step][0];
-            InfoText.text = AgentFlow[Step][1];
-            Select[4] = "女生";
-            Select[5] = "成年人";
-            Select[7] = "nohand";
-            multi.ChangeAgentButton(new string[] { "明朝", "宋朝", "唐朝", "晉朝", "漢朝" }, 4, true);
+            Sprite[] Hint = Resources.LoadAll<Sprite>("Agent模式圖片");
+            OtherDetailButton.SetActive(false);
             for (int i = 0; i < 4; i++)
             {
-                multi.HintImage[i].sprite = System.Array.Find(
-                    Hint,
-                    sprite => sprite.name.Contains(multi.buttons[i].GetComponentInChildren<Text>().text)
-                );
+                multi.buttons[i].gameObject.SetActive(true);
+                multi.HintImage[i].gameObject.SetActive(true);
             }
-            Next = false;
-            SkipButton.SetActive(false);
             InputButton.SetActive(false);
-            multi.buttons[3].gameObject.SetActive(true);
-        }
-        else if(Step == 1)
-        {
-            Step += 1;
-        }
-        yield return new WaitUntil(() => Next);
-        if (Step == 2 && (new[] { "食物照片" }.Contains(Select[0])))
-        {
-            multi.stableDiffusionRegionPrompt.gameController.voiceAudioPlayer.AudioPlay(14);
-            MainText.text = AgentFlow[Step][0];
-            InfoText.text = AgentFlow[Step][1];
+            OtherDetailButton.SetActive(false);
+            if (Step == 0)
+            {
+                multi.stableDiffusionRegionPrompt.gameController.voiceAudioPlayer.AudioPlay(1);
+                MainText.text = AgentFlow[Step][0];
+                InfoText.text = AgentFlow[Step][1];
+                multi.ChangeAgentButton(new string[] { "女性漢服", "黑白漫畫", "可愛貓咪", "中國水墨畫", "盒玩人偶", "吉卜力", "漂亮眼睛", "食物照片" },4 , true);
+                for(int i = 0; i < 4; i++)
+                {
+                    multi.HintImage[i].sprite = System.Array.Find(
+                        Hint,
+                        sprite => sprite.name.Contains(multi.buttons[i].GetComponentInChildren<Text>().text)
+                    );
+                }
+                Next = false;
+                SkipButton.SetActive(true);
+                InputButton.SetActive(false);
+                multi.buttons[3].gameObject.SetActive(true);
+            }
+            else if(Step == 0)
+            {
+                Step += 1;
+            }
+            yield return new WaitUntil(() => Next);
+            if (Step == 1 && (new[] {"女性漢服"}.Contains(Select[0])))
+            {
+                multi.stableDiffusionRegionPrompt.gameController.voiceAudioPlayer.AudioPlay(13);
+                MainText.text = AgentFlow[Step][0];
+                InfoText.text = AgentFlow[Step][1];
+                Select[4] = "女生";
+                Select[5] = "成年人";
+                Select[7] = "nohand";
+                multi.ChangeAgentButton(new string[] { "明朝", "宋朝", "唐朝", "晉朝", "漢朝" }, 4, true);
+                for (int i = 0; i < 4; i++)
+                {
+                    multi.HintImage[i].sprite = System.Array.Find(
+                        Hint,
+                        sprite => sprite.name.Contains(multi.buttons[i].GetComponentInChildren<Text>().text)
+                    );
+                }
+                Next = false;
+                SkipButton.SetActive(false);
+                InputButton.SetActive(false);
+                multi.buttons[3].gameObject.SetActive(true);
+            }
+            else if(Step == 1)
+            {
+                Step += 1;
+            }
+            yield return new WaitUntil(() => Next);
+            if (Step == 2 && (new[] { "食物照片" }.Contains(Select[0])))
+            {
+                multi.stableDiffusionRegionPrompt.gameController.voiceAudioPlayer.AudioPlay(14);
+                MainText.text = AgentFlow[Step][0];
+                InfoText.text = AgentFlow[Step][1];
             
-            Select[4] = "";
+                Select[4] = "";
 
-            multi.ChangeAgentButton(new string[] { "hot pot", "shumai", "hamburger", "pizza", "spaghetti", "fried chicken", "ice cream", "pancakes", "apple" }, 4, true);
-            for (int i = 0; i < 4; i++)
-            {
-                multi.HintImage[i].sprite = System.Array.Find(
-                    Hint,
-                    sprite => sprite.name.Contains(multi.buttons[i].GetComponentInChildren<Text>().text)
-                );
+                multi.ChangeAgentButton(new string[] { "hot pot", "shumai", "hamburger", "pizza", "spaghetti", "fried chicken", "ice cream", "pancakes", "apple" }, 4, true);
+                for (int i = 0; i < 4; i++)
+                {
+                    multi.HintImage[i].sprite = System.Array.Find(
+                        Hint,
+                        sprite => sprite.name.Contains(multi.buttons[i].GetComponentInChildren<Text>().text)
+                    );
+                }
+                Next = false;
+                SkipButton.SetActive(false);
+                InputButton.SetActive(false);
+                multi.buttons[3].gameObject.SetActive(true);
             }
-            Next = false;
-            SkipButton.SetActive(false);
-            InputButton.SetActive(false);
-            multi.buttons[3].gameObject.SetActive(true);
-        }
-        else if (Step == 2)
-        {
-            Step += 1;
-        }
-        yield return new WaitUntil(() => Next);
-        if (Step == 3 && (!new[] {"盒玩人偶", "吉卜力", "食物照片" , "黑白漫畫", "可愛貓咪", "中國水墨畫", "盒玩人偶", "漂亮眼睛" }.Contains(Select[0])))
-        {
-            multi.stableDiffusionRegionPrompt.gameController.voiceAudioPlayer.AudioPlay(2);
-            MainText.text = AgentFlow[Step][0];
-            InfoText.text = AgentFlow[Step][1];
-            multi.ChangeAgentButton(new string[] { "可愛動畫", "擬真動畫", "柔和動畫", "現實風格", "插畫動畫" }, 4, true);
-            for (int i = 0; i < 4; i++)
+            else if (Step == 2)
             {
-                multi.HintImage[i].sprite = System.Array.Find(
-                    Hint,
-                    sprite => sprite.name.Contains(multi.buttons[i].GetComponentInChildren<Text>().text)
-                );
+                Step += 1;
             }
-            Next = false;
-            SkipButton.SetActive(false);
-            InputButton.SetActive(false);
-            multi.buttons[3].gameObject.SetActive(true);
-        }
-        else if (Step == 3)
-        {
-            Step += 1;
-        }
-        yield return new WaitUntil(() => Next);
-        if (Step == 4 && (!new[] { "女性漢服", "可愛貓咪", "盒玩人偶", "漂亮眼睛", "食物照片" }.Contains(Select[0])))
-        {
-            multi.stableDiffusionRegionPrompt.gameController.voiceAudioPlayer.AudioPlay(3);
-            MainText.text = AgentFlow[Step][0];
-            InfoText.text = AgentFlow[Step][1];
-            multi.ChangeAgentButton(new string[] { "男生", "女生", "隨機"}, 3);
+            yield return new WaitUntil(() => Next);
+            if (Step == 3 && (!new[] {"盒玩人偶", "吉卜力", "食物照片" , "黑白漫畫", "可愛貓咪", "中國水墨畫", "盒玩人偶", "漂亮眼睛" }.Contains(Select[0])))
+            {
+                multi.stableDiffusionRegionPrompt.gameController.voiceAudioPlayer.AudioPlay(2);
+                MainText.text = AgentFlow[Step][0];
+                InfoText.text = AgentFlow[Step][1];
+                multi.ChangeAgentButton(new string[] { "可愛動畫", "擬真動畫", "柔和動畫", "現實風格", "插畫動畫" }, 4, true);
+                for (int i = 0; i < 4; i++)
+                {
+                    multi.HintImage[i].sprite = System.Array.Find(
+                        Hint,
+                        sprite => sprite.name.Contains(multi.buttons[i].GetComponentInChildren<Text>().text)
+                    );
+                }
+                Next = false;
+                SkipButton.SetActive(false);
+                InputButton.SetActive(false);
+                multi.buttons[3].gameObject.SetActive(true);
+            }
+            else if (Step == 3)
+            {
+                Step += 1;
+            }
+            yield return new WaitUntil(() => Next);
+            if (Step == 4 && (!new[] { "女性漢服", "可愛貓咪", "盒玩人偶", "漂亮眼睛", "食物照片" }.Contains(Select[0])))
+            {
+                multi.stableDiffusionRegionPrompt.gameController.voiceAudioPlayer.AudioPlay(3);
+                MainText.text = AgentFlow[Step][0];
+                InfoText.text = AgentFlow[Step][1];
+                multi.ChangeAgentButton(new string[] { "男生", "女生", "隨機"}, 3);
 
-            for (int i = 0; i < 2; i++)
-            {
-                multi.HintImage[i].sprite = System.Array.Find(
-                    Hint,
-                    sprite => sprite.name.Contains(Select[3] + multi.buttons[i].GetComponentInChildren<Text>().text)
-                );
+                for (int i = 0; i < 2; i++)
+                {
+                    multi.HintImage[i].sprite = System.Array.Find(
+                        Hint,
+                        sprite => sprite.name.Contains(Select[3] + multi.buttons[i].GetComponentInChildren<Text>().text)
+                    );
+                }
+                for (int i = 2; i < 3; i++)
+                {
+                    multi.HintImage[i].sprite = System.Array.Find(
+                        Hint,
+                        sprite => sprite.name.Contains(multi.buttons[i].GetComponentInChildren<Text>().text)
+                    );
+                }
+                multi.HintImage[3].sprite = System.Array.Find(
+                       Hint,
+                       sprite => sprite.name.Contains("自己決定")
+                   );
+                Next = false;
+                SkipButton.SetActive(false);
+                InputButton.SetActive(true);
+                multi.buttons[3].gameObject.SetActive(false);
             }
-            for (int i = 2; i < 3; i++)
+            else if (Step == 4)
             {
-                multi.HintImage[i].sprite = System.Array.Find(
-                    Hint,
-                    sprite => sprite.name.Contains(multi.buttons[i].GetComponentInChildren<Text>().text)
-                );
+                Step += 1;
             }
-            multi.HintImage[3].sprite = System.Array.Find(
-                   Hint,
-                   sprite => sprite.name.Contains("自己決定")
-               );
-            Next = false;
-            SkipButton.SetActive(false);
-            InputButton.SetActive(true);
-            multi.buttons[3].gameObject.SetActive(false);
-        }
-        else if (Step == 4)
-        {
-            Step += 1;
-        }
-        yield return new WaitUntil(() => Next);
-        multi.buttons[3].gameObject.SetActive(true);
-        if (Step == 5 && (!new[] { "女性漢服", "可愛貓咪", "盒玩人偶", "漂亮眼睛", "食物照片" }.Contains(Select[0])))
-        {
-            multi.stableDiffusionRegionPrompt.gameController.voiceAudioPlayer.AudioPlay(4);
-            MainText.text = AgentFlow[Step][0];
-            InfoText.text = AgentFlow[Step][1];
-            multi.ChangeAgentButton(new string[] { "小孩", "成年人", "老人", "隨機" }, 4);
-            string[] Comparison = new string[] { "男孩", "女孩", "男生" , "女生", "阿公", "阿嬤" };
-            if (Select[4] == "隨機")
-            {
-                int rand = UnityEngine.Random.Range(0, 2);
-                Select[4] = (rand == 0) ? "男生" : "女生";
-            }
-            for (int i = 0; i < 3; i++)
-            {
-                int ADD = 0;
-                if (Select[4] == "男生"|| Select[4] == "女生")
-                    ADD = i * 2 + ((Select[4] == "男生") ? 0 : 1);
-                multi.HintImage[i].sprite = System.Array.Find(
-                    Hint,
-                    sprite => sprite.name.Contains(Select[3] + Comparison[ADD] )
-                );
-            }
-            for (int i = 3; i < 4; i++)
-            {
-                multi.HintImage[i].sprite = System.Array.Find(
-                    Hint,
-                    sprite => sprite.name.Contains(multi.buttons[i].GetComponentInChildren<Text>().text)
-                );
-            }
-            Next = false;
-            SkipButton.SetActive(false);
-
-            InputButton.SetActive(false);
+            yield return new WaitUntil(() => Next);
             multi.buttons[3].gameObject.SetActive(true);
-        }
-        else if (Step == 5)
-        {
-            Step += 1;
-        }
-        yield return new WaitUntil(() => Next);
-        if (Step == 6 && (!new[] { "女性漢服", "可愛貓咪", "漂亮眼睛", "食物照片" }.Contains(Select[0])))
-        {
-            multi.stableDiffusionRegionPrompt.gameController.voiceAudioPlayer.AudioPlay(5);
-            MainText.text = AgentFlow[Step][0];
-            InfoText.text = AgentFlow[Step][1]; 
-            multi.ChangeAgentButton(new string[] { "跳躍", "跑步", "坐著", "站立" }, 3, true);
-            
-            for (int i = 0; i < 3; i++)
+            if (Step == 5 && (!new[] { "女性漢服", "可愛貓咪", "盒玩人偶", "漂亮眼睛", "食物照片" }.Contains(Select[0])))
             {
-                multi.HintImage[i].sprite = System.Array.Find(
-                    Hint,
-                    sprite => sprite.name.Contains(multi.buttons[i].GetComponentInChildren<Text>().text)
-                );
-            }
-            multi.HintImage[3].sprite = System.Array.Find(
-                   Hint,
-                   sprite => sprite.name.Contains("自己決定")
-               );
-            Next = false;
-            SkipButton.SetActive(false);
+                multi.stableDiffusionRegionPrompt.gameController.voiceAudioPlayer.AudioPlay(4);
+                MainText.text = AgentFlow[Step][0];
+                InfoText.text = AgentFlow[Step][1];
+                multi.ChangeAgentButton(new string[] { "小孩", "成年人", "老人", "隨機" }, 4);
+                string[] Comparison = new string[] { "男孩", "女孩", "男生" , "女生", "阿公", "阿嬤" };
+                if (Select[4] == "隨機")
+                {
+                    int rand = UnityEngine.Random.Range(0, 2);
+                    Select[4] = (rand == 0) ? "男生" : "女生";
+                }
+                for (int i = 0; i < 3; i++)
+                {
+                    int ADD = 0;
+                    if (Select[4] == "男生"|| Select[4] == "女生")
+                        ADD = i * 2 + ((Select[4] == "男生") ? 0 : 1);
+                    multi.HintImage[i].sprite = System.Array.Find(
+                        Hint,
+                        sprite => sprite.name.Contains(Select[3] + Comparison[ADD] )
+                    );
+                }
+                for (int i = 3; i < 4; i++)
+                {
+                    multi.HintImage[i].sprite = System.Array.Find(
+                        Hint,
+                        sprite => sprite.name.Contains(multi.buttons[i].GetComponentInChildren<Text>().text)
+                    );
+                }
+                Next = false;
+                SkipButton.SetActive(false);
 
-            InputButton.SetActive(true);
-            multi.buttons[3].gameObject.SetActive(false);
-        }
-        else if (Step == 6)
-        {
-            Step += 1;
-        }
-        yield return new WaitUntil(() => Next);
-        if (Step == 7 && (!new[] { "女性漢服", "可愛貓咪", "盒玩人偶", "漂亮眼睛", "食物照片" }.Contains(Select[0])))
-        {
-            multi.stableDiffusionRegionPrompt.gameController.voiceAudioPlayer.AudioPlay(6);
-            MainText.text = AgentFlow[Step][0];
-            InfoText.text = AgentFlow[Step][1];
-            multi.ChangeAgentButton(new string[] { Select[6]+"1", Select[6] + "2", Select[6] + "3", Select[6] + "4" }, 4);
+                InputButton.SetActive(false);
+                multi.buttons[3].gameObject.SetActive(true);
+            }
+            else if (Step == 5)
+            {
+                Step += 1;
+            }
+            yield return new WaitUntil(() => Next);
+            if (Step == 6 && (!new[] { "女性漢服", "可愛貓咪", "漂亮眼睛", "食物照片" }.Contains(Select[0])))
+            {
+                multi.stableDiffusionRegionPrompt.gameController.voiceAudioPlayer.AudioPlay(5);
+                MainText.text = AgentFlow[Step][0];
+                InfoText.text = AgentFlow[Step][1]; 
+                multi.ChangeAgentButton(new string[] { "跳躍", "跑步", "坐著", "站立" }, 3, true);
+            
+                for (int i = 0; i < 3; i++)
+                {
+                    multi.HintImage[i].sprite = System.Array.Find(
+                        Hint,
+                        sprite => sprite.name.Contains(multi.buttons[i].GetComponentInChildren<Text>().text)
+                    );
+                }
+                multi.HintImage[3].sprite = System.Array.Find(
+                       Hint,
+                       sprite => sprite.name.Contains("自己決定")
+                   );
+                Next = false;
+                SkipButton.SetActive(false);
 
-            for (int i = 0; i < 4; i++)
-            {
-                multi.HintImage[i].sprite = System.Array.Find(
-                    Hint,
-                    sprite => sprite.name.Contains(multi.buttons[i].GetComponentInChildren<Text>().text)
-                );
+                InputButton.SetActive(true);
+                multi.buttons[3].gameObject.SetActive(false);
             }
-            Next = false;
-            SkipButton.SetActive(true);
-            InputButton.SetActive(false);
-            multi.buttons[3].gameObject.SetActive(true);
-        }
-        else if (Step == 7)
-        {
-            Step += 1;
-        }
-        yield return new WaitUntil(() => Next);
-        if (Step == 8 && (!new[] { "可愛貓咪", "漂亮眼睛", "食物照片" }.Contains(Select[0])))
-        {
-            multi.stableDiffusionRegionPrompt.gameController.voiceAudioPlayer.AudioPlay(7);
-            MainText.text = AgentFlow[Step][0];
-            InfoText.text = AgentFlow[Step][1];
-            multi.ChangeAgentButton(new string[] { "laughing", "smiling", "relaxed", "crying", "scared", "angry" }, 3, true);
+            else if (Step == 6)
+            {
+                Step += 1;
+            }
+            yield return new WaitUntil(() => Next);
+            if (Step == 7 && (!new[] { "女性漢服", "可愛貓咪", "盒玩人偶", "漂亮眼睛", "食物照片" }.Contains(Select[0])))
+            {
+                multi.stableDiffusionRegionPrompt.gameController.voiceAudioPlayer.AudioPlay(6);
+                MainText.text = AgentFlow[Step][0];
+                InfoText.text = AgentFlow[Step][1];
+                multi.ChangeAgentButton(new string[] { Select[6]+"1", Select[6] + "2", Select[6] + "3", Select[6] + "4" }, 4);
+
+                for (int i = 0; i < 4; i++)
+                {
+                    multi.HintImage[i].sprite = System.Array.Find(
+                        Hint,
+                        sprite => sprite.name.Contains(multi.buttons[i].GetComponentInChildren<Text>().text)
+                    );
+                }
+                Next = false;
+                SkipButton.SetActive(true);
+                InputButton.SetActive(false);
+                multi.buttons[3].gameObject.SetActive(true);
+            }
+            else if (Step == 7)
+            {
+                Step += 1;
+            }
+            yield return new WaitUntil(() => Next);
+            if (Step == 8 && (!new[] { "可愛貓咪", "漂亮眼睛", "食物照片" }.Contains(Select[0])))
+            {
+                multi.stableDiffusionRegionPrompt.gameController.voiceAudioPlayer.AudioPlay(7);
+                MainText.text = AgentFlow[Step][0];
+                InfoText.text = AgentFlow[Step][1];
+                multi.ChangeAgentButton(new string[] { "laughing", "smiling", "relaxed", "crying", "scared", "angry" }, 3, true);
             
-            for (int i = 0; i < 3; i++)
-            {
-                multi.HintImage[i].sprite = System.Array.Find(
-                    Hint,
-                    sprite => sprite.name.Contains(multi.buttons[i].GetComponentInChildren<Text>().text)
-                );
+                for (int i = 0; i < 3; i++)
+                {
+                    multi.HintImage[i].sprite = System.Array.Find(
+                        Hint,
+                        sprite => sprite.name.Contains(multi.buttons[i].GetComponentInChildren<Text>().text)
+                    );
+                }
+                multi.HintImage[3].sprite = System.Array.Find(
+                       Hint,
+                       sprite => sprite.name.Contains("自己決定")
+                   );
+                Next = false;
+                SkipButton.SetActive(true);
+                InputButton.SetActive(true);
+                multi.buttons[3].gameObject.SetActive(false);
             }
-            multi.HintImage[3].sprite = System.Array.Find(
-                   Hint,
-                   sprite => sprite.name.Contains("自己決定")
-               );
-            Next = false;
-            SkipButton.SetActive(true);
-            InputButton.SetActive(true);
-            multi.buttons[3].gameObject.SetActive(false);
-        }
-        else if (Step == 8)
-        {
-            Step += 1;
-        }
-        yield return new WaitUntil(() => Next);
-        if (Step == 9 && (!new[] { "黑白漫畫", "中國水墨畫" }.Contains(Select[0])))
-        {
-            multi.stableDiffusionRegionPrompt.gameController.voiceAudioPlayer.AudioPlay(8);
-            MainText.text = AgentFlow[Step][0];
-            InfoText.text = AgentFlow[Step][1];
-            multi.ChangeAgentButton(new string[] { "red", "blue", "green", "yellow", "purple","orange", "pink", "black", "white", "gray", "brown" }, 3, true);
+            else if (Step == 8)
+            {
+                Step += 1;
+            }
+            yield return new WaitUntil(() => Next);
+            if (Step == 9 && (!new[] { "黑白漫畫", "中國水墨畫" }.Contains(Select[0])))
+            {
+                multi.stableDiffusionRegionPrompt.gameController.voiceAudioPlayer.AudioPlay(8);
+                MainText.text = AgentFlow[Step][0];
+                InfoText.text = AgentFlow[Step][1];
+                multi.ChangeAgentButton(new string[] { "red", "blue", "green", "yellow", "purple","orange", "pink", "black", "white", "gray", "brown" }, 3, true);
             
-            for (int i = 0; i < 3; i++)
-            {
-                multi.HintImage[i].sprite = System.Array.Find(
-                    Hint,
-                    sprite => sprite.name.Contains(multi.buttons[i].GetComponentInChildren<Text>().text)
-                );
+                for (int i = 0; i < 3; i++)
+                {
+                    multi.HintImage[i].sprite = System.Array.Find(
+                        Hint,
+                        sprite => sprite.name.Contains(multi.buttons[i].GetComponentInChildren<Text>().text)
+                    );
+                }
+                multi.HintImage[3].sprite = System.Array.Find(
+                       Hint,
+                       sprite => sprite.name.Contains("自己決定")
+                   );
+                Next = false;
+                SkipButton.SetActive(true);
+                InputButton.SetActive(true);
+                multi.buttons[3].gameObject.SetActive(false);
             }
-            multi.HintImage[3].sprite = System.Array.Find(
-                   Hint,
-                   sprite => sprite.name.Contains("自己決定")
-               );
-            Next = false;
-            SkipButton.SetActive(true);
-            InputButton.SetActive(true);
-            multi.buttons[3].gameObject.SetActive(false);
-        }
-        else if (Step == 9)
-        {
-            Step += 1;
-        }
-        yield return new WaitUntil(() => Next);
-        if (Step == 10 && (!new[] { "女性漢服", "中國水墨畫" ,"漂亮眼睛", "盒玩人偶", "食物照片" }.Contains(Select[0])))
-        {
-            multi.stableDiffusionRegionPrompt.gameController.voiceAudioPlayer.AudioPlay(9);
-            MainText.text = AgentFlow[Step][0];
-            InfoText.text = AgentFlow[Step][1];
-            multi.ChangeAgentButton(new string[] {"desert", "forest", "beach", "grassland", "lake", "blizzard", "sunset", "foggy", "thunderstorm","god rays", "downtown", "oil painting", "japanese temple", "castle","classroom", "bedroom", "magic forest"}, 3, true);
+            else if (Step == 9)
+            {
+                Step += 1;
+            }
+            yield return new WaitUntil(() => Next);
+            if (Step == 10 && (!new[] { "女性漢服", "中國水墨畫" ,"漂亮眼睛", "盒玩人偶", "食物照片" }.Contains(Select[0])))
+            {
+                multi.stableDiffusionRegionPrompt.gameController.voiceAudioPlayer.AudioPlay(9);
+                MainText.text = AgentFlow[Step][0];
+                InfoText.text = AgentFlow[Step][1];
+                multi.ChangeAgentButton(new string[] {"desert", "forest", "beach", "grassland", "lake", "blizzard", "sunset", "foggy", "thunderstorm","god rays", "downtown", "oil painting", "japanese temple", "castle","classroom", "bedroom", "magic forest"}, 3, true);
             
-            for (int i = 0; i < 3; i++)
-            {
-                multi.HintImage[i].sprite = System.Array.Find(
-                    Hint,
-                    sprite => sprite.name.Contains(multi.buttons[i].GetComponentInChildren<Text>().text)
-                );
+                for (int i = 0; i < 3; i++)
+                {
+                    multi.HintImage[i].sprite = System.Array.Find(
+                        Hint,
+                        sprite => sprite.name.Contains(multi.buttons[i].GetComponentInChildren<Text>().text)
+                    );
+                }
+                multi.HintImage[3].sprite = System.Array.Find(
+                       Hint,
+                       sprite => sprite.name.Contains("自己決定")
+                   );
+                Next = false;
+                SkipButton.SetActive(true);
+                InputButton.SetActive(true);
+                multi.buttons[3].gameObject.SetActive(false);
             }
-            multi.HintImage[3].sprite = System.Array.Find(
-                   Hint,
-                   sprite => sprite.name.Contains("自己決定")
-               );
-            Next = false;
-            SkipButton.SetActive(true);
-            InputButton.SetActive(true);
-            multi.buttons[3].gameObject.SetActive(false);
-        }
-        else if (Step == 10)
-        {
-            Step += 1;
-        }
-        yield return new WaitUntil(() => Next);
-        if (Step == 11 && (!new[] { "漂亮眼睛" }.Contains(Select[0])))
-        {
-            multi.stableDiffusionRegionPrompt.gameController.voiceAudioPlayer.AudioPlay(10);
-            MainText.text = AgentFlow[Step][0];
-            InfoText.text = AgentFlow[Step][1];
-            multi.ChangeAgentButton(new string[] { "384", "1024", "512", "768" }, 3, true);
+            else if (Step == 10)
+            {
+                Step += 1;
+            }
+            yield return new WaitUntil(() => Next);
+            if (Step == 11 && (!new[] { "漂亮眼睛" }.Contains(Select[0])))
+            {
+                multi.stableDiffusionRegionPrompt.gameController.voiceAudioPlayer.AudioPlay(10);
+                MainText.text = AgentFlow[Step][0];
+                InfoText.text = AgentFlow[Step][1];
+                multi.ChangeAgentButton(new string[] { "384", "1024", "512", "768" }, 3, true);
             
-            for (int i = 0; i < 3; i++)
-            {
-                multi.HintImage[i].sprite = System.Array.Find(
-                    Hint,
-                    sprite => sprite.name.Contains(multi.buttons[i].GetComponentInChildren<Text>().text)
-                );
+                for (int i = 0; i < 3; i++)
+                {
+                    multi.HintImage[i].sprite = System.Array.Find(
+                        Hint,
+                        sprite => sprite.name.Contains(multi.buttons[i].GetComponentInChildren<Text>().text)
+                    );
+                }
+                multi.HintImage[3].sprite = System.Array.Find(
+                       Hint,
+                       sprite => sprite.name.Contains("自己決定")
+                   );
+                Next = false;
+                SkipButton.SetActive(false);
+                InputButton.SetActive(true);
+                multi.buttons[3].gameObject.SetActive(false);
             }
-            multi.HintImage[3].sprite = System.Array.Find(
-                   Hint,
-                   sprite => sprite.name.Contains("自己決定")
-               );
-            Next = false;
-            SkipButton.SetActive(false);
-            InputButton.SetActive(true);
-            multi.buttons[3].gameObject.SetActive(false);
-        }
-        else if (Step == 11)
-        {
-            Step += 1;
-        }
-        yield return new WaitUntil(() => Next);
-        if (Step == 12)
-        {
-            multi.stableDiffusionRegionPrompt.gameController.voiceAudioPlayer.AudioPlay(11);
-            MainText.text = AgentFlow[Step][0];
-            InfoText.text = AgentFlow[Step][1];
+            else if (Step == 11)
+            {
+                Step += 1;
+            }
+            yield return new WaitUntil(() => Next);
+            if (Step == 12)
+            {
+                multi.stableDiffusionRegionPrompt.gameController.voiceAudioPlayer.AudioPlay(11);
+                MainText.text = AgentFlow[Step][0];
+                InfoText.text = AgentFlow[Step][1];
            
-            for (int i = 0; i < 4; i++)
-            {
-                multi.buttons[i].gameObject.SetActive(false);
-                //multi.HintImage[i].gameObject.SetActive(false);
+                for (int i = 0; i < 4; i++)
+                {
+                    multi.buttons[i].gameObject.SetActive(false);
+                    //multi.HintImage[i].gameObject.SetActive(false);
+                }
+                AllHint.SetActive(false);
+                Next = false;
+                SkipButton.SetActive(true); SkipButton.GetComponentInChildren<TMPro.TextMeshProUGUI>().text = "Generate";
+                InputButton.SetActive(false);
+                OtherDetailButton.SetActive(true);
             }
-            AllHint.SetActive(false);
-            Next = false;
-            SkipButton.SetActive(true); SkipButton.GetComponentInChildren<TMPro.TextMeshProUGUI>().text = "Generate";
-            InputButton.SetActive(false);
-            OtherDetailButton.SetActive(true);
+            else if (Step == 12)
+            {
+                Step += 1;
+            }
+            yield return new WaitUntil(() => Next);
+            multi.stableDiffusionRegionPrompt.gameController.voiceAudioPlayer.AudioPlay(12);
+            StartCoroutine(ConversionInfo());
         }
-        else if (Step == 12)
-        {
-            Step += 1;
-        }
-        yield return new WaitUntil(() => Next);
-        multi.stableDiffusionRegionPrompt.gameController.voiceAudioPlayer.AudioPlay(12);
-        StartCoroutine(ConversionInfo());
+
     }
 
-    
+    public void OnAgentActive(InputField inputField)
+    {
+        string LLM_Prompt = @"
+            接下來我會給你上一次的對話結果(可能無)、上一次的建議(可能無)和這一次的對話內容，你需要根據這些對話用文字描述圖片的內容，並給予一些建議
+            範例輸入:上一次的對話結果:無,上一次的建議:無,這一次的對話內容:可以幫我構想圖片內容嗎，主角會是一個穿著漢服的女性，且圖片風格為動畫風
+            範例輸出:圖片內容:{一張日系動畫風格的圖片躍然眼前，描繪了一位身穿齊胸襦裙的漢服少女，她站立於一片翠綠欲滴、竹影婆娑的竹林深處。陽光穿透茂密的竹葉，灑下斑駁的光影，輕輕柔柔地灑落在少女身上，也點亮了蜿蜒流淌的清澈小溪。溪水清澈見底，幾片竹葉隨波輕舞，為這片靜謐的竹林增添了幾分生機。}建議:{要不要再加入一些顏色來豐富圖片呢}
+            輸入:上一次的對話結果:{1},上一次的建議:{2},這一次的對話內容:{3}
+            輸出格式:圖片內容:{},建議:{}
+            圖片內容和建議皆須使用大括號括起來，不要生成圖像，僅使用文字進行回覆
+        ";
+
+        LLM_Prompt = LLM_Prompt.Replace("{1}", "{" + content.text +"}").Replace("{2}", "{" + suggestion.text + "}").Replace("{3}", "{" + inputField.text + "}");
+
+        inputField.text = "";
+        Debug.Log(LLM_Prompt);
+        StartCoroutine(multi.stableDiffusionRegionPrompt.geminiAPI.SendRequest(LLM_Prompt, (result) => {
+            MatchCollection matches = Regex.Matches(result, @"\{(.*?)\}");
+            List<string> results = new List<string>();
+
+            foreach (Match match in matches)
+            {
+                results.Add(match.Groups[1].Value);
+            }
+            content.text = (results[0] != null) ? results[0] : "抱歉我不太懂你的意思";
+            suggestion.text = (results[1] != null)? results[1] : "抱歉我不太懂你的意思";
+            AgentCount--;
+            if(AgentCount == 0)
+            {
+                string LLM_Prompt = @"
+                    接下來我會給你一段話來描述希望的圖片內容，你需要分別告訴我這段話中有沒有:
+                    1.主題:限定以下八種主題(1)女性漢服(2)黑白漫畫(3)可愛貓咪(4)中國水墨畫(5)盒玩人偶(6)吉卜力(7)漂亮眼睛(8)食物照片，若有的話回答對應編號，若不是這八種則回答none
+                    2.風格:限定以下五種風格(1)可愛動畫風格(2)擬真動畫風格(3)柔和動畫風格(4)現實風格(5)插畫動畫風格，，若有的話回答對應編號，若不是這五種則回答none
+                    3.主體:圖片中最主要的角色，只須回答一個，若沒有則回答none，並根據是不是人類回答yes/no
+                    4.姿勢:圖片中最主要角色的姿勢，若沒有則回答none
+                    5.色調:圖片中最主要的色調，只須回答一個，若沒有則回答none
+                    6.背景:圖片中最主要的背景，只須回答一個，若沒有則回答none
+                    7.其他敘述:圖片中的其他細節描述，可以回答多個，請作為圖片提示詞一個一個列出來，若沒有則無需回答
+                    希望的圖片內容:{1}
+                    輸出格式:主題:{1/2/3/4/5/6/7/8或none}, 風格:{1/2/3/4/5或none},主體:{main character或none},主體是否為人:{yes或no},姿勢:{main character's pose或none},色調:{main color或none},背景{main background或none},其他敘述1:{image prompt},其他敘述1:{image prompt},其他敘述2:{image prompt},其他敘述3:{image prompt}...
+                    輸出需使用英文回答，且每個回答皆須使用大括號括起來
+                ";
+                LLM_Prompt = LLM_Prompt.Replace("{1}", "{" + content.text + "}");
+                StartCoroutine(multi.stableDiffusionRegionPrompt.geminiAPI.SendRequest(LLM_Prompt, (result) => {
+                    MatchCollection matches = Regex.Matches(result, @"\{(.*?)\}");
+                    List<string> results = new List<string>();
+
+                    foreach (Match match in matches)
+                    {
+                        results.Add(match.Groups[1].Value);
+                    }
+                    string[] Loralist = new string[] { "", "女性漢服", "黑白漫畫", "可愛貓咪", "中國水墨畫", "盒玩人偶", "吉卜力", "漂亮眼睛", "食物照片" };
+                    string[] Modellist = new string[] { "", "可愛動畫", "擬真動畫", "柔和動畫", "現實風格", "插畫動畫" };
+                    //主題:{3}, 風格:{4}, 主體:{young woman}, 主體是否為人:{yes}, 姿勢:{gently petting a cat}, 色調:{blue}, 背景:{cozy home interior}, 其他敘述1:{blue dress}, 其他敘述2:{fluffy cat}, 其他敘述3:{sparkling eyes}, 其他敘述4:{bell on the cat's neck}, 其他敘述5:{soft sunlight}, 其他敘述6:{warm and peaceful atmosphere}, 其他敘述7:{silky hair}, 其他敘述8:{loving smile}
+                    Select[0] = Loralist[int.TryParse(results[0], out int index) ? index : 0];
+                    Select[3] = Modellist[int.TryParse(results[1], out int index2) ? index2 : 0];
+                    Select[4] = results[2];
+                    Select[6] = results[4];
+                    Select[9] = results[5];
+                    Select[10] = results[6];
+                    Select[11] = "768";
+                    string combined = string.Join(",", results.Skip(6));
+                    Select[12] = combined;
+                    StartCoroutine(ConversionInfo());
+                }));
+            }
+        }));
+        
+    }
 }

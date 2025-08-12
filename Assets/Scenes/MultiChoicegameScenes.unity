@@ -16454,6 +16454,7 @@ MonoBehaviour:
   multiChoiceQuestion: {fileID: 1101888633}
   tTSClone: {fileID: 1101888634}
   Hardlist: []
+  usedMainPrompt: 
 --- !u!114 &1101888625
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16657,9 +16658,11 @@ MonoBehaviour:
   - {fileID: 415376719}
   - {fileID: 1898129411}
   stableDiffusionRegionPrompt: {fileID: 1101888632}
+  ClassificationZone: {fileID: 0}
   IsResultScreen: 0
   GameScreen: {fileID: 544581154}
   ResultScreen: {fileID: 1387340013}
+  Classification: []
 --- !u!114 &1101888634
 MonoBehaviour:
   m_ObjectHideFlags: 0
