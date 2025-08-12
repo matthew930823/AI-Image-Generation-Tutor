@@ -765,7 +765,14 @@ public class AIAgentMode : MonoBehaviour
             AgentCount--;
             if(AgentCount == 0)
             {
-                string LLM_Prompt = @"
+                SkipChat();
+            }
+        }));
+        
+    }
+    public void SkipChat()
+    {
+        string LLM_Prompt = @"
                     接下來我會給你一段話來描述希望的圖片內容，你需要分別告訴我這段話中有沒有:
                     1.主題:限定以下八種主題(1)女性漢服(2)黑白漫畫(3)可愛貓咪(4)中國水墨畫(5)盒玩人偶(6)吉卜力(7)漂亮眼睛(8)食物照片，若有的話回答對應編號，若不是這八種則回答none
                     2.風格:限定以下五種風格(1)可愛動畫風格(2)擬真動畫風格(3)柔和動畫風格(4)現實風格(5)插畫動畫風格，，若有的話回答對應編號，若不是這五種則回答none
@@ -778,31 +785,28 @@ public class AIAgentMode : MonoBehaviour
                     輸出格式:主題:{1/2/3/4/5/6/7/8或none}, 風格:{1/2/3/4/5或none},主體:{main character或none},主體是否為人:{yes或no},姿勢:{main character's pose或none},色調:{main color或none},背景{main background或none},其他敘述1:{image prompt},其他敘述1:{image prompt},其他敘述2:{image prompt},其他敘述3:{image prompt}...
                     輸出需使用英文回答，且每個回答皆須使用大括號括起來
                 ";
-                LLM_Prompt = LLM_Prompt.Replace("{1}", "{" + content.text + "}");
-                StartCoroutine(multi.stableDiffusionRegionPrompt.geminiAPI.SendRequest(LLM_Prompt, (result) => {
-                    MatchCollection matches = Regex.Matches(result, @"\{(.*?)\}");
-                    List<string> results = new List<string>();
+        LLM_Prompt = LLM_Prompt.Replace("{1}", "{" + content.text + "}");
+        StartCoroutine(multi.stableDiffusionRegionPrompt.geminiAPI.SendRequest(LLM_Prompt, (result) => {
+            MatchCollection matches = Regex.Matches(result, @"\{(.*?)\}");
+            List<string> results = new List<string>();
 
-                    foreach (Match match in matches)
-                    {
-                        results.Add(match.Groups[1].Value);
-                    }
-                    string[] Loralist = new string[] { "", "女性漢服", "黑白漫畫", "可愛貓咪", "中國水墨畫", "盒玩人偶", "吉卜力", "漂亮眼睛", "食物照片" };
-                    string[] Modellist = new string[] { "", "可愛動畫", "擬真動畫", "柔和動畫", "現實風格", "插畫動畫" };
-                    //主題:{3}, 風格:{4}, 主體:{young woman}, 主體是否為人:{yes}, 姿勢:{gently petting a cat}, 色調:{blue}, 背景:{cozy home interior}, 其他敘述1:{blue dress}, 其他敘述2:{fluffy cat}, 其他敘述3:{sparkling eyes}, 其他敘述4:{bell on the cat's neck}, 其他敘述5:{soft sunlight}, 其他敘述6:{warm and peaceful atmosphere}, 其他敘述7:{silky hair}, 其他敘述8:{loving smile}
-                    Select[0] = Loralist[int.TryParse(results[0], out int index) ? index : 0];
-                    Select[3] = Modellist[int.TryParse(results[1], out int index2) ? index2 : 0];
-                    Select[4] = results[2];
-                    Select[6] = results[4];
-                    Select[9] = results[5];
-                    Select[10] = results[6];
-                    Select[11] = "768";
-                    string combined = string.Join(",", results.Skip(6));
-                    Select[12] = combined;
-                    StartCoroutine(ConversionInfo());
-                }));
+            foreach (Match match in matches)
+            {
+                results.Add(match.Groups[1].Value);
             }
+            string[] Loralist = new string[] { "", "女性漢服", "黑白漫畫", "可愛貓咪", "中國水墨畫", "盒玩人偶", "吉卜力", "漂亮眼睛", "食物照片" };
+            string[] Modellist = new string[] { "", "可愛動畫", "擬真動畫", "柔和動畫", "現實風格", "插畫動畫" };
+            //主題:{3}, 風格:{4}, 主體:{young woman}, 主體是否為人:{yes}, 姿勢:{gently petting a cat}, 色調:{blue}, 背景:{cozy home interior}, 其他敘述1:{blue dress}, 其他敘述2:{fluffy cat}, 其他敘述3:{sparkling eyes}, 其他敘述4:{bell on the cat's neck}, 其他敘述5:{soft sunlight}, 其他敘述6:{warm and peaceful atmosphere}, 其他敘述7:{silky hair}, 其他敘述8:{loving smile}
+            Select[0] = Loralist[int.TryParse(results[0], out int index) ? index : 0];
+            Select[3] = Modellist[int.TryParse(results[1], out int index2) ? index2 : 0];
+            Select[4] = (results[2]!="none")? results[2] : "";
+            Select[6] = (results[4] != "none") ? results[4] : "";
+            Select[9] = (results[5] != "none") ? results[5] : "";
+            Select[10] = (results[6] != "none") ? results[6] : "";
+            Select[11] = "768";
+            string combined = string.Join(",", results.Skip(6));
+            Select[12] = combined;
+            StartCoroutine(ConversionInfo());
         }));
-        
     }
 }
