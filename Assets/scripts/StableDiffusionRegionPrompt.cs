@@ -234,7 +234,8 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
         // 然後執行 GenerateImageForMultipleChoice
         if(type!= "Controlnet")
         {
-            yield return StartCoroutine(GenerateImageForMultipleChoice(768, 768, Prompt, checkpoint, LoRa, ControlNetType, "", ControlnetImageBase64, Seed,
+            int temp_resolution = (LoRa == "Snoopy") ? 512 : 768;
+            yield return StartCoroutine(GenerateImageForMultipleChoice(temp_resolution, temp_resolution, Prompt, checkpoint, LoRa, ControlNetType, "", ControlnetImageBase64, Seed,
                    texture =>
                    {
                        img1 = texture;
