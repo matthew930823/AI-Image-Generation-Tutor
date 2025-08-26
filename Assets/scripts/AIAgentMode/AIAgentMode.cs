@@ -46,6 +46,7 @@ public class AIAgentMode : MonoBehaviour
     public GameObject GameScene;
     public GameObject AgentScene;
     public GameObject ResultScene;
+    public GameObject AgentCheckScene;
     public GameObject Option;
     public GameObject AllHint;
 
@@ -106,7 +107,28 @@ public class AIAgentMode : MonoBehaviour
             inputField.text = "";
         }
     }
-    IEnumerator ConversionInfo()//Lora 漢服 食物 checkpoint 主體 年齡 姿勢 參考圖 表情 色調 背景 解析度 細節
+    Dictionary<string, string> LoraMap = new Dictionary<string, string>()
+        {
+            { "女性漢服", "Hanfu" },
+            { "黑白漫畫", "Manga" },
+            { "可愛貓咪", "Cutecat" },
+            { "中國水墨畫", "Inkpainting" },
+            { "盒玩人偶", "Doll" },
+            { "吉卜力", "Ghibli" },
+            { "漂亮眼睛", "Eye" },
+            { "食物照片", "Foodphoto" },
+            { "", "None" }
+        };
+    Dictionary<string, string> CheckpointMap = new Dictionary<string, string>()
+        {
+            { "anime_cute.safetensors", "CuteYukiMix" },
+            { "anime-real_hybrid.safetensors", "ReV Animated" },
+            { "anime_soft.safetensors", "Cetus-Mix" },
+            { "realistic_anything.safetensors", "DreamShaper" },
+            { "anime_bold.safetensors", "Counterfeit" },
+            { "","None"}
+        };
+    IEnumerator ConversionInfo(bool AgentMode)//Lora 漢服 食物 checkpoint 主體 年齡 姿勢 參考圖 表情 色調 背景 解析度 細節
     {
         //Key_Prompt + Main_Prompt + Other_Prompt + LoRa_Prompt + Default_Prompt
         string Key_Prompt = "";
@@ -142,27 +164,22 @@ public class AIAgentMode : MonoBehaviour
             { "晉朝", "jin style" },
             { "漢朝", "han style" }
         };
-        Dictionary<string, string> CheckpointMap = new Dictionary<string, string>()
-        {
-            { "anime_cute.safetensors", "CuteYukiMix" },
-            { "anime-real_hybrid.safetensors", "ReV Animated" },
-            { "anime_soft.safetensors", "Cetus-Mix" },
-            { "realistic_anything.safetensors", "DreamShaper" },
-            { "anime_bold.safetensors", "Counterfeit" }
-        };
+        
  
-        Dictionary<string, string> LoraMap = new Dictionary<string, string>()
+        
+
+        if (AgentMode)
         {
-            { "女性漢服", "Hanfu" },
-            { "黑白漫畫", "Manga" },
-            { "可愛貓咪", "Cutecat" },
-            { "中國水墨畫", "Inkpainting" },
-            { "盒玩人偶", "Doll" },
-            { "吉卜力", "Ghibli" },
-            { "漂亮眼睛", "Eye" },
-            { "食物照片", "Foodphoto" },
-            { "", "None" }
-        };
+            string key = LoraMap.FirstOrDefault(kvp => kvp.Value.Contains(editResultObjects[0].GetComponent<TMP_Text>().text)).Key;
+            Debug.Log(key);
+            Select[0] = key;
+            Select[4] = editResultObjects[1].GetComponent<TMP_Text>().text;
+            Select[3] = "";//不要放後面影響到model
+            Checkpoint = CheckpointMap.FirstOrDefault(kvp => kvp.Value.Contains(editResultObjects[2].GetComponent<TMP_Text>().text)).Key;
+            Select[9] = editResultObjects[3].GetComponent<TMP_Text>().text;
+            Select[10] = editResultObjects[4].GetComponent<TMP_Text>().text;
+            Select[6] = editResultObjects[5].GetComponent<TMP_Text>().text;
+        }
         switch (Select[0]) 
         {
             case "女性漢服":
@@ -319,6 +336,8 @@ public class AIAgentMode : MonoBehaviour
             Key_Prompt += "(" + Select[9] + ":2)";
         if (Select[10] != "")
             Key_Prompt += ",(" + Select[10] + ":2)";
+
+        
         string Prompt = Key_Prompt + ",(" + Main_Prompt + ((Select[5] != "") ? ":1.7)" : ":1.3)") + Other_Prompt+ Select[12] + LoRa_Prompt + Default_Prompt;
         Debug.Log(  "Prompt:"+ Prompt + "\n"+
                     "Neg_Prompt:" + Neg_Prompt + "\n" +
@@ -326,6 +345,7 @@ public class AIAgentMode : MonoBehaviour
                     "Resolution:" + Resolution + "\n" +
                     "Add_Detail:" + Add_Detail + "\n" +
                     "Controlnet:" + Controlnet_moduleString);
+
         Result[0].text = LoraMap[Select[0]];
         Result[1].text = Main_Prompt;
         Result[2].text = CheckpointMap[Checkpoint];
@@ -428,7 +448,57 @@ public class AIAgentMode : MonoBehaviour
                 multi.buttons[3].gameObject.SetActive(false);
             }
             yield return new WaitUntil(() => Next);
-            StartCoroutine(ConversionInfo());
+            editResultObjects[0].GetComponent<TMP_Text>().text = LoraMap[Select[0]];
+            editResultObjects[1].GetComponent<TMP_Text>().text = Select[4];
+            string Checkpoint="";
+            switch (Select[3])
+            {
+                case "可愛動畫":
+                    Checkpoint = "anime_cute.safetensors";
+                    break;
+                case "擬真動畫":
+                    Checkpoint = "anime-real_hybrid.safetensors";
+                    break;
+                case "柔和動畫":
+                    Checkpoint = "anime_soft.safetensors";
+                    break;
+                case "現實風格":
+                    Checkpoint = "realistic_anything.safetensors";
+                    break;
+                case "插畫動畫":
+                    Checkpoint = "anime_bold.safetensors";
+                    break;
+                default:
+                    break;
+            }
+            editResultObjects[2].GetComponent<TMP_Text>().text = CheckpointMap[Checkpoint];
+            editResultObjects[3].GetComponent<TMP_Text>().text = Select[9];
+            editResultObjects[4].GetComponent<TMP_Text>().text = Select[10];
+            switch (Select[6])
+            {
+                case "跳躍":
+                    editResultObjects[5].GetComponent<TMP_Text>().text = "jumping";
+                    break;
+                case "跑步":
+                    editResultObjects[5].GetComponent<TMP_Text>().text = "running";
+                    break;
+                case "坐著":
+                    editResultObjects[5].GetComponent<TMP_Text>().text = "sitting";
+                    break;
+                case "站立":
+                    editResultObjects[5].GetComponent<TMP_Text>().text = "standing";
+                    break;
+                default:
+                    if (Select[6] != "")
+                    {
+                        editResultObjects[5].GetComponent<TMP_Text>().text = Select[6];
+                    }
+                    else
+                        editResultObjects[5].GetComponent<TMP_Text>().text = "None";
+                    break;
+            }
+            GameScene.SetActive(false);
+            AgentCheckScene.SetActive(true);
         }
         else
         {
@@ -803,7 +873,7 @@ public class AIAgentMode : MonoBehaviour
             }
             yield return new WaitUntil(() => Next);
             multi.stableDiffusionRegionPrompt.gameController.voiceAudioPlayer.AudioPlay(12);
-            StartCoroutine(ConversionInfo());
+            StartCoroutine(ConversionInfo(false));
         }
 
     }
@@ -897,5 +967,70 @@ public class AIAgentMode : MonoBehaviour
             AgentScene.SetActive(false);
             BigScene.SetActive(true);
         }));
+    }
+
+    public GameObject[] editObjects;
+    public GameObject[] editResultObjects;
+    public void EditButton()
+    {
+        for (int i = 0; i < editObjects.Length; i++)
+        {
+            editObjects[i].SetActive(true);
+            if (editObjects[i].GetComponent<InputField>() != null)
+            {
+                var input = editObjects[i].GetComponent<InputField>();
+                if (editResultObjects[i].GetComponent<TMP_Text>().text != null)
+                {
+                    input.text = editResultObjects[i].GetComponent<TMP_Text>().text;
+                }
+            }
+            else
+            {
+                var dropdown = editObjects[i].GetComponent<TMP_Dropdown>();
+                if (editResultObjects[i].GetComponent<TMP_Text>().text != null)
+                {
+                    int index = dropdown.options.FindIndex(option => option.text == editResultObjects[i].GetComponent<TMP_Text>().text);
+                    dropdown.value = index;
+                }
+
+            }
+        }
+    }
+
+    public void TickButton()
+    {
+        for(int i=0;i< editObjects.Length;i++)
+        {
+            editObjects[i].SetActive(false);
+            if (editObjects[i].GetComponent<InputField>() != null)
+            {
+                var input = editObjects[i].GetComponent<InputField>();
+                if (input.text != "")
+                {
+                    editResultObjects[i].GetComponent<TMP_Text>().text = input.text;
+                }
+                else
+                {
+                    editResultObjects[i].GetComponent<TMP_Text>().text = "none";
+                }
+            }
+            else
+            {
+                var dropdown = editObjects[i].GetComponent<TMP_Dropdown>();
+                if (dropdown.options[dropdown.value].text != "")
+                {
+                    editResultObjects[i].GetComponent<TMP_Text>().text = dropdown.options[dropdown.value].text;
+                }
+                else
+                {
+                    editResultObjects[i].GetComponent<TMP_Text>().text = "none";
+                }
+
+            }
+        }
+    }
+    public void CheckSceneButton()
+    {
+        StartCoroutine(ConversionInfo(true));
     }
 }

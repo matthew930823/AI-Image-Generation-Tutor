@@ -1106,7 +1106,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
                 break;
             case "Snoopy":
                 LoraPrompt = ",<lora:Snoopy:1>";
-                Model_checkpoint = "anyloraCheckpoint_bakedvaeBlessedFp16.safetensors [ef49fbb25f]";
+                Model_checkpoint = "realistic_anything.safetensors";
                 modelString = "";
                 break;  
             default:
