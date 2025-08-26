@@ -186,7 +186,7 @@ public class AIAgentMode : MonoBehaviour
                 Select[3] = "插畫動畫";
                 break;
             case "可愛貓咪":
-                Main_Prompt = "1 cute cat"; 
+                Select[4] = "1 cute cat";
                 Controlnet_modelString = "";
                 Select[3] = "擬真動畫";
                 LoRa_Prompt = ",<lora:cat_20230627113759:0.7>";
@@ -211,14 +211,14 @@ public class AIAgentMode : MonoBehaviour
                 break;
             case "漂亮眼睛":
                 LoRa_Prompt = ",<lora:Loraeyes_V1:0.8>";
-                Main_Prompt = "1 eye";
+                Select[4] = "1 eye";
                 Other_Prompt += ",loraeyes";
                 Controlnet_modelString = "";
                 Select[3] = "可愛動畫";
                 Resolution = 512;
                 break;
             case "食物照片":
-                Main_Prompt = Select[2];
+                Select[4] = Select[2];
                 Select[3] = "現實風格";
                 LoRa_Prompt = ",<lora:foodphoto:0.6>";
                 Other_Prompt += ",foodphoto";
