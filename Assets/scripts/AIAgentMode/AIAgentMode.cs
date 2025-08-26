@@ -150,7 +150,8 @@ public class AIAgentMode : MonoBehaviour
 
         string Controlnet_modelString = (Select[7]!="")?"control_v11p_sd15_openpose [cab727d4]":"";
         string Controlnet_moduleString = "none";
-
+        if (Select[0] == "女性漢服")
+            Select[7] = "nohand";
         string Controlnet_Image = Convert.ToBase64String(System.Array.Find(
                    Hint,
                    sprite => sprite.name.Contains(Select[7])
@@ -166,20 +167,6 @@ public class AIAgentMode : MonoBehaviour
         };
         
  
-        
-
-        if (AgentMode)
-        {
-            string key = LoraMap.FirstOrDefault(kvp => kvp.Value.Contains(editResultObjects[0].GetComponent<TMP_Text>().text)).Key;
-            Debug.Log(key);
-            Select[0] = key;
-            Select[4] = editResultObjects[1].GetComponent<TMP_Text>().text;
-            Select[3] = "";//不要放後面影響到model
-            Checkpoint = CheckpointMap.FirstOrDefault(kvp => kvp.Value.Contains(editResultObjects[2].GetComponent<TMP_Text>().text)).Key;
-            Select[9] = editResultObjects[3].GetComponent<TMP_Text>().text;
-            Select[10] = editResultObjects[4].GetComponent<TMP_Text>().text;
-            Select[6] = editResultObjects[5].GetComponent<TMP_Text>().text;
-        }
         switch (Select[0]) 
         {
             case "女性漢服":
@@ -381,7 +368,94 @@ public class AIAgentMode : MonoBehaviour
         {
             Debug.Log("NO");
             FinishAgent = false;
+            
             yield return new WaitUntil(() => FinishAgent);
+            editResultObjects[0].GetComponent<TMP_Text>().text = LoraMap[Select[0]];
+            editResultObjects[1].GetComponent<TMP_Text>().text = Select[4];
+            string Checkpoint = "";
+            switch (Select[3])
+            {
+                case "可愛動畫":
+                    Checkpoint = "anime_cute.safetensors";
+                    break;
+                case "擬真動畫":
+                    Checkpoint = "anime-real_hybrid.safetensors";
+                    break;
+                case "柔和動畫":
+                    Checkpoint = "anime_soft.safetensors";
+                    break;
+                case "現實風格":
+                    Checkpoint = "realistic_anything.safetensors";
+                    break;
+                case "插畫動畫":
+                    Checkpoint = "anime_bold.safetensors";
+                    break;
+                default:
+                    Select[3] = "";
+                    break;
+            }
+            editResultObjects[2].GetComponent<TMP_Text>().text = CheckpointMap[Checkpoint];
+            editResultObjects[3].GetComponent<TMP_Text>().text = Select[9];
+            editResultObjects[4].GetComponent<TMP_Text>().text = Select[10];
+            switch (Select[6])
+            {
+                case "跳躍":
+                    editResultObjects[5].GetComponent<TMP_Text>().text = "jumping";
+                    break;
+                case "跑步":
+                    editResultObjects[5].GetComponent<TMP_Text>().text = "running";
+                    break;
+                case "坐著":
+                    editResultObjects[5].GetComponent<TMP_Text>().text = "sitting";
+                    break;
+                case "站立":
+                    editResultObjects[5].GetComponent<TMP_Text>().text = "standing";
+                    break;
+                default:
+                    if (Select[6] != "")
+                    {
+                        editResultObjects[5].GetComponent<TMP_Text>().text = Select[6];
+                    }
+                    else
+                        editResultObjects[5].GetComponent<TMP_Text>().text = "None";
+                    break;
+            }
+            GameScene.SetActive(false);
+            AgentCheckScene.SetActive(true);
+            Next = false;
+            yield return new WaitUntil(() => Next);
+            string key = LoraMap.FirstOrDefault(kvp => kvp.Value.Contains(editResultObjects[0].GetComponent<TMP_Text>().text)).Key;
+            Debug.Log(key);
+            Select[0] = key;
+            Select[4] = editResultObjects[1].GetComponent<TMP_Text>().text;
+            string checkpoint = CheckpointMap.FirstOrDefault(x => x.Value == editResultObjects[2].GetComponent<TMP_Text>().text).Key;
+
+            // 再由 checkpoint 反推出 Select[3]
+            switch (checkpoint)
+            {
+                case "anime_cute.safetensors":
+                    Select[3] = "可愛動畫";
+                    break;
+                case "anime-real_hybrid.safetensors":
+                    Select[3] = "擬真動畫";
+                    break;
+                case "anime_soft.safetensors":
+                    Select[3] = "柔和動畫";
+                    break;
+                case "realistic_anything.safetensors":
+                    Select[3] = "現實風格";
+                    break;
+                case "anime_bold.safetensors":
+                    Select[3] = "插畫動畫";
+                    break;
+                default:
+                    Select[3] = "";
+                    break;
+            }
+            Select[9] = editResultObjects[3].GetComponent<TMP_Text>().text;
+            Select[10] = editResultObjects[4].GetComponent<TMP_Text>().text;
+            Select[6] = editResultObjects[5].GetComponent<TMP_Text>().text;
+            GameScene.SetActive(true);
             if (Select[3] == "")
             {
                 Step = 3;
@@ -402,7 +476,7 @@ public class AIAgentMode : MonoBehaviour
                 multi.buttons[3].gameObject.SetActive(true);
             }
             yield return new WaitUntil(() => Next);
-            if (Select[7] == "yes")
+            if (Select[7] == "yes"&& Select[0]!= "女性漢服")
             {
                 Step = 7;
                 multi.stableDiffusionRegionPrompt.gameController.voiceAudioPlayer.AudioPlay(6);
@@ -448,57 +522,7 @@ public class AIAgentMode : MonoBehaviour
                 multi.buttons[3].gameObject.SetActive(false);
             }
             yield return new WaitUntil(() => Next);
-            editResultObjects[0].GetComponent<TMP_Text>().text = LoraMap[Select[0]];
-            editResultObjects[1].GetComponent<TMP_Text>().text = Select[4];
-            string Checkpoint="";
-            switch (Select[3])
-            {
-                case "可愛動畫":
-                    Checkpoint = "anime_cute.safetensors";
-                    break;
-                case "擬真動畫":
-                    Checkpoint = "anime-real_hybrid.safetensors";
-                    break;
-                case "柔和動畫":
-                    Checkpoint = "anime_soft.safetensors";
-                    break;
-                case "現實風格":
-                    Checkpoint = "realistic_anything.safetensors";
-                    break;
-                case "插畫動畫":
-                    Checkpoint = "anime_bold.safetensors";
-                    break;
-                default:
-                    break;
-            }
-            editResultObjects[2].GetComponent<TMP_Text>().text = CheckpointMap[Checkpoint];
-            editResultObjects[3].GetComponent<TMP_Text>().text = Select[9];
-            editResultObjects[4].GetComponent<TMP_Text>().text = Select[10];
-            switch (Select[6])
-            {
-                case "跳躍":
-                    editResultObjects[5].GetComponent<TMP_Text>().text = "jumping";
-                    break;
-                case "跑步":
-                    editResultObjects[5].GetComponent<TMP_Text>().text = "running";
-                    break;
-                case "坐著":
-                    editResultObjects[5].GetComponent<TMP_Text>().text = "sitting";
-                    break;
-                case "站立":
-                    editResultObjects[5].GetComponent<TMP_Text>().text = "standing";
-                    break;
-                default:
-                    if (Select[6] != "")
-                    {
-                        editResultObjects[5].GetComponent<TMP_Text>().text = Select[6];
-                    }
-                    else
-                        editResultObjects[5].GetComponent<TMP_Text>().text = "None";
-                    break;
-            }
-            GameScene.SetActive(false);
-            AgentCheckScene.SetActive(true);
+            StartCoroutine(ConversionInfo(true));
         }
         else
         {
@@ -976,6 +1000,7 @@ public class AIAgentMode : MonoBehaviour
         for (int i = 0; i < editObjects.Length; i++)
         {
             editObjects[i].SetActive(true);
+            editResultObjects[i].SetActive(false);
             if (editObjects[i].GetComponent<InputField>() != null)
             {
                 var input = editObjects[i].GetComponent<InputField>();
@@ -1002,6 +1027,7 @@ public class AIAgentMode : MonoBehaviour
         for(int i=0;i< editObjects.Length;i++)
         {
             editObjects[i].SetActive(false);
+            editResultObjects[i].SetActive(true);
             if (editObjects[i].GetComponent<InputField>() != null)
             {
                 var input = editObjects[i].GetComponent<InputField>();
@@ -1028,9 +1054,5 @@ public class AIAgentMode : MonoBehaviour
 
             }
         }
-    }
-    public void CheckSceneButton()
-    {
-        StartCoroutine(ConversionInfo(true));
     }
 }
