@@ -324,9 +324,9 @@ public class AIAgentMode : MonoBehaviour
             Other_Prompt += "," + Select[8];
             Add_Detail += "," + Select[8];
         }
-        if (Select[9] != "")
+        if (Select[9] != "" & Select[9] != "none")
             Key_Prompt += "(" + Select[9] + ":2)";
-        if (Select[10] != "")
+        if (Select[10] != "" & Select[10] != "none")
             Key_Prompt += ",(" + Select[10] + ":2)";
 
         
