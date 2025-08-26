@@ -152,11 +152,16 @@ public class AIAgentMode : MonoBehaviour
         string Controlnet_moduleString = "none";
         if (Select[0] == "女性漢服")
             Select[7] = "nohand";
-        string Controlnet_Image = Convert.ToBase64String(System.Array.Find(
-                   Hint,
-                   sprite => sprite.name.Contains(Select[7])
-               ).texture.EncodeToPNG());
-        
+
+        var foundSprite = System.Array.Find(Hint, sprite => sprite.name.Contains(Select[7]));
+
+        string Controlnet_Image = null;
+        if (foundSprite != null)
+        {
+            Controlnet_Image = Convert.ToBase64String(foundSprite.texture.EncodeToPNG());
+        }
+
+
         Dictionary<string, string> dynastyMap = new Dictionary<string, string>()
         {
             { "明朝", "ming style" },
