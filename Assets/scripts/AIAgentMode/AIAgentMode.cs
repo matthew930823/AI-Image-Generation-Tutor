@@ -477,13 +477,13 @@ public class AIAgentMode : MonoBehaviour
                 multi.buttons[3].gameObject.SetActive(true);
             }
             yield return new WaitUntil(() => Next);
-            if (Select[7] == "yes"&& Select[0]!= "女性漢服")
+            if (Select[7] != "none"&& Select[0]!= "女性漢服")
             {
                 Step = 7;
                 multi.stableDiffusionRegionPrompt.gameController.voiceAudioPlayer.AudioPlay(6);
                 MainText.text = AgentFlow[Step][0];
                 InfoText.text = AgentFlow[Step][1];
-                multi.ChangeAgentButton(new string[] { Select[6] + "1", Select[6] + "2", Select[6] + "3", Select[6] + "4" }, 4);
+                multi.ChangeAgentButton(new string[] { Select[7] + "1", Select[7] + "2", Select[7] + "3", Select[7] + "4" }, 4);
 
                 for (int i = 0; i < 4; i++)
                 {
@@ -947,30 +947,18 @@ public class AIAgentMode : MonoBehaviour
     public void SkipChat()
     {
         string LLM_Prompt = @"接下來我會給你一段話來描述希望的圖片內容，你需要分別告訴我這段話中有沒有:
-
 1.主題:限定以下八種主題(1)女性漢服(2)黑白漫畫(3)可愛貓咪(4)中國水墨畫(5)盒玩人偶(6)吉卜力(7)漂亮眼睛(8)食物照片，若有的話回答對應編號，若不是這八種則回答none
-
 2.風格:限定以下五種風格(1)可愛動畫風格(2)擬真動畫風格(3)柔和動畫風格(4)現實風格(5)插畫動畫風格，，若有的話回答對應編號，若不是這五種則回答none
-
 3.主體:圖片中最主要的角色，只須回答一個，若沒有則回答none，並根據是不是人類回答yes/no
-
-4.姿勢:圖片中最主要角色的姿勢，若沒有則回答none，需額外判斷姿勢是否為跳/跑/坐/站(如果是的話則用中文回答 跳躍/跑步/坐著/站立，如果不是則用英文回答)
-
-5.色調:圖片中最主要的色調，只須回答一個，若沒有則回答none
-
-6.背景:圖片中最主要的背景，只須回答一個，若沒有則回答none
-
-7.其他敘述:圖片中的其他細節描述，可以回答多個，請作為圖片提示詞一個一個列出來，若沒有則無需回答
-
-範例輸入:在灑滿陽光的窗邊，一隻毛茸茸的橘色小貓，正興奮地撲向一個鮮豔的紅色毛線球。牠圓滾滾的大眼睛專注地盯著毛線球，小小的爪子輕輕撥弄著，而一小段毛線已經纏繞在牠的腳邊。藍色的毛毯襯托著牠活潑的身影，整個畫面充滿了童趣與溫馨。
-
-範例輸出:主題:{3}, 風格:{1}, 主體:{cat}, 主體是否為人:{no}, 姿勢:{playing}, 姿勢是否為特定姿勢:{none}, 色調:{orange}, 背景{window}, 其他敘述1:{sunlight}, 其他敘述2:{fluffy cat}, 其他敘述3:{red yarn ball}, 其他敘述4:{blue blanket}, 其他敘述5:{warm atmosphere}
-
+4.姿勢:圖片中最主要角色的姿勢，若沒有則回答none，
+5.需判斷姿勢是否為跳/跑/坐/站，如果是的話則用中文回答跳躍/跑步/坐著/站立，若不是則回答none
+6.色調:圖片中最主要的色調，只須回答一個，若沒有則回答none
+7.背景:圖片中最主要的背景，只須回答一個，若沒有則回答none
+8.其他敘述:圖片中的其他細節描述，可以回答多個，請作為圖片提示詞一個一個列出來，若沒有則無需回答
+範例輸入:在灑滿陽光的窗邊，一隻毛茸茸的橘色小貓，正興奮地跑向一個鮮豔的紅色毛線球。牠圓滾滾的大眼睛專注地盯著毛線球，小小的爪子輕輕撥弄著，而一小段毛線已經纏繞在牠的腳邊。藍色的毛毯襯托著牠活潑的身影，整個畫面充滿了童趣與溫馨。
+範例輸出:主題:{3}, 風格:{1}, 主體:{cat}, 主體是否為人:{no}, 姿勢:{runing}, 特定姿勢:{跑步}, 色調:{orange}, 背景{window}, 其他敘述1:{sunlight}, 其他敘述2:{fluffy cat}, 其他敘述3:{red yarn ball}, 其他敘述4:{blue blanket}, 其他敘述5:{warm atmosphere}
 輸入:{內容}
-
-輸出格式:輸出格式:主題:{1/2/3/4/5/6/7/8或none}, 風格:{1/2/3/4/5或none},主體:{main character或none},主體是否為人:{yes或no},姿勢:{main character's pose或none}, 姿勢是否為特定姿勢:{yes或none},色調:{main color或none},背景{main background或none},其他敘述1:{image prompt},其他敘述1:{image prompt},其他敘述2:{image prompt},其他敘述3:{image prompt}...
-
-輸出需使用英文回答(除了特定姿勢用中文)，且每個回答皆須使用大括號括起來
+輸出格式:輸出格式:主題:{1/2/3/4/5/6/7/8或none}, 風格:{1/2/3/4/5或none},主體:{main character或none},主體是否為人:{yes或no},姿勢:{main character's pose或none}, 姿勢是否為特定姿勢:{跳躍/跑步/坐著/站立或none},色調:{main color或none},背景{main background或none},其他敘述1:{image prompt},其他敘述1:{image prompt},其他敘述2:{image prompt},其他敘述3:{image prompt}...輸出需使用英文回答(除了特定姿勢用中文)，且每個回答皆須使用大括號括起來，記住除了特定姿勢外都要使用英文回答
                 ";
         LLM_Prompt = LLM_Prompt.Replace("{內容}", "{" + content.text + "}");
         StartCoroutine(multi.stableDiffusionRegionPrompt.geminiAPI.SendRequest(LLM_Prompt, (result) => {
@@ -989,7 +977,7 @@ public class AIAgentMode : MonoBehaviour
             Select[3] = Modellist[int.TryParse(results[1], out int index2) ? index2 : 0];//風格
             Select[4] = (results[2]!="none")? results[2] : "";//主體
             Select[6] = (results[4] != "none") ? results[4] : "";//姿勢
-            Select[7] = (results[3] == "yes" && results[5] == "yes") ? "yes" : "";//特定姿勢
+            Select[7] = (results[3] == "yes" && results[5] != "none") ? results[5] : "";//特定姿勢
             Select[9] = (results[6] != "none") ? results[6] : "";//色調
             Select[10] = (results[7] != "none") ? results[7] : "";//背景
             Select[11] = "";
