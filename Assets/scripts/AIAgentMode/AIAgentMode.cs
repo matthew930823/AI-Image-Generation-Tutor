@@ -977,7 +977,7 @@ public class AIAgentMode : MonoBehaviour
             Select[3] = Modellist[int.TryParse(results[1], out int index2) ? index2 : 0];//風格
             Select[4] = (results[2]!="none")? results[2] : "";//主體
             Select[6] = (results[4] != "none") ? results[4] : "";//姿勢
-            Select[7] = (results[3] == "yes" && results[5] != "none") ? results[5] : "";//特定姿勢
+            Select[7] = (results[3] == "yes" && results[5] != "none") ? results[5] : "none";//特定姿勢
             Select[9] = (results[6] != "none") ? results[6] : "";//色調
             Select[10] = (results[7] != "none") ? results[7] : "";//背景
             Select[11] = "";
