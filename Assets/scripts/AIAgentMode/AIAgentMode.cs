@@ -366,10 +366,11 @@ public class AIAgentMode : MonoBehaviour
         Sprite[] Hint = Resources.LoadAll<Sprite>("Agent模式圖片");
         if (IsAgent)
         {
-            Debug.Log("NO");
+            multi.stableDiffusionRegionPrompt.gameController.voiceAudioPlayer.AudioPlay(15);
             FinishAgent = false;
             
             yield return new WaitUntil(() => FinishAgent);
+            multi.stableDiffusionRegionPrompt.gameController.voiceAudioPlayer.AudioPlay(16);
             editResultObjects[0].GetComponent<TMP_Text>().text = LoraMap[Select[0]];
             editResultObjects[1].GetComponent<TMP_Text>().text = Select[4];
             string Checkpoint = "";
@@ -928,7 +929,15 @@ public class AIAgentMode : MonoBehaviour
             content.text = (results[0] != null) ? results[0] : "抱歉我不太懂你的意思";
             suggestion.text = (results[1] != null)? results[1] : "抱歉我不太懂你的意思";
             AgentCount--;
-            if(AgentCount == 0)
+            if(AgentCount == 3)
+            {
+                multi.stableDiffusionRegionPrompt.gameController.voiceAudioPlayer.AudioPlay(17);
+            }
+            if (AgentCount == 1)
+            {
+                multi.stableDiffusionRegionPrompt.gameController.voiceAudioPlayer.AudioPlay(18);
+            }
+            if (AgentCount == 0)
             {
                 SkipChat();
             }
