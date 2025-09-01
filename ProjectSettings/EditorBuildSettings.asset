@@ -32,4 +32,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/AssessmentModegameScenes.unity
     guid: 8dcd67ac3704e574ead0749e0c6cf1c2
+  - enabled: 1
+    path: Assets/Scenes/AIAgentMode.unity
+    guid: 4970362e2a96bde44b276e1acb4d2623
   m_configObjects: {}

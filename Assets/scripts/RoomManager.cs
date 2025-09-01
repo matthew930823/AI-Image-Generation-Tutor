@@ -21,8 +21,8 @@ public class RoomManager : MonoBehaviourPunCallbacks
         generatedRoomCode = GenerateRoomCode();
         RoomOptions roomOptions = new RoomOptions { MaxPlayers = 2 };
         PhotonNetwork.CreateRoom(generatedRoomCode, roomOptions);
-        roomCodeText.text = "房間號：" + generatedRoomCode; 
-        statusText.text = "創建房間";
+        //roomCodeText.text = "房間號：" + generatedRoomCode; 
+        //statusText.text = "創建房間";
     }
 
     public void JoinRoom()
@@ -36,8 +36,8 @@ public class RoomManager : MonoBehaviourPunCallbacks
 
     public override void OnJoinedRoom()
     {
-        statusText.text = "已加入房間：" + PhotonNetwork.CurrentRoom.Name;
-        Debug.Log("玩家 " + PhotonNetwork.NickName + " 加入房間 " + PhotonNetwork.CurrentRoom.Name);
+        //statusText.text = "已加入房間：" + PhotonNetwork.CurrentRoom.Name;
+        //Debug.Log("玩家 " + PhotonNetwork.NickName + " 加入房間 " + PhotonNetwork.CurrentRoom.Name);
         PhotonNetwork.LoadLevel("SelectScene"); 
     }
 

@@ -8,6 +8,7 @@ using Photon.Pun;
 using Photon.Realtime;
 using System.IO;
 using System.Linq;
+using ExitGames.Client.Photon;
 
 public class GameController : MonoBehaviourPun
 {
@@ -38,17 +39,14 @@ public class GameController : MonoBehaviourPun
     private int NowQuestion = 1;
 
     public TTSClone tTSClone;
+    
     void Start()
     {
         //roomNumber.text = "Room : " + PhotonNetwork.CurrentRoom.Name;
+        ApplyDifficultySettings(DifficultyManager.Instance.GetDifficulty());
     }
     public void ApplyDifficultySettings(string diff)
     {
-        if (!PhotonNetwork.IsMasterClient)
-        {
-            
-            return;
-        }
         Debug.Log(diff);
         NowDifficulty = diff;
         if (diff == "Easy") { /* 設定簡單模式參數 */
@@ -68,6 +66,11 @@ public class GameController : MonoBehaviourPun
     }
 
     byte[] imageForMultiNext;
+
+    public void OnclickReturn()
+    {
+        PhotonNetwork.LoadLevel("SelectScene");
+    }
 
     private void OnImageGenerated(Texture2D generatedTexture)
     {

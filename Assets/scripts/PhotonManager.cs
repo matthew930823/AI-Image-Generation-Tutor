@@ -4,13 +4,13 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System.Collections;
-
+using UnityEngine.SceneManagement;
 public class PhotonManager : MonoBehaviourPunCallbacks
 {
     public TextMeshProUGUI loadingText; // 使用 TMP_Text
     private string baseText = "Loading";
     private int dotCount = 0;
-
+    public RoomManager room;
     private void Start()
     {
         StartCoroutine(AnimateLoadingText());
@@ -20,7 +20,8 @@ public class PhotonManager : MonoBehaviourPunCallbacks
     public override void OnConnectedToMaster()
     {
         PhotonNetwork.JoinLobby();
-        PhotonNetwork.LoadLevel("Lobby");
+        //PhotonNetwork.LoadLevel("Lobby");
+        SceneManager.LoadScene("SelectScene");
     }
 
     IEnumerator AnimateLoadingText()

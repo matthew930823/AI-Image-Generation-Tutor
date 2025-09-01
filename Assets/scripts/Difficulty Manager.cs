@@ -1,23 +1,36 @@
-using Photon.Pun;
-using ExitGames.Client.Photon;
 using UnityEngine;
+using Photon.Pun;
 
 public class DifficultyManager : MonoBehaviourPunCallbacks
 {
-    private string difficulty;
-    public GameController gameController;
-    void Start()
+    public static DifficultyManager Instance { get; private set; }
+
+    private string difficulty = "Normal"; // 預設難度
+
+    private void Awake()
     {
-        if (PhotonNetwork.CurrentRoom.CustomProperties.TryGetValue("Difficulty", out object diff))
+        // 如果已經有一個 DifficultyManager，就刪掉新生成的
+        if (Instance != null && Instance != this)
         {
-            difficulty = diff.ToString();
-        }
-        else
-        {
-            difficulty = "Normal"; // 預設難易度
+            Destroy(gameObject);
+            return;
         }
 
-        Debug.Log($"當前難易度: {difficulty}");
-        gameController.ApplyDifficultySettings(difficulty);
+        Instance = this;
+        DontDestroyOnLoad(gameObject); // 切換場景時不銷毀
+    }
+
+    void Start()
+    {
+    }
+
+    public string GetDifficulty()
+    {
+        return difficulty;
+    }
+
+    public void SetDifficulty(string newDiff)
+    {
+        difficulty = newDiff;
     }
 }
