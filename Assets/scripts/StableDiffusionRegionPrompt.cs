@@ -33,6 +33,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
     private string tempAnswer;
 
     public GameObject SkipButton;
+    public GameObject ExitButton;
     public GameObject SkipButtonForAssessment;
     public ScoreControll scoreControll;
     [System.Serializable]
@@ -525,9 +526,11 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
             yield return StartCoroutine(HandlePromptAndGenerateImageForHardMode(back => { string[] tempAns = back; }));
             gameController.voiceAudioPlayer.AudioPlay(5);
             SkipButton.SetActive(true);
+            ExitButton.SetActive(true);
             skipWait = false;
             yield return new WaitUntil(() => skipWait);
             SkipButton.SetActive(false);
+            ExitButton.SetActive(false);
             if (!first)
             {
                 gameController.Hardlist.Clear();
@@ -579,9 +582,11 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
             //    temp = result;
             //}));
             SkipButton.SetActive(true);
+            ExitButton.SetActive(true);
             skipWait = false;
             yield return new WaitUntil(() => skipWait);
             SkipButton.SetActive(false);
+            ExitButton.SetActive(false);
             if (!first)
             {
                 gameController.Hardlist.Clear();
@@ -655,6 +660,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
             //}));
             temp = result[2];
             SkipButton.SetActive(true);
+            ExitButton.SetActive(true);
             skipWait = false;
             MainBody.Enqueue(Prompt.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries)[0]);
             if (MainBody.Count > 5)
@@ -663,6 +669,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
             }
             yield return new WaitUntil(() => skipWait);
             SkipButton.SetActive(false);
+            ExitButton.SetActive(false);
             if (!first)
             {
                 if (temp == "Checkpoint")
