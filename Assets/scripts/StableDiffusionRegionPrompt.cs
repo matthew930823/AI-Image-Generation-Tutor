@@ -662,7 +662,12 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
             SkipButton.SetActive(true);
             ExitButton.SetActive(true);
             skipWait = false;
-            MainBody.Enqueue(Prompt.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries)[0]);
+            var parts = Prompt?.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+
+            if (parts != null && parts.Length > 0)
+            {
+                MainBody.Enqueue(parts[0]);
+            }
             if (MainBody.Count > 5)
             {
                 MainBody.Dequeue();
@@ -1406,37 +1411,31 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
         switch (LoRa_name)
         {
             case "漢服":
-                AddLLM = "主角是一個女生，提示詞需要包含hanfu, (朝代) style，其他由你自由發揮";
-                break;
-            case "漫畫":
-                AddLLM = "題目由你來決定";
+                AddLLM = "輸入:主體是一個女生，提示詞需要包含hanfu, (朝代) style，其他由你自由發揮";
                 break;
             case "貓":
-                AddLLM = "主角是一個貓，提示詞需要包含cat，其他由你自由發揮";
+                AddLLM = "輸入:主體是一個貓，提示詞需要包含cat，其他由你自由發揮";
                 break;
             case "水墨":
-                AddLLM = "主體前需要加potrait of，提示詞需要包含traditional chinese ink painting, 大師名, shukezouma，其他由你自由發揮 ";
+                AddLLM = "輸入:主體前需要加potrait of，提示詞需要包含traditional chinese ink painting, 大師名, shukezouma，其他由你自由發揮 ";
                 break;
             case "盒玩":
-                AddLLM = "主角是一個女生或男生，提示詞需要包含full body, chibi，提示詞只能描述主體，不用描述環境";
-                break;
-            case "吉普利":
-                AddLLM = "題目由你來決定";
+                AddLLM = "輸入:主體是一個女生或男生，提示詞需要包含full body, chibi，提示詞只能描述主體，不用描述環境";
                 break;
             case "眼睛":
-                AddLLM = "主角是一個眼睛，提示詞需要包含loraeyes，其他由你自由發揮";
+                AddLLM = "輸入:主體是一個眼睛，提示詞需要包含loraeyes，其他由你自由發揮";
                 break;
             case "食物照片":
-                AddLLM = "主角是一個食物(禁止壽司)，提示詞需要包含foodphoto，可以使用攝影細節，其他由你自由發揮";
+                AddLLM = "輸入:主體是一個食物(禁止壽司)，提示詞需要包含foodphoto，可以使用攝影細節，其他由你自由發揮";
                 break;
             case "Controlnet":
-                AddLLM = "主角是一個人，其他由你自由發揮";
+                AddLLM = "輸入:主體是一個人，其他由你自由發揮";
                 break;
             case "HardMode":
-                AddLLM = "主角是一個人，其他由你自由發揮，但要記得包括主體後提示詞數量只能有6個" + AssessmentLLM;
+                AddLLM = "輸入:主體是一個人，其他由你自由發揮，但要記得包括主體後提示詞數量只能有6個" + AssessmentLLM;
                 break;
             default:
-                AddLLM = "題目由你來決定" + "，不能出現的主體有:" + MainBodyLLM;
+                AddLLM = "輸入:主體由你來決定，不能出現的主體有:" + MainBodyLLM;
                 break;
         }
 #if UNITY_ANDROID && !UNITY_EDITOR
@@ -1454,8 +1453,8 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
         if(LoRa_name == "HardMode")
         {
             fileContent = fileContent.Replace(
-                "10.提示詞數量為7-12個",
-                "10.提示詞數量為5個，不能包含square image這種沒有意義的提示詞"
+                "提示詞數量為7-12個",
+                "提示詞數量為5個，不能包含square image這種沒有意義的提示詞"
             );
         }
         //Debug.Log(fileContent+ AddLLM);
@@ -1487,7 +1486,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
 
         //Debug.Log(fileContent+ AddLLM);
         // 呼叫 Gemini API 並傳入檔案內容
-        yield return StartCoroutine(geminiAPI.SendRequest(fileContent+Prompt , (result) =>
+        yield return StartCoroutine(geminiAPI.SendRequest(fileContent+"輸入"+Prompt , (result) =>
         {
             Match match = Regex.Match(result, @"\{([^}]*)\}");
             if (match.Success)
