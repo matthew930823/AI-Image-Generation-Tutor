@@ -1060,6 +1060,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
             }
         };
         Debug.Log("ADetaile:" + infoArray[5]);
+        seed = 7;
         var requestData = new Txt2ImgRequest
         {
             steps = 20,
