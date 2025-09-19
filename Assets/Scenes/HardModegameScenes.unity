@@ -3093,7 +3093,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 631764662}
+      - m_Target: {fileID: 1841451213}
         m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
         m_MethodName: SetActive
         m_Mode: 6
@@ -8487,7 +8487,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "\u53EF\u900F\u904E\u984F\u8272\u77E5\u9053\u5404\u9078\u9805\u6240\u5C0D\u61C9\u7684\u63A7\u5236\u53C3\u6578\u985E\u578B"
+  m_Text: "\u53EF\u900F\u904E\u984F\u8272\u77E5\u9053\u5404\u9078\u9805\n\u6240\u5C0D\u61C9\u7684\u63A7\u5236\u53C3\u6578\u985E\u578B"
 --- !u!222 &394739563
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -11488,7 +11488,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "\u56DE\u7B54\u5B8C\u5F8C\u5373\u53EF\u67E5\u770B\u4F7F\u7528\u5230\u4E86\u54EA\u4E9B\u63A7\u5236\u53C3\u6578"
+  m_Text: "\u56DE\u7B54\u5B8C\u5F8C\u5373\u53EF\u67E5\u770B\n\u4F7F\u7528\u5230\u4E86\u54EA\u4E9B\u63A7\u5236\u53C3\u6578"
 --- !u!222 &555200431
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -18825,7 +18825,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "\u53F3\u908A\u70BA\u984C\u76EE\u5716\u7247\uFF0C\u7D93\u904E\u591A\u7A2E\u985E\u578B\u7684\u63A7\u5236\u5F8C\u751F\u6210"
+  m_Text: "\u53F3\u908A\u70BA\u984C\u76EE\u5716\u7247\uFF0C\n\u7D93\u904E\u591A\u7A2E\u985E\u578B\u7684\u63A7\u5236\u5F8C\u751F\u6210"
 --- !u!222 &936778085
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -26688,7 +26688,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 1152988045}
+      - m_Target: {fileID: 196329901}
         m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
         m_MethodName: SetActive
         m_Mode: 6
@@ -35719,7 +35719,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "\u9700\u5F9E\u4E0B\u65B9\u9078\u9805\u4E2D\uFF0C\u9078\u51FA\u4F7F\u7528\u5230\u7684\u4E09\u7A2E\u63A7\u5236\u53C3\u6578"
+  m_Text: "\u9700\u5F9E\u4E0B\u65B9\u9078\u9805\u4E2D\uFF0C\n\u9078\u51FA\u4F7F\u7528\u5230\u7684\u4E09\u7A2E\u63A7\u5236\u53C3\u6578"
 --- !u!222 &1945652835
 CanvasRenderer:
   m_ObjectHideFlags: 0
