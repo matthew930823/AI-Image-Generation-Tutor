@@ -651,10 +651,23 @@ public class MultiChoiceQuestion : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(ResultScreen.activeSelf && stableDiffusionRegionPrompt.SkipButton.activeSelf && !PrepareQuestions)
+        if(ResultScreen.activeSelf /*&& stableDiffusionRegionPrompt.SkipButton.activeSelf*/ && !PrepareQuestions)
         {
-            stableDiffusionRegionPrompt.gameController.voiceAudioPlayer.AudioPlay(5);
-            PrepareQuestions = true;
+            //¬°¤FÃD®w
+
+            //stableDiffusionRegionPrompt.gameController.voiceAudioPlayer.AudioPlay(5);
+            //PrepareQuestions = true;
+
+            StartCoroutine(qazwsx());
         }
+    }
+
+    IEnumerator qazwsx()
+    {
+        PrepareQuestions = true;
+        yield return new WaitForSeconds(4);
+        stableDiffusionRegionPrompt.gameController.voiceAudioPlayer.AudioPlay(5);
+        stableDiffusionRegionPrompt.SkipButton.SetActive(true);
+        stableDiffusionRegionPrompt.ExitButton.SetActive(true);
     }
 }

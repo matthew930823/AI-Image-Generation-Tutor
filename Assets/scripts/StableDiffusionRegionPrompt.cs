@@ -412,9 +412,23 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
             Debug.Log("⏳ 開始生成圖片...");
             if (first)
             {
-                yield return StartCoroutine(HandlePromptAndGenerateImageForHardMode(back => { string[] tempAns = back; }));
+                //為了題庫(以下)
+                //yield return StartCoroutine(HandlePromptAndGenerateImageForHardMode(back => { string[] tempAns = back; }));
+                yield return new WaitForSeconds(28);
+                //為了題庫(以上)
                 gameController.voiceAudioPlayer.AudioPlay(6);
                 GameStartButton.SetActive(true);
+                //為了題庫(以下)
+                Sprite[] Hint = Resources.LoadAll<Sprite>("題庫/考核模式");
+
+                foreach (Sprite sprite in Hint)
+                {
+                    if (sprite.name == "1")
+                    {
+                        img2 = sprite.texture;
+                    }
+                }
+                //為了題庫(以上)
                 multiChoiceQuestion.AfterImage.sprite = Sprite.Create(img2, new Rect(0, 0, img2.width, img2.height), new Vector2(0.5f, 0.5f));
                 first = false;
             }
@@ -549,27 +563,51 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
             Debug.Log("⏳ 開始生成圖片...");
             if (first)
             {
-                yield return StartCoroutine(HandlePromptAndGenerateImageForHardMode(back=> { tempAns = back; }));
-                //yield return StartCoroutine(geminiAPI.SendPhotoRequest("題目會說明主體和他在做什麼，且需要在20個英文字裡說明完，且不能有標點符號，例子:[A young woman stands on a city street]，接下來我會給一張圖片，你要給我符合這個圖片的題目，請你依照{說明}回傳給我，說明要包在大括號內。", Convert.ToBase64String((img1).EncodeToPNG()), (result) =>
-                //{
-                //    Match match = Regex.Match(result, @"\{([^}]*)\}");
-                //    result = match.Groups[1].Value;
-                //    multiChoiceQuestion.QuestionName.text = result;
-                //}));
+                //為了題庫(以下)
+                //yield return StartCoroutine(HandlePromptAndGenerateImageForHardMode(back => { tempAns = back; }));
+                yield return new WaitForSeconds(27);
+                //為了題庫(以上)
                 gameController.voiceAudioPlayer.AudioPlay(6);
                 GameStartButton.SetActive(true);
-                Debug.Log("選中的答案有:"+ string.Join(", ", tempAns));
-                HardTempAnswer = tempAns;
-                multiChoiceQuestion.ChangeOptionsForHardMode(tempAns);
+                //為了題庫(以下)
+                //Debug.Log("選中的答案有:"+ string.Join(", ", tempAns));
+                //HardTempAnswer = tempAns;
+                //multiChoiceQuestion.ChangeOptionsForHardMode(tempAns);
+                HardTempAnswer = new string[] { "Depth", "classroom", "768", "Dreamshaper"};
+                Sprite[] Hint = Resources.LoadAll<Sprite>("題庫/困難模式");
+
+                foreach (Sprite sprite in Hint)
+                {
+                    if (sprite.name == "1")
+                    {
+                        img1 = sprite.texture;
+                    }
+                    if (sprite.name == "2")
+                    {
+                        img2 = sprite.texture;
+                    }
+                }
+                // 顯示到按鈕上
+                List<string> selected = new List<string>()
+                {
+                    "Depth", "Counterfeit", "classroom", "Canny", "Openpose", "512", "Dreamshaper", "beach"
+                };
+                for (int i = 0; i < 8; i++)
+                {
+                    Text btnText = multiChoiceQuestion.buttons[i].GetComponentInChildren<Text>();
+                    btnText.text = selected[i];
+                }
+                //MainBody.Enqueue(Prompt.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries)[0]);
+                //if (MainBody.Count > 5)
+                //{
+                //    MainBody.Dequeue();
+                //}
+                //為了題庫(以上)
                 multiChoiceQuestion.ChangeEveryButtonColor();
                 multiChoiceQuestion.BeforeImage.sprite = Sprite.Create(img1, new Rect(0, 0, img1.width, img1.height), new Vector2(0.5f, 0.5f));
                 multiChoiceQuestion.AfterImage.sprite = Sprite.Create(img2, new Rect(0, 0, img2.width, img2.height), new Vector2(0.5f, 0.5f));
-                //gameController.answer = tempAnswer;
-                MainBody.Enqueue(Prompt.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries)[0]);
-                if (MainBody.Count > 5)
-                {
-                    MainBody.Dequeue();
-                }
+                
+                
                 first = false;
                 Debug.Log("已經生成完第一組圖 ，開始生成第二組圖");
             }
@@ -603,103 +641,264 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
     public IEnumerator StartAutoImageUpdate()
     {
         bool first = true;
-        while (true)
-        {
-            Debug.Log("⏳ 開始生成圖片...");
-            string[] result;
-            if (first)
+        string[] result = new string[3];
+        if (false)
+            while (true)
             {
+                Debug.Log("⏳ 開始生成圖片...");
+                if (first)
+                {
+                    result = multiChoiceQuestion.GenerateQuestions();
+                    yield return StartCoroutine(HandlePromptAndGenerateImage(result[0], result[1], result[2]));
+                
+                    if(result[2] == "Checkpoint")
+                        multiChoiceQuestion.QuestionName.text = "Model";
+                    else
+                        multiChoiceQuestion.QuestionName.text = result[2];
+                    gameController.voiceAudioPlayer.AudioPlay(6);
+                    GameStartButton.SetActive(true);
+                    if (result[2] == "Checkpoint"|| result[2] == "LoRa")
+                    {
+                        multiChoiceQuestion.AfterImage.sprite = Sprite.Create(img1, new Rect(0, 0, img1.width, img1.height), new Vector2(0.5f, 0.5f));
+                        multiChoiceQuestion.BeforeImage.sprite = Sprite.Create(img2, new Rect(0, 0, img2.width, img2.height), new Vector2(0.5f, 0.5f));
+                    
+                    }
+                    else
+                    {
+                        multiChoiceQuestion.BeforeImage.sprite = Sprite.Create(img1, new Rect(0, 0, img1.width, img1.height), new Vector2(0.5f, 0.5f));
+                        multiChoiceQuestion.AfterImage.sprite = Sprite.Create(img2, new Rect(0, 0, img2.width, img2.height), new Vector2(0.5f, 0.5f));
+                    
+                    }
+                    gameController.answer = tempAnswer;
+                    multiChoiceQuestion.ChangeHintImage(result[2]);
+                    MainBody.Enqueue(Prompt.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries)[0]);
+                    if (MainBody.Count > 5)
+                    {
+                        MainBody.Dequeue();
+                    }
+                    first = false;
+                    Debug.Log("已經生成完第一組圖 ，開始生成第二組圖");
+                }
                 result = multiChoiceQuestion.GenerateQuestions();
                 yield return StartCoroutine(HandlePromptAndGenerateImage(result[0], result[1], result[2]));
-                //yield return StartCoroutine(geminiAPI.SendPhotoRequest("題目會說明主體和他在做什麼，且需要在20個英文字裡說明完，且不能有標點符號，例子:[A young woman stands on a city street]，接下來我會給一張圖片，你要給我符合這個圖片的題目，請你依照{說明}回傳給我，說明要包在大括號內。", Convert.ToBase64String((((result[2] == "Prompt") || (result[2] == "Resolution")) ? img1 : img2).EncodeToPNG()), (result1) =>
-                //{
-                //    Match match = Regex.Match(result1, @"\{([^}]*)\}");
-                //    result1 = match.Groups[1].Value;
-                //    //Narrative.text = result;
-                //    multiChoiceQuestion.QuestionName.text = result1;
-                //}));
-                if(result[2] == "Checkpoint")
-                    multiChoiceQuestion.QuestionName.text = "Model";
-                else
-                    multiChoiceQuestion.QuestionName.text = result[2];
-                gameController.voiceAudioPlayer.AudioPlay(6);
-                GameStartButton.SetActive(true);
-                if (result[2] == "Checkpoint"|| result[2] == "LoRa")
+                string temp = "";
+            
+                temp = result[2];
+                SkipButton.SetActive(true);
+                ExitButton.SetActive(true);
+                skipWait = false;
+                var parts = Prompt?.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+
+                if (parts != null && parts.Length > 0)
                 {
-                    multiChoiceQuestion.AfterImage.sprite = Sprite.Create(img1, new Rect(0, 0, img1.width, img1.height), new Vector2(0.5f, 0.5f));
-                    multiChoiceQuestion.BeforeImage.sprite = Sprite.Create(img2, new Rect(0, 0, img2.width, img2.height), new Vector2(0.5f, 0.5f));
-                    //imageUI2.sprite = Sprite.Create(img1, new Rect(0, 0, img1.width, img1.height), new Vector2(0.5f, 0.5f));
-                    //imageUI.sprite = Sprite.Create(img2, new Rect(0, 0, img2.width, img2.height), new Vector2(0.5f, 0.5f));
+                    MainBody.Enqueue(parts[0]);
                 }
-                else
-                {
-                    multiChoiceQuestion.BeforeImage.sprite = Sprite.Create(img1, new Rect(0, 0, img1.width, img1.height), new Vector2(0.5f, 0.5f));
-                    multiChoiceQuestion.AfterImage.sprite = Sprite.Create(img2, new Rect(0, 0, img2.width, img2.height), new Vector2(0.5f, 0.5f));
-                    //imageUI.sprite = Sprite.Create(img1, new Rect(0, 0, img1.width, img1.height), new Vector2(0.5f, 0.5f));
-                    //imageUI2.sprite = Sprite.Create(img2, new Rect(0, 0, img2.width, img2.height), new Vector2(0.5f, 0.5f));
-                }
-                gameController.answer = tempAnswer;
-                multiChoiceQuestion.ChangeHintImage(result[2]);
-                MainBody.Enqueue(Prompt.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries)[0]);
                 if (MainBody.Count > 5)
                 {
                     MainBody.Dequeue();
                 }
-                first = false;
-                Debug.Log("已經生成完第一組圖 ，開始生成第二組圖");
+                yield return new WaitUntil(() => skipWait);
+                SkipButton.SetActive(false);
+                ExitButton.SetActive(false);
+                if (!first)
+                {
+                    if (temp == "Checkpoint")
+                        multiChoiceQuestion.QuestionName.text = "Model";
+                    else
+                        multiChoiceQuestion.QuestionName.text = temp;
+                    multiChoiceQuestion.ResetButtonColor();
+                    if (result[2] == "Checkpoint" || result[2] == "LoRa")
+                    {
+                        multiChoiceQuestion.AfterImage.sprite = Sprite.Create(img1, new Rect(0, 0, img1.width, img1.height), new Vector2(0.5f, 0.5f));
+                        multiChoiceQuestion.BeforeImage.sprite = Sprite.Create(img2, new Rect(0, 0, img2.width, img2.height), new Vector2(0.5f, 0.5f));
+                    
+                    }
+                    else
+                    {
+                        multiChoiceQuestion.BeforeImage.sprite = Sprite.Create(img1, new Rect(0, 0, img1.width, img1.height), new Vector2(0.5f, 0.5f));
+                        multiChoiceQuestion.AfterImage.sprite = Sprite.Create(img2, new Rect(0, 0, img2.width, img2.height), new Vector2(0.5f, 0.5f));
+                    
+                    }
+                    gameController.answer = tempAnswer;
+                    multiChoiceQuestion.ChangeHintImage(result[2]);
+                }
             }
-            result = multiChoiceQuestion.GenerateQuestions();
-            yield return StartCoroutine(HandlePromptAndGenerateImage(result[0], result[1], result[2]));
-            string temp = "";
-            //yield return StartCoroutine(geminiAPI.SendPhotoRequest("題目會說明主體和他在做什麼，且需要在20個英文字裡說明完，且不能有標點符號，例子:[A young woman stands on a city street]，接下來我會給一張圖片，你要給我符合這個圖片的題目，請你依照{說明}回傳給我，說明要包在大括號內。", Convert.ToBase64String((((result[2] == "Prompt") || (result[2] == "Resolution")) ? img1 : img2).EncodeToPNG()), (result1) =>
-            //{
-            //    Match match = Regex.Match(result1, @"\{([^}]*)\}");
-            //    result1 = match.Groups[1].Value;
-            //    //Narrative.text = result;
-            //    temp = result1;
-            //}));
-            temp = result[2];
-            SkipButton.SetActive(true);
-            ExitButton.SetActive(true);
-            skipWait = false;
-            var parts = Prompt?.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+        else
+        {
+            //為了題庫
+            if (true)
+            {
 
-            if (parts != null && parts.Length > 0)
-            {
-                MainBody.Enqueue(parts[0]);
-            }
-            if (MainBody.Count > 5)
-            {
-                MainBody.Dequeue();
-            }
-            yield return new WaitUntil(() => skipWait);
-            SkipButton.SetActive(false);
-            ExitButton.SetActive(false);
-            if (!first)
-            {
-                if (temp == "Checkpoint")
+                Sprite[] Hint = Resources.LoadAll<Sprite>("題庫/簡單模式");
+                //第一題
+                foreach (Sprite sprite in Hint)
+                {
+                    if (sprite.name == "1")
+                    {
+                        img1 = sprite.texture;
+                    }
+                    if (sprite.name == "2")
+                    {
+                        img2 = sprite.texture;
+                    }
+                }
+                result[0] = "";
+                result[1] = "anime_bold.safetensors";
+                result[2] = "Checkpoint";
+                if (result[2] == "Checkpoint")
                     multiChoiceQuestion.QuestionName.text = "Model";
                 else
-                    multiChoiceQuestion.QuestionName.text = temp;
-                multiChoiceQuestion.ResetButtonColor();
-                if (result[2] == "Checkpoint" || result[2] == "LoRa")
-                {
-                    multiChoiceQuestion.AfterImage.sprite = Sprite.Create(img1, new Rect(0, 0, img1.width, img1.height), new Vector2(0.5f, 0.5f));
-                    multiChoiceQuestion.BeforeImage.sprite = Sprite.Create(img2, new Rect(0, 0, img2.width, img2.height), new Vector2(0.5f, 0.5f));
-                    //imageUI2.sprite = Sprite.Create(img1, new Rect(0, 0, img1.width, img1.height), new Vector2(0.5f, 0.5f));
-                    //imageUI.sprite = Sprite.Create(img2, new Rect(0, 0, img2.width, img2.height), new Vector2(0.5f, 0.5f));
-                }
-                else
-                {
-                    multiChoiceQuestion.BeforeImage.sprite = Sprite.Create(img1, new Rect(0, 0, img1.width, img1.height), new Vector2(0.5f, 0.5f));
-                    multiChoiceQuestion.AfterImage.sprite = Sprite.Create(img2, new Rect(0, 0, img2.width, img2.height), new Vector2(0.5f, 0.5f));
-                    //imageUI.sprite = Sprite.Create(img1, new Rect(0, 0, img1.width, img1.height), new Vector2(0.5f, 0.5f));
-                    //imageUI2.sprite = Sprite.Create(img2, new Rect(0, 0, img2.width, img2.height), new Vector2(0.5f, 0.5f));
-                }
+                    multiChoiceQuestion.QuestionName.text = result[2];
+
+                multiChoiceQuestion.BeforeImage.sprite = Sprite.Create(img1, new Rect(0, 0, img1.width, img1.height), new Vector2(0.5f, 0.5f));
+                multiChoiceQuestion.AfterImage.sprite = Sprite.Create(img2, new Rect(0, 0, img2.width, img2.height), new Vector2(0.5f, 0.5f));
+                yield return new WaitForSeconds(28);
+                gameController.voiceAudioPlayer.AudioPlay(6);
+                GameStartButton.SetActive(true);
+                tempAnswer = "Counterfeit";
                 gameController.answer = tempAnswer;
                 multiChoiceQuestion.ChangeHintImage(result[2]);
+                skipWait = false;
+                
+                yield return new WaitUntil(() => skipWait);
+                SkipButton.SetActive(false);
+                ExitButton.SetActive(false);
+                multiChoiceQuestion.ResetButtonColor();
+
+                //第二題
+                foreach (Sprite sprite in Hint)
+                {
+                    if (sprite.name == "3")
+                    {
+                        img1 = sprite.texture;
+                    }
+                    if (sprite.name == "4")
+                    {
+                        img2 = sprite.texture;
+                    }
+                }
+                result[0] = "Snoopy";
+                result[1] = "anime_bold.safetensors";
+                result[2] = "LoRa";
+                if (result[2] == "Checkpoint")
+                    multiChoiceQuestion.QuestionName.text = "Model";
+                else
+                    multiChoiceQuestion.QuestionName.text = result[2];
+
+                multiChoiceQuestion.BeforeImage.sprite = Sprite.Create(img1, new Rect(0, 0, img1.width, img1.height), new Vector2(0.5f, 0.5f));
+                multiChoiceQuestion.AfterImage.sprite = Sprite.Create(img2, new Rect(0, 0, img2.width, img2.height), new Vector2(0.5f, 0.5f));
+                tempAnswer = "Snoopy";
+                gameController.answer = tempAnswer;
+                multiChoiceQuestion.ChangeHintImage(result[2]);
+                
+                skipWait = false;
+
+                yield return new WaitUntil(() => skipWait);
+                SkipButton.SetActive(false);
+                ExitButton.SetActive(false);
+                multiChoiceQuestion.ResetButtonColor();
+
+                //第三題
+                foreach (Sprite sprite in Hint)
+                {
+                    if (sprite.name == "5")
+                    {
+                        img1 = sprite.texture;
+                    }
+                    if (sprite.name == "6")
+                    {
+                        img2 = sprite.texture;
+                    }
+                }
+                result[0] = "";
+                result[1] = "anime_bold.safetensors";
+                result[2] = "Resolution";
+                if (result[2] == "Checkpoint")
+                    multiChoiceQuestion.QuestionName.text = "Model";
+                else
+                    multiChoiceQuestion.QuestionName.text = result[2];
+
+                multiChoiceQuestion.BeforeImage.sprite = Sprite.Create(img1, new Rect(0, 0, img1.width, img1.height), new Vector2(0.5f, 0.5f));
+                multiChoiceQuestion.AfterImage.sprite = Sprite.Create(img2, new Rect(0, 0, img2.width, img2.height), new Vector2(0.5f, 0.5f));
+                tempAnswer = "384";
+                gameController.answer = tempAnswer;
+                multiChoiceQuestion.ChangeHintImage(result[2]);
+
+                skipWait = false;
+
+                yield return new WaitUntil(() => skipWait);
+                SkipButton.SetActive(false);
+                ExitButton.SetActive(false);
+                multiChoiceQuestion.ResetButtonColor();
+
+                //第四題
+                foreach (Sprite sprite in Hint)
+                {
+                    if (sprite.name == "7")
+                    {
+                        img1 = sprite.texture;
+                    }
+                    if (sprite.name == "8")
+                    {
+                        img2 = sprite.texture;
+                    }
+                }
+                result[0] = "";
+                result[1] = "anime_bold.safetensors";
+                result[2] = "Prompt";
+                if (result[2] == "Checkpoint")
+                    multiChoiceQuestion.QuestionName.text = "Model";
+                else
+                    multiChoiceQuestion.QuestionName.text = result[2];
+
+                multiChoiceQuestion.BeforeImage.sprite = Sprite.Create(img1, new Rect(0, 0, img1.width, img1.height), new Vector2(0.5f, 0.5f));
+                multiChoiceQuestion.AfterImage.sprite = Sprite.Create(img2, new Rect(0, 0, img2.width, img2.height), new Vector2(0.5f, 0.5f));
+                tempAnswer = "red";
+                gameController.answer = tempAnswer;
+                multiChoiceQuestion.ChangeHintImage(result[2]);
+
+                skipWait = false;
+
+                yield return new WaitUntil(() => skipWait);
+                SkipButton.SetActive(false);
+                ExitButton.SetActive(false);
+                multiChoiceQuestion.ResetButtonColor();
+
+                //第五題
+                foreach (Sprite sprite in Hint)
+                {
+                    if (sprite.name == "9")
+                    {
+                        img1 = sprite.texture;
+                    }
+                    if (sprite.name == "10")
+                    {
+                        img2 = sprite.texture;
+                    }
+                }
+                result[0] = "Controlnet";
+                result[1] = "anime_bold.safetensors";
+                result[2] = "Controlnet";
+                if (result[2] == "Checkpoint")
+                    multiChoiceQuestion.QuestionName.text = "Model";
+                else
+                    multiChoiceQuestion.QuestionName.text = result[2];
+
+                multiChoiceQuestion.BeforeImage.sprite = Sprite.Create(img1, new Rect(0, 0, img1.width, img1.height), new Vector2(0.5f, 0.5f));
+                multiChoiceQuestion.AfterImage.sprite = Sprite.Create(img2, new Rect(0, 0, img2.width, img2.height), new Vector2(0.5f, 0.5f));
+                tempAnswer = "openpose";
+                gameController.answer = tempAnswer;
+                multiChoiceQuestion.ChangeHintImage(result[2]);
+
+                skipWait = false;
+
+                yield return new WaitUntil(() => skipWait);
+                SkipButton.SetActive(false);
+                ExitButton.SetActive(false);
+                multiChoiceQuestion.ResetButtonColor();
             }
         }
+            
     }
     List<object> BuildFullArgs(List<Region> regions)
     {
