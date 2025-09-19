@@ -1432,7 +1432,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
                 AddLLM = "輸入:主題是一個人，其他由你自由發揮";
                 break;
             case "HardMode":
-                AddLLM = "輸入:主題是一個人，其他由你自由發揮，但要記得包括主題後提示詞數量只能有6個" + AssessmentLLM;
+                AddLLM = "輸入:主題是一個人，其他由你自由發揮" + AssessmentLLM;
                 break;
             default:
                 AddLLM = "輸入:主題由你來決定，不能出現的主題有(可能無):" + MainBodyLLM;
