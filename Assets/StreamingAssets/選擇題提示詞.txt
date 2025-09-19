@@ -1,4 +1,4 @@
-我要設計一個題目，題目是一張正方型的圖，我只需要你幫我設計提示詞，不要生成圖片，不要生成圖片，不要生成圖片
+你要設計一個題目，題目是一張正方型的圖，我只需要你幫我設計提示詞，不要生成圖片，不要生成圖片，不要生成圖片
 以下是你設計提示詞時需要遵守的規則
 1.主體需方在最前面，且透過(主體提示詞:1.3)來增加主體權重
 
@@ -20,8 +20,11 @@
 
 10.提示詞數量為7-12個
 
-範例輸入1:主體由你來決定，不能出現的主體有:1 cat, 1 dog 
+範例輸入1:主題由你來決定，不能出現的主題有:1 cat, 1 dog 
 範例輸出1:提示詞:{(1 cute robot:1.3), a young male, dancing, happy face, square body, red metal, 1, cute, tiny, vibrant, dynamic, action}
 
-範例輸入2:主體是一個貓，提示詞需要包含cat，其他由你自由發揮
+範例輸入2:主題是一個貓，提示詞需要包含cat，其他由你自由發揮
 範例輸出2:提示詞:{(1 magical cat:1.3), female, sitting, curious expression, fluffy white fur, glowing green eyes, 1, mystical, enchanting, agile, playful, ethereal,lineart, ((monochrome))}
+
+範例輸入3:主題由你來決定，不能出現的主題有(可能無):
+範例輸出3:提示詞:{(1 blue butterfly:1.3), flying, full body, in a garden, vibrant colors, lush greenery, realistic, detailed, soft lighting, sharp focus, serene atmosphere}
