@@ -665,7 +665,7 @@ public class MultiChoiceQuestion : MonoBehaviour
     IEnumerator qazwsx()
     {
         PrepareQuestions = true;
-        yield return new WaitForSeconds(4);
+        yield return new WaitForSeconds(6);
         stableDiffusionRegionPrompt.gameController.voiceAudioPlayer.AudioPlay(5);
         stableDiffusionRegionPrompt.SkipButton.SetActive(true);
         stableDiffusionRegionPrompt.ExitButton.SetActive(true);
