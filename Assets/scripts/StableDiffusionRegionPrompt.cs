@@ -573,7 +573,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
                 //Debug.Log("選中的答案有:"+ string.Join(", ", tempAns));
                 //HardTempAnswer = tempAns;
                 //multiChoiceQuestion.ChangeOptionsForHardMode(tempAns);
-                HardTempAnswer = new string[] { "Depth", "classroom", "768", "Dreamshaper"};
+                HardTempAnswer = new string[] { "Depth", "classroom", "768", "DreamShaper"};
                 Sprite[] Hint = Resources.LoadAll<Sprite>("題庫/困難模式");
 
                 foreach (Sprite sprite in Hint)
