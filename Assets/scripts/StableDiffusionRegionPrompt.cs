@@ -1059,7 +1059,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
                 { "ad_prompt", "detail face," + ((Emoji == "no") ? "":Emoji)+((Isold == "yes") ? ",wrinkle":"")}
             }
         };
-        Debug.Log("ADetaile:" + infoArray[5]);
+        //Debug.Log("ADetaile:" + infoArray[5]);
         seed = 7;
         var requestData = new Txt2ImgRequest
         {
