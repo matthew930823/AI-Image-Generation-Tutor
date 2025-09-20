@@ -357,6 +357,18 @@ public class AIAgentMode : MonoBehaviour
             {
                 img1 = texture;
             }));
+        //為了題庫
+        Sprite[] blabla = Resources.LoadAll<Sprite>("題庫/Agent模式");
+
+        foreach (Sprite sprite in blabla)
+        {
+            if (sprite.name == "1")
+            {
+                img1 = sprite.texture;
+            }
+        }
+        //為了題庫
+
         Result_Image.sprite = Sprite.Create(img1, new Rect(0, 0, img1.width, img1.height), new Vector2(0.5f, 0.5f));
     }
 
