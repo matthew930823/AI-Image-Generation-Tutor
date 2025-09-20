@@ -590,7 +590,7 @@ public class StableDiffusionRegionPrompt : MonoBehaviour
                 // 顯示到按鈕上
                 List<string> selected = new List<string>()
                 {
-                    "Depth", "Counterfeit", "classroom", "Canny", "Openpose", "512", "Dreamshaper", "beach"
+                    "Depth", "Counterfeit", "classroom", "Canny", "Openpose", "512", "DreamShaper", "beach"
                 };
                 for (int i = 0; i < 8; i++)
                 {
