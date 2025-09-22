@@ -5,7 +5,7 @@
 請依照以下步驟啟動系統：
 
 1. 前往 [Releases](https://github.com/matthew930823/AI-Image-Generation-Tutor/releases) 下載 **AI-Image-Generation-Tutor** 並解壓縮
-2. 前往 [Google Drive](https://drive.google.com/drive/folders/1KJ8zi5uhN3mLTzKApngOKMTSjnxnZAYD?usp=sharing) 下載 **SD** 資料夾
+2. 前往 [Google Drive](https://drive.google.com/drive/folders/1KJ8zi5uhN3mLTzKApngOKMTSjnxnZAYD?usp=sharing) 下載 **SD** 資料夾 > ⚠️ 注意：下載檔案可能需要較長時間
 3. 開啟 `SD/webui-user.bat`，等待網頁`http://127.0.0.1:7860`跳出  
 4. 執行 `AI-Image-Generation-Tutor/AI圖像生成助教執行檔/AItest`  
 5. 相關模式操作可參考 [影片說明](https://youtu.be/dvgTzGWRYK8)  
