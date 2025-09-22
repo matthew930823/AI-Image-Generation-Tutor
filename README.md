@@ -1,4 +1,4 @@
-請按照以下步驟啟動系統
+請按照以下步驟啟動系統\n
 1.去release下載SD和AI-Image-Generation-Tutor並解壓縮
 2.開啟SD/webui-user.bat，並等待下面的網頁跳出
 3.開啟AI-Image-Generation-Tutor/AI圖像生成助教執行檔/AItest
