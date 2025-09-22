@@ -1,5 +1,5 @@
 請按照以下步驟啟動系統<br>
-1.去release下載SD和AI-Image-Generation-Tutor並解壓縮<br>
+1.去[release](https://github.com/matthew930823/AI-Image-Generation-Tutor/releases)下載SD和AI-Image-Generation-Tutor並解壓縮<br>
 2.開啟SD/webui-user.bat，並等待下面的網頁跳出<br>
 3.開啟AI-Image-Generation-Tutor/AI圖像生成助教執行檔/AItest<br>
 4.相關模式操作可參考[影片說明](https://youtu.be/dvgTzGWRYK8)<br>
