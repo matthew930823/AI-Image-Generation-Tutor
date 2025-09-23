@@ -5,7 +5,7 @@
 請依照以下步驟啟動系統：
 
 1. 前往 [Releases](https://github.com/matthew930823/AI-Image-Generation-Tutor/releases) 下載 **AI-Image-Generation-Tutor** 並解壓縮
-2. 前往 [Google Drive](https://drive.google.com/drive/folders/1KJ8zi5uhN3mLTzKApngOKMTSjnxnZAYD?usp=sharing) 下載 **SD** 資料夾 > ⚠️ 注意：下載可能需要較長時間
+2. 前往 [Google Drive](https://drive.google.com/drive/folders/1Vom0m_9n0nxXxxJFo5NQgCTdfW7gIAMk?usp=sharing) 下載 **SD** 資料夾 > ⚠️ 注意：下載可能需要較長時間
 3. 前往 `SD\venv\Lib\site-packages\jax\_src` 將 `custom_derivatives.zip` 解壓縮，並把解壓出的 `custom_derivatives.py` 複製到 `SD\venv\Lib\site-packages\jax\_src` 資料夾
 4. 開啟 `SD/webui-user.bat`，等待網頁`http://127.0.0.1:7860`跳出  
 5. 執行 `AI-Image-Generation-Tutor/AI圖像生成助教執行檔/AItest`
