@@ -10,8 +10,8 @@
 4. 開啟 `SD/webui-user.bat`，等待網頁 `http://127.0.0.1:7860` 跳出
 5. 在 `cmd` 打上 `CTRL+C` + `Y` 結束執行
 6. 前往 [Google Drive](https://drive.google.com/drive/folders/1Vom0m_9n0nxXxxJFo5NQgCTdfW7gIAMk?usp=sharing) 下載 **models** 資料夾後取代 `stable-diffusion-webui-master\models`
-7. 前往 [Google Drive](https://drive.google.com/drive/folders/1Vom0m_9n0nxXxxJFo5NQgCTdfW7gIAMk?usp=sharing) 下載 **extensions** 資料夾後取代 `stable-diffusion-webui-master\extensions`
-8. 前往 [Google Drive](https://drive.google.com/drive/folders/1Vom0m_9n0nxXxxJFo5NQgCTdfW7gIAMk?usp=sharing) 下載 **embeddings** 資料夾後取代 `stable-diffusion-webui-master\embeddings`
+7. 前往 [Google Drive](https://drive.google.com/file/d/1aWy3xzgNLw_FiXXJ-svKDx5xsQhZA4On/view?usp=sharing) 下載 **extensions** 資料夾後取代 `stable-diffusion-webui-master\extensions`
+8. 前往 [Google Drive](https://drive.google.com/file/d/14Ep12LbgJix1XQkQgH7gSwTmBTW5cKG2/view?usp=sharing) 下載 **embeddings** 資料夾後取代 `stable-diffusion-webui-master\embeddings`
 
 ## 使用方式
 請依照以下步驟啟動系統：
