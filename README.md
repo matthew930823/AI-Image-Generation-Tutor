@@ -161,7 +161,7 @@ set COMMANDLINE_ARGS=--xformers --autolaunch --theme dark --api
 
 | **1. 微調前** | **2. 微調後** |
 | :---: | :---: |
-| <img src="screenshot/assesmode/scene2.png" width="500" alt="微調前"> | <img src="screenshot/assesmode/scene3.png" width="500" alt="微調後"> |
+| <img src="screenshot/Snoopy_example/lora_before.png" width="250" alt="微調前"> | <img src="screenshot/Snoopy_example/lora_after.png" width="250" alt="微調後"> |
 
 ---
 
