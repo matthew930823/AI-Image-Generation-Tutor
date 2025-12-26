@@ -167,7 +167,7 @@ set COMMANDLINE_ARGS=--xformers --autolaunch --theme dark --api
 
 ## 👥 作者與貢獻 (Authors)
 
-[cite_start]**國立臺灣海洋大學 資訊工程學系 (NTOU CS)** 指導教授：張欽圳 博士 
+**國立臺灣海洋大學 資訊工程學系 (NTOU CS)** 指導教授：張欽圳 博士 
 
 | 姓名 | 學號 | 主要職責 | 貢獻度 |
 | :--- | :--- | :--- | :--- |
