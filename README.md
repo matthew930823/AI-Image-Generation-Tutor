@@ -5,12 +5,15 @@
 [![Stable Diffusion](https://img.shields.io/badge/Stable%20Diffusion-v1.5-blue)](https://github.com/AUTOMATIC1111/stable-diffusion-webui)
 [![Model](https://img.shields.io/badge/LLM-Gemini%202.5%20Flash--Lite-orange)](https://aistudio.google.com/)
 [![Demo Video](https://img.shields.io/badge/Demo-Video-red)](https://youtu.be/dvgTzGWRYK8)
+[![Project Report](https://img.shields.io/badge/PDF-Project_Report-b31b1b)](https://drive.google.com/file/d/17XuxVGuz0Tx9AxdcEJduVH1oWiUJQoTb/view?usp=sharing)
 
 ## 📖 專案簡介 (Introduction)
 
 本專題開發了一套互動式圖像生成教學系統，旨在引導使用者從基礎的提示詞輸入，進階至能夠精確操控圖像生成的專家。系統結合了 **Large Language Models (LLM)**、**Live2D 虛擬角色**與**語音回饋**，提供多樣化的學習模式與考核機制。
 
 此外，系統包含一個 **對話式圖像生成代理人**，讓使用者能透過自然語言對話，經由系統自動提取參數並運用 ControlNet、LoRA 等技術，生成符合需求的理想圖像。
+
+![專案簡介示意圖](screenshot/system/choose_mode.png)
 
 ### 🎥 成果展示 (Demo)
 > **[點擊觀看 YouTube 完整演示影片](https://youtu.be/dvgTzGWRYK8)**
@@ -21,13 +24,66 @@
 
 本系統設計了五種互動模式，滿足不同階段的學習需求：
 
-| 模式名稱 | 功能說明 | 學習重點 |
-| :--- | :--- | :--- |
-| **1. 簡單模式 (Easy Mode)** | 透過圖像對照，辨識技術差異。 | 模型選擇、Prompt、LoRA、解析度 |
-| **2. 困難模式 (Hard Mode)** | 觀察融合圖像，判斷複合技術組合。 | ControlNet、多重技術混合應用 |
-| **3. 猜詞模式 (Guess Mode)** | 推測特定區域的提示詞 (基於 MultiDiffusion)。 | 提示詞撰寫、區域控制 (Region Control) |
-| **4. 考核模式 (Exam Mode)** | 自行設定參數以還原題目圖像。 | 綜合實戰能力評量 |
-| **5. 匠人模式 (Craftsman Mode)** | 對話式代理人協助生成，或自定義細節。 | 自由創作、自然語言轉參數 |
+### 1. 簡單模式 (Easy Mode)
+* **功能說明**：透過圖像對照，辨識技術差異。
+* **學習重點**：模型選擇、Prompt、LoRA、解析度。
+
+#### 📸 系統介面與教學效果展示
+| **1. 答題畫面示意圖** | **2. 結算畫面示意圖** |
+| :---: | :---: |
+| <img src="screenshot/easymode/scene2.png" width="500" alt="答題畫面"> | <img src="screenshot/easymode/scene3.png" width="500" alt="結算畫面"> |
+
+| **3. Model 選擇效果** | **4. Prompt 效果** |
+| :---: | :---: |
+| <img src="screenshot/easymode/Model.png" width="500" alt="Model效果"> | <img src="screenshot/easymode/Prompt.png" width="500" alt="Prompt效果"> |
+
+| **5. LoRA 效果** | **6. Resolution 效果** |
+| :---: | :---: |
+| <img src="screenshot/easymode/LoRA.png" width="500" alt="LoRA效果"> | <img src="screenshot/easymode/Resolution.png" width="500" alt="Resolution效果"> |
+
+---
+
+### 2. 困難模式 (Hard Mode)
+* **功能說明**：觀察融合圖像，判斷複合技術組合。
+* **學習重點**：ControlNet、多重技術混合應用。
+
+| **1. 答題畫面示意圖** | **2. 結算畫面示意圖** |
+| :---: | :---: |
+| <img src="screenshot/hardmode/scene2.png" width="500" alt="答題畫面"> | <img src="screenshot/hardmode/scene3.png" width="500" alt="結算畫面"> |
+
+---
+
+### 3. 猜詞模式 (Guess Mode)
+* **功能說明**：推測特定區域的提示詞 (基於 MultiDiffusion)。
+* **學習重點**：提示詞撰寫、區域控制 (Region Control)。
+
+| **1. 答題畫面示意圖** | **2. 結算畫面示意圖** |
+| :---: | :---: |
+| <img src="screenshot/multimode/scene2.png" width="500" alt="答題畫面"> | <img src="screenshot/multimode/scene3.png" width="500" alt="結算畫面"> |
+
+---
+
+### 4. 考核模式 (Exam Mode)
+* **功能說明**：使用者需自行設定參數，嘗試生成與題目極為相似的圖像，系統將量化相似度進行評分。
+* **學習重點**：綜合實戰能力評量。
+
+| **1. 答題畫面示意圖** | **2. 結算畫面示意圖** |
+| :---: | :---: |
+| <img src="screenshot/assesmode/scene2.png" width="500" alt="答題畫面"> | <img src="screenshot/assesmode/scene3.png" width="500" alt="結算畫面"> |
+
+---
+
+### 5. 匠人模式 (Craftsman Mode)
+* **功能說明**：對話式代理人協助生成，並提供多樣種類的自定義細節。
+* **學習重點**：自由創作、自然語言轉參數。
+
+| **1. 對話式代理人示意圖** | **2. 參數檢查示意圖** |
+| :---: | :---: |
+| <img src="screenshot/agentmode/scene4.png" width="500" alt="對話式代理人"> | <img src="screenshot/agentmode/scene5.png" width="500" alt="參數檢查"> |
+
+| **3. 自定義細節示意圖** | **4. 結果畫面示意圖** |
+| :---: | :---: |
+| <img src="screenshot/agentmode/scene2.png" width="500" alt="自定義細節"> | <img src="screenshot/agentmode/scene6.png" width="500" alt="結果畫面"> |
 
 ---
 
@@ -100,8 +156,12 @@ set COMMANDLINE_ARGS=--xformers --autolaunch --theme dark --api
 
 ## 📂 LoRA 模型資料集
 
-本專題自訓練之 LoRA 模型資料集（如 Snoopy 風格等）可於以下連結下載：  
+本專題也嘗試以 Snoopy 風格為主題，訓練出專屬的 LoRA 微調模型，自訓練之 LoRA 模型資料集可於以下連結下載：  
 👉 [Google Drive 下載](https://drive.google.com/drive/folders/1KJ8zi5uhN3mLTzKApngOKMTSjnxnZAYD?usp=sharing)
+
+| **1. 微調前** | **2. 微調後** |
+| :---: | :---: |
+| <img src="screenshot/assesmode/scene2.png" width="500" alt="微調前"> | <img src="screenshot/assesmode/scene3.png" width="500" alt="微調後"> |
 
 ---
 
